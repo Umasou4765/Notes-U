@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light dark">
+    <title>Sign Up - UniNotes</title>
+    <style>
+        /* Base styles (Notion-like theme) */
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center; /* Center content vertically */
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f8f8f8; /* Light mode background */
+            color: #333; /* Light mode text color */
+            flex-direction: column;
+            box-sizing: border-box;
+            overflow-x: hidden;
+            width: 100%;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            padding: 20px; /* General padding to prevent content touching edges */
+        }
+
+        .container {
+            max-width: 400px; /* Standard width for auth forms */
+            width: 90%;
+            margin: 0 auto;
+            padding: 30px; /* Increased padding */
+            box-sizing: border-box;
+            background-color: white; /* Card background */
+            border-radius: 8px; /* Rounded corners */
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05); /* Subtle shadow */
+            text-align: center;
+        }
+
+        /* Notion-like Input Styles */
+        .notion-input-group {
+            margin-bottom: 24px;
+            text-align: left; /* Align labels/inputs to the left */
+        }
+
+        .notion-label {
+            display: block;
+            font-size: 0.875em;
+            font-weight: 500;
+            color: #666;
+            margin-bottom: 8px;
+            transition: color 0.3s ease;
+        }
+
+        .notion-input {
+            display: block;
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid rgba(55, 53, 47, 0.16);
+            border-radius: 4px;
+            background-color: white;
+            color: #333;
+            font-size: 1em;
+            line-height: 1.5;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+        }
+
+        .notion-input::placeholder {
+            color: rgba(55, 53, 47, 0.4);
+        }
+
+        .notion-input:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 1px #007bff;
+        }
+
+        /* Header Styles */
+        .header {
+            margin-bottom: 32px;
+        }
+        .header h1 {
+            font-size: 1.8em; /* Adjusted for auth pages */
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            transition: color 0.3s ease;
+        }
+        .header p {
+            font-size: 0.95em;
+            color: #666;
+            transition: color 0.3s ease;
+        }
+
+        /* Button Styles */
+        .auth-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 10px 15px;
+            border-radius: 4px;
+            font-size: 1em;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+            margin-bottom: 12px; /* Spacing between auth buttons */
+        }
+
+        .github-button {
+            background-color: #333; /* GitHub black */
+            color: white;
+            border: 1px solid #333;
+        }
+
+        .github-button:hover {
+            background-color: #555;
+            border-color: #555;
+        }
+
+        .github-button svg {
+            margin-right: 8px;
+            width: 20px;
+            height: 20px;
+            fill: white;
+        }
+        
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 24px 0;
+            color: #999;
+        }
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #eee;
+        }
+        .divider:not(:empty)::before {
+            margin-right: .25em;
+        }
+        .divider:not(:empty)::after {
+            margin-left: .25em;
+        }
+
+        .primary-button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            width: 100%;
+            font-size: 1em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+        .primary-button:hover {
+            background-color: #0056b3;
+        }
+
+        .switch-link {
+            display: block;
+            margin-top: 24px;
+            font-size: 0.9em;
+            color: #007bff;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+        .switch-link:hover {
+            color: #0056b3;
+            text-decoration: underline;
+        }
+
+        /* Error message styles */
+        .error-message {
+            color: #dc3545;
+            font-size: 0.875em;
+            margin-top: 8px;
+            display: none;
+        }
+
+        /* Theme Toggle Button Styles (copied from index.html) */
+        .theme-toggle-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s ease;
+            z-index: 10;
+        }
+
+        .theme-toggle-btn:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        .theme-toggle-btn svg {
+            width: 24px;
+            height: 24px;
+            fill: #333;
+            transition: fill 0.3s ease;
+        }
+
+        /* Dark Mode Styles */
+        body.dark {
+            background-color: #121212;
+            color: white;
+        }
+
+        body.dark .container {
+            background-color: #1a1a1a;
+            box-shadow: 0 4px 12px rgba(255,255,255,0.02);
+        }
+
+        body.dark .header h1,
+        body.dark .header p,
+        body.dark .notion-label,
+        body.dark .divider {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        body.dark .notion-input {
+            background-color: #252525;
+            color: white;
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        body.dark .notion-input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        body.dark .notion-input:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 1px #007bff;
+        }
+
+        body.dark .github-button {
+            background-color: #555;
+            border-color: #555;
+        }
+        body.dark .github-button:hover {
+            background-color: #777;
+            border-color: #777;
+        }
+
+        body.dark .github-button svg {
+            fill: white;
+        }
+
+        body.dark .divider::before,
+        body.dark .divider::after {
+            border-bottom-color: rgba(255, 255, 255, 0.1);
+        }
+
+        body.dark .error-message {
+            color: #ff6b6b;
+        }
+
+        body.dark .theme-toggle-btn svg {
+            fill: white;
+        }
+
+        body.dark .switch-link {
+            color: #8bb4ff;
+        }
+        body.dark .switch-link:hover {
+            color: #b0d0ff;
+        }
+
+        /* Desktop specific styles */
+        @media (min-width: 768px) {
+            .container {
+                padding: 40px;
+            }
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle theme">
+        <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+            <circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+        <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+    </button>
+
+    <div class="container">
+        <div class="header">
+            <h1>Sign Up for UniNotes</h1>
+            <p>Join our community to share and access notes.</p>
+        </div>
+
+        <button class="auth-button github-button" onclick="location.href='YOUR_GITHUB_SIGNUP_URL_HERE'">
+            <svg viewBox="0 0 24 24" aria-hidden="true" class="r-lrsllp r-4qtqp9 r-yyyyoo r-16y2uox r-8kz0gk r-dnmrzs r-bnwqim r-1plcrux r-lrvibr" fill="currentColor">
+                <g><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57V20.46c-3.375.735-4.08-1.62-4.08-1.62-.585-1.485-1.425-1.875-1.425-1.875-1.17-.795.075-.78.075-.78 1.29.09 1.965 1.32 1.965 1.32 1.14 1.95 3 1.38 3.735 1.05.105-.825.45-1.38.825-1.71-2.85-.3-5.835-1.425-5.835-6.345 0-1.41.495-2.565 1.305-3.465-.135-.315-.555-1.635.12-3.42 0 0 1.065-.315 3.48 1.305 1.005-.285 2.07-.42 3.135-.42 1.065 0 2.13.135 3.135.42 2.415-1.62 3.48-1.305 3.48-1.305.675 1.785.255 3.105.12 3.42.81.9 1.305 2.055 1.305 3.465 0 4.935-2.985 6.03-5.85 6.345.465.39.81 1.11.81 2.235V23.76c0 .315.225.69.825.57C20.565 21.795 24 17.31 24 12c0-6.63-5.37-12-12-12z"></path></g>
+            </svg>
+            Continue with GitHub
+        </button>
+
+        <div class="divider">or</div>
+
+        <form id="signupForm">
+            <div class="notion-input-group">
+                <label for="email" class="notion-label">Email address</label>
+                <input type="email" id="email" class="notion-input" placeholder="Enter your email" required>
+                <p id="emailError" class="error-message">Please enter a valid email address</p>
+            </div>
+            <div class="notion-input-group">
+                <label for="password" class="notion-label">Create password</label>
+                <input type="password" id="password" class="notion-input" placeholder="Min. 8 characters" required>
+                <p id="passwordError" class="error-message">Password must be at least 8 characters</p>
+            </div>
+            <div class="notion-input-group">
+                <label for="confirmPassword" class="notion-label">Confirm password</label>
+                <input type="password" id="confirmPassword" class="notion-input" placeholder="Confirm your password" required>
+                <p id="confirmPasswordError" class="error-message">Passwords do not match</p>
+            </div>
+            <button type="submit" class="primary-button">Sign Up</button>
+        </form>
+
+        <a href="login.html" class="switch-link">Already have an account? Log In</a>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
