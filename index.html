@@ -4,64 +4,47 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Notes Upload</title>
-  <link href="style.css" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="style.css" />
 </head>
-<body>
-  <h1>📘 Upload Your Notes</h1>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+  <div class="w-full max-w-md bg-white p-8 rounded-xl shadow-lg">
+    <h1 class="text-2xl font-bold text-center mb-6">📘 Upload Your Notes</h1>
+    
+    <form id="uploadForm" class="flex flex-col gap-4">
+      <div>
+        <label for="year" class="block text-sm font-medium text-gray-700 mb-1">Year:</label>
+        <select id="year" class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
+          <option>Year 1</option>
+          <option>Year 2</option>
+        </select>
+      </div>
 
-  <form id="uploadForm">
-    <label for="year">Year:</label>
-    <select id="year">
-      <option>Year 1</option>
-      <option>Year 2</option>
-    </select>
+      <div>
+        <label for="semester" class="block text-sm font-medium text-gray-700 mb-1">Semester:</label>
+        <select id="semester" class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
+          <option>Semester 1</option>
+          <option>Semester 2</option>
+          <option>Semester 3</option>
+        </select>
+      </div>
 
-    <label for="semester">Semester:</label>
-    <select id="semester">
-      <option>Semester 1</option>
-      <option>Semester 2</option>
-      <option>Semester 3</option>
-    </select>
+      <div>
+        <label for="subject" class="block text-sm font-medium text-gray-700 mb-1">Subject:</label>
+        <input type="text" id="subject" required class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"/>
+      </div>
 
-    <label for="subject">Subject:</label>
-    <input type="text" id="subject" required />
+      <div>
+        <label for="file" class="block text-sm font-medium text-gray-700 mb-1">Select File:</label>
+        <input type="file" id="file" required class="w-full border border-gray-300 rounded px-3 py-2"/>
+      </div>
 
-    <label for="file">Select file:</label>
-    <input type="file" id="file" required />
-
-    <button type="submit">Upload</button>
-  </form>
+      <button type="submit" class="bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition duration-300">
+        Upload
+      </button>
+    </form>
+  </div>
 
   <script src="app.js"></script>
 </body>
 </html>
-
-
-<script src="https://cdn.tailwindcss.com"></script>
-
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Notes Upload</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
-
-<h1 class="text-2xl font-bold text-center my-4">📘 Upload Notes</h1>
-
-<form class="flex flex-col gap-4 max-w-md mx-auto bg-white p-6 rounded-xl shadow">
-  <label class="font-semibold">Year:</label>
-  <select class="border rounded p-2">
-    <option>Year 1</option>
-    <option>Year 2</option>
-  </select>
-  
-  <label class="font-semibold">Subject:</label>
-  <input type="text" class="border rounded p-2" />
-
-  <label class="font-semibold">File:</label>
-  <input type="file" class="border rounded p-2" />
-
-  <button class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition">
-    Upload
-  </button>
-</form>
