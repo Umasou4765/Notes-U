@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UniNotes</title>
+    <meta name="color-scheme" content="light dark"> <title>UniNotes</title>
     <style>
         /* Base styles (optimized for all devices, primarily mobile) */
         body {
@@ -13,19 +13,20 @@
             align-items: center;
             min-height: 100vh;
             margin: 0;
-            background-color: #f8f8f8;
+            background-color: #f8f8f8; /* Light mode background */
+            color: #333; /* Light mode text color */
             flex-direction: column;
             box-sizing: border-box;
-            /* Prevents horizontal scrolling on mobile */
             overflow-x: hidden;
-            width: 100%; /* Ensures body width is viewport width */
+            width: 100%;
+            transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition for theme change */
         }
 
         .container {
             text-align: center;
             padding: 20px;
-            max-width: 400px; /* Max width for mobile */
-            width: 90%; /* Occupy 90% width on small screens */
+            max-width: 400px;
+            width: 90%;
             box-sizing: border-box;
         }
 
@@ -42,6 +43,7 @@
             border: 2px solid #333;
             box-sizing: border-box;
             margin: 0 auto 50px auto;
+            transition: border-color 0.3s ease, color 0.3s ease; /* Smooth transition for logo */
         }
 
         .logo span {
@@ -49,24 +51,26 @@
         }
 
         h1 {
-            font-size: 2.2em; /* Mobile heading size */
+            font-size: 2.2em;
             margin-bottom: 20px;
             color: #333;
             line-height: 1.3;
             font-weight: normal;
+            transition: color 0.3s ease; /* Smooth transition for heading */
         }
 
         p {
-            font-size: 1.1em; /* Mobile paragraph size */
+            font-size: 1.1em;
             color: #666;
             margin-bottom: 40px;
+            transition: color 0.3s ease; /* Smooth transition for paragraph */
         }
 
         .button-group {
             display: flex;
             flex-direction: column;
             gap: 15px;
-            width: 100%; /* Buttons group takes full width of container on mobile */
+            width: 100%;
             margin: 0 auto;
         }
 
@@ -79,7 +83,7 @@
             text-decoration: none;
             display: block;
             text-align: center;
-            transition: background-color 0.3s ease;
+            transition: background-color 0.3s ease, color 0.3s ease;
             color: #fff;
         }
 
@@ -101,55 +105,135 @@
             background-color: #e0e0e0;
         }
 
+        /* Theme Toggle Button Styles */
+        .theme-toggle-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s ease;
+        }
+
+        .theme-toggle-btn:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        .theme-toggle-btn svg {
+            width: 24px;
+            height: 24px;
+            fill: #333; /* Default icon color in light mode */
+            transition: fill 0.3s ease;
+        }
+
+        /* Dark Mode Styles */
+        body.dark {
+            background-color: #121212;
+            color: white;
+        }
+
+        body.dark .logo {
+            color: white;
+            border-color: white;
+        }
+
+        body.dark h1,
+        body.dark p {
+            color: white;
+        }
+
+        body.dark .button.register {
+            background-color: #333; /* Darker background for register in dark mode */
+            color: white;
+            border-color: #555;
+        }
+
+        body.dark .button.register:hover {
+            background-color: #444;
+        }
+
+        body.dark .theme-toggle-btn svg {
+            fill: white; /* Icon color in dark mode */
+        }
+
         /* Desktop specific styles */
-        @media (min-width: 768px) { /* Apply when screen width is 768px or greater */
+        @media (min-width: 768px) {
             body {
                 align-items: center;
             }
 
             .container {
-                max-width: 600px; /* Max width for desktop */
-                padding: 40px; /* Increased padding for desktop */
-                background-color: #fff; /* White background for container */
-                border-radius: 10px; /* Slightly rounded corners */
-                box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Shadow effect */
+                max-width: 600px;
+                padding: 40px;
+                background-color: #fff;
+                border-radius: 10px;
+                box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            }
+
+            /* Dark mode specific styles for desktop container */
+            body.dark .container {
+                background-color: #1a1a1a; /* Darker background for container in dark mode */
+                box-shadow: 0 4px 8px rgba(255,255,255,0.05); /* Lighter shadow for dark mode */
             }
 
             .logo {
-                font-size: 3.5em; /* Larger logo for desktop */
+                font-size: 3.5em;
                 height: 70px;
                 width: 70px;
-                margin-bottom: 70px; /* Increased spacing */
+                margin-bottom: 70px;
             }
 
             h1 {
-                font-size: 3em; /* Larger heading for desktop */
+                font-size: 3em;
                 margin-bottom: 30px;
             }
 
             p {
-                font-size: 1.3em; /* Larger paragraph for desktop */
+                font-size: 1.3em;
                 margin-bottom: 50px;
             }
 
             .button-group {
-                flex-direction: row; /* Horizontal button layout for desktop */
-                justify-content: center; /* Center buttons horizontally */
-                gap: 20px; /* Increased spacing between buttons */
-                width: auto; /* Button group width adapts to content */
+                flex-direction: row;
+                justify-content: center;
+                gap: 20px;
+                width: auto;
             }
 
             .button {
-                padding: 18px 40px; /* Larger button padding for desktop */
-                font-size: 1.2em; /* Larger button font size for desktop */
-                width: auto; /* Button width adapts to content */
-                flex-grow: 1; /* Make buttons grow to fill space evenly */
-                max-width: 180px; /* Control max width of individual buttons */
+                padding: 18px 40px;
+                font-size: 1.2em;
+                width: auto;
+                flex-grow: 1;
+                max-width: 180px;
             }
         }
     </style>
 </head>
 <body>
+    <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle theme">
+        <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+        <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+    </button>
+
     <div class="container">
         <div class="logo">
             <span>U</span>
@@ -161,5 +245,60 @@
             <a href="register.html" class="button register">Sign Up</a>
         </div>
     </div>
+
+    <script>
+        const themeToggleButton = document.getElementById("theme-toggle");
+        const sunIcon = themeToggleButton.querySelector(".sun-icon");
+        const moonIcon = themeToggleButton.querySelector(".moon-icon");
+
+        // Function to set the theme based on the 'dark' class on body
+        function setTheme(isDark) {
+            if (isDark) {
+                document.body.classList.add("dark");
+                sunIcon.style.display = "block";
+                moonIcon.style.display = "none";
+            } else {
+                document.body.classList.remove("dark");
+                sunIcon.style.display = "none";
+                moonIcon.style.display = "block";
+            }
+        }
+
+        // Toggle theme and save setting
+        function toggleTheme() {
+            const isDark = document.body.classList.toggle("dark"); // Toggle on body directly
+            localStorage.setItem("theme", isDark ? "dark" : "light");
+            setTheme(isDark); // Update icons immediately
+        }
+
+        // Set theme on page load
+        window.addEventListener("DOMContentLoaded", () => {
+            const storedTheme = localStorage.getItem("theme");
+
+            // Check for stored theme first
+            if (storedTheme === "dark") {
+                setTheme(true);
+            } else if (storedTheme === "light") {
+                setTheme(false);
+            } else {
+                // If no stored theme, check system preference
+                if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    setTheme(true);
+                } else {
+                    setTheme(false);
+                }
+            }
+        });
+
+        // Add event listener to the button
+        themeToggleButton.addEventListener("click", toggleTheme);
+
+        // Listen for system theme changes (optional, but good for reactivity)
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+            if (!localStorage.getItem("theme")) { // Only apply if user hasn't manually set a preference
+                setTheme(event.matches);
+            }
+        });
+    </script>
 </body>
 </html>
