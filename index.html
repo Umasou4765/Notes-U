@@ -12,10 +12,15 @@
   <div class="w-full max-w-md bg-white p-8 rounded-xl shadow-lg">
     <h1 class="text-2xl font-bold text-center mb-6">📘 Upload Your Notes</h1>
 
-    <button id="tipBtn" class="bg-green-600 text-white py-1.5 px-4 rounded hover:bg-green-700 transition duration-300 mt-4">
-      Show Me a Study Tip!
-    </button>
-    <p id="studyTip" class="mt-2 text-blue-700 font-semibold"></p>
+    <!-- Study Tip Floating Button -->
+<button id="tipBtn" 
+  class="fixed bottom-4 right-4 bg-green-500 text-white px-3 py-2 rounded-full shadow hover:bg-green-600 text-sm z-50" 
+  aria-label="Study Tip Button">
+  💡
+</button>
+<p id="studyTip" 
+  class="fixed bottom-16 right-4 bg-white border border-blue-200 px-3 py-2 rounded shadow text-sm text-blue-700 hidden z-50 max-w-xs">
+</p>
 
     <form id="uploadForm" class="flex flex-col gap-4" novalidate>
 
