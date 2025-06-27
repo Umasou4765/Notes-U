@@ -1,8 +1,6 @@
 # UniNotes
 A simple university notes sharing platform 
 
-https://umasou4765.github.io/UniNotes/
-
 # 📘 Student Notes Sharing Platform
 
 A simple web app for students to upload, categorize, and share notes and resources across semesters and subjects.
