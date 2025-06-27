@@ -2,19 +2,21 @@
 
 // --- Theme Toggling Module ---
 const themeModule = (() => {
-    const themeToggleButton = document.getElementById("theme-toggle");
-    const sunIcon = themeToggleButton ? themeToggleButton.querySelector(".sun-icon") : null;
-    const moonIcon = themeToggleButton ? themeToggleButton.querySelector(".moon-icon") : null;
+    let themeToggleButton = null; // Declare as null initially
+    let sunIcon = null;
+    let moonIcon = null;
 
     const setTheme = (isDark) => {
-        if (isDark) {
-            document.body.classList.add("dark");
-            if (sunIcon) sunIcon.style.display = "block";
-            if (moonIcon) moonIcon.style.display = "none";
-        } else {
-            document.body.classList.remove("dark");
-            if (sunIcon) sunIcon.style.display = "none";
-            if (moonIcon) moonIcon.style.display = "block";
+        if (document.body) { // Ensure body exists
+            if (isDark) {
+                document.body.classList.add("dark");
+                if (sunIcon) sunIcon.style.display = "block";
+                if (moonIcon) moonIcon.style.display = "none";
+            } else {
+                document.body.classList.remove("dark");
+                if (sunIcon) sunIcon.style.display = "none";
+                if (moonIcon) moonIcon.style.display = "block";
+            }
         }
     };
 
@@ -25,6 +27,13 @@ const themeModule = (() => {
     };
 
     const initializeTheme = () => {
+        // Get elements only when initializing
+        themeToggleButton = document.getElementById("theme-toggle");
+        if (themeToggleButton) {
+            sunIcon = themeToggleButton.querySelector(".sun-icon");
+            moonIcon = themeToggleButton.querySelector(".moon-icon");
+        }
+
         const storedTheme = localStorage.getItem("theme");
 
         if (storedTheme === "dark") {
@@ -41,7 +50,7 @@ const themeModule = (() => {
     };
 
     const setupListeners = () => {
-        if (themeToggleButton) {
+        if (themeToggleButton) { // Only add listener if button exists
             themeToggleButton.addEventListener("click", toggleTheme);
         }
 
@@ -54,6 +63,9 @@ const themeModule = (() => {
 
     return {
         init: () => {
+            // Defer element fetching and listener setup until DOMContentLoaded
+            // This is already handled by the global DOMContentLoaded listener below
+            // but ensuring calls within init() are robust.
             initializeTheme();
             setupListeners();
         }
@@ -94,7 +106,9 @@ const fileUploadModule = (() => {
 
     const setupListeners = () => {
         if (fileUploadArea) {
-            fileUploadArea.addEventListener('click', () => fileInput.click());
+            fileUploadArea.addEventListener('click', () => {
+                if (fileInput) fileInput.click();
+            });
 
             fileUploadArea.addEventListener('dragover', (e) => {
                 e.preventDefault();
@@ -109,7 +123,7 @@ const fileUploadModule = (() => {
                 e.preventDefault();
                 fileUploadArea.classList.remove('dragover');
                 if (e.dataTransfer && e.dataTransfer.files.length > 0) {
-                    fileInput.files = e.dataTransfer.files;
+                    if (fileInput) fileInput.files = e.dataTransfer.files;
                     updateFileDisplay();
                 }
             });
@@ -121,12 +135,12 @@ const fileUploadModule = (() => {
 
     return {
         init: () => {
-            if (fileInput && fileUploadArea) { // Only initialize if upload elements exist
+            if (fileInput && fileUploadArea && uploadPrompt && fileInfo) { // Ensure all necessary elements exist
                 setupListeners();
-                updateFileDisplay(); // Set initial display
+                updateFileDisplay();
             }
         },
-        reset: updateFileDisplay // Expose reset for form module
+        reset: updateFileDisplay
     };
 })();
 
@@ -141,6 +155,10 @@ const formModule = (() => {
     const validateField = (element, errorId) => {
         const errorElement = getErrorDisplay(errorId);
         let isValid = true;
+
+        if (!element) { // Element might not exist on the current page
+            return true; // Consider valid if element isn't present
+        }
 
         if (element.type === 'file') {
             if (!element.files.length) {
@@ -172,6 +190,7 @@ const formModule = (() => {
         ];
 
         fieldsToValidate.forEach(field => {
+            // Only validate if the element actually exists on the page
             if (field.element && !validateField(field.element, field.error)) {
                 formIsValid = false;
             }
@@ -186,7 +205,9 @@ const formModule = (() => {
             setTimeout(() => {
                 alert('Notes uploaded successfully!');
                 if (form) form.reset();
-                fileUploadModule.reset(); // Reset file display using the file upload module's exposed method
+                if (fileUploadModule && fileUploadModule.reset) {
+                    fileUploadModule.reset();
+                }
                 if (submitBtn) {
                     submitBtn.disabled = false;
                     submitBtn.textContent = 'Upload Notes';
@@ -199,7 +220,6 @@ const formModule = (() => {
         if (form) {
             form.addEventListener('submit', handleSubmit);
 
-            // Add event listeners for instant validation feedback on input
             const yearSelect = getField('year');
             const semesterSelect = getField('semester');
             const subjectInput = getField('subject');
@@ -214,7 +234,7 @@ const formModule = (() => {
 
     return {
         init: () => {
-            if (form) { // Only initialize if form exists (i.e., on upload.html)
+            if (form) {
                 setupListeners();
             }
         }
@@ -223,11 +243,7 @@ const formModule = (() => {
 
 // --- Universal Initialization ---
 document.addEventListener('DOMContentLoaded', () => {
-    themeModule.init(); // Initialize theme module on all pages
-    fileUploadModule.init(); // Initialize file upload module (only runs if elements exist)
-    formModule.init(); // Initialize form module (only runs if form exists)
+    themeModule.init();
+    fileUploadModule.init();
+    formModule.init();
 });
-
-    <script src="app.js"></script>
-</body>
-</html>
