@@ -2,45 +2,37 @@
 
 // --- Theme Toggling Module ---
 const themeModule = (() => {
-    let themeToggleButton = null; // Declare as null initially
-    let sunIcon = null;
-    let moonIcon = null;
+    const themeToggleButton = document.getElementById("theme-toggle");
+    const sunIcon = themeToggleButton ? themeToggleButton.querySelector(".sun-icon") : null;
+    const moonIcon = themeToggleButton ? themeToggleButton.querySelector(".moon-icon") : null;
 
     const setTheme = (isDark) => {
-        if (document.body) { // Ensure body exists
-            if (isDark) {
-                document.body.classList.add("dark");
-                if (sunIcon) sunIcon.style.display = "block";
-                if (moonIcon) moonIcon.style.display = "none";
-            } else {
-                document.body.classList.remove("dark");
-                if (sunIcon) sunIcon.style.display = "none";
-                if (moonIcon) moonIcon.style.display = "block";
-            }
+        if (isDark) {
+            document.body.classList.add("dark");
+            if (sunIcon) sunIcon.style.display = "block"; 
+            if (moonIcon) moonIcon.style.display = "none"; 
+        } else {
+            document.body.classList.remove("dark");
+            if (sunIcon) sunIcon.style.display = "none"; 
+            if (moonIcon) moonIcon.style.display = "block"; 
         }
     };
 
     const toggleTheme = () => {
         const isDark = document.body.classList.toggle("dark");
         localStorage.setItem("theme", isDark ? "dark" : "light");
-        setTheme(isDark);
+        setTheme(isDark); // 调用 setTheme 来更新图标显示
     };
 
     const initializeTheme = () => {
-        // Get elements only when initializing
-        themeToggleButton = document.getElementById("theme-toggle");
-        if (themeToggleButton) {
-            sunIcon = themeToggleButton.querySelector(".sun-icon");
-            moonIcon = themeToggleButton.querySelector(".moon-icon");
-        }
-
         const storedTheme = localStorage.getItem("theme");
 
         if (storedTheme === "dark") {
-            setTheme(true);
+            setTheme(true); 
         } else if (storedTheme === "light") {
-            setTheme(false);
+            setTheme(false); 
         } else {
+           
             if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
                 setTheme(true);
             } else {
@@ -50,11 +42,13 @@ const themeModule = (() => {
     };
 
     const setupListeners = () => {
-        if (themeToggleButton) { // Only add listener if button exists
+        if (themeToggleButton) {
             themeToggleButton.addEventListener("click", toggleTheme);
         }
 
+       
         window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+           
             if (!localStorage.getItem("theme")) {
                 setTheme(event.matches);
             }
@@ -63,9 +57,6 @@ const themeModule = (() => {
 
     return {
         init: () => {
-            // Defer element fetching and listener setup until DOMContentLoaded
-            // This is already handled by the global DOMContentLoaded listener below
-            // but ensuring calls within init() are robust.
             initializeTheme();
             setupListeners();
         }
@@ -106,9 +97,7 @@ const fileUploadModule = (() => {
 
     const setupListeners = () => {
         if (fileUploadArea) {
-            fileUploadArea.addEventListener('click', () => {
-                if (fileInput) fileInput.click();
-            });
+            fileUploadArea.addEventListener('click', () => fileInput.click());
 
             fileUploadArea.addEventListener('dragover', (e) => {
                 e.preventDefault();
@@ -123,7 +112,7 @@ const fileUploadModule = (() => {
                 e.preventDefault();
                 fileUploadArea.classList.remove('dragover');
                 if (e.dataTransfer && e.dataTransfer.files.length > 0) {
-                    if (fileInput) fileInput.files = e.dataTransfer.files;
+                    fileInput.files = e.dataTransfer.files;
                     updateFileDisplay();
                 }
             });
@@ -135,12 +124,12 @@ const fileUploadModule = (() => {
 
     return {
         init: () => {
-            if (fileInput && fileUploadArea && uploadPrompt && fileInfo) { // Ensure all necessary elements exist
+            if (fileInput && fileUploadArea) { // Only initialize if upload elements exist
                 setupListeners();
-                updateFileDisplay();
+                updateFileDisplay(); // Set initial display
             }
         },
-        reset: updateFileDisplay
+        reset: updateFileDisplay // Expose reset for form module
     };
 })();
 
@@ -155,10 +144,6 @@ const formModule = (() => {
     const validateField = (element, errorId) => {
         const errorElement = getErrorDisplay(errorId);
         let isValid = true;
-
-        if (!element) { // Element might not exist on the current page
-            return true; // Consider valid if element isn't present
-        }
 
         if (element.type === 'file') {
             if (!element.files.length) {
@@ -190,7 +175,6 @@ const formModule = (() => {
         ];
 
         fieldsToValidate.forEach(field => {
-            // Only validate if the element actually exists on the page
             if (field.element && !validateField(field.element, field.error)) {
                 formIsValid = false;
             }
@@ -205,9 +189,7 @@ const formModule = (() => {
             setTimeout(() => {
                 alert('Notes uploaded successfully!');
                 if (form) form.reset();
-                if (fileUploadModule && fileUploadModule.reset) {
-                    fileUploadModule.reset();
-                }
+                fileUploadModule.reset(); // Reset file display using the file upload module's exposed method
                 if (submitBtn) {
                     submitBtn.disabled = false;
                     submitBtn.textContent = 'Upload Notes';
@@ -243,7 +225,7 @@ const formModule = (() => {
 
 // --- Universal Initialization ---
 document.addEventListener('DOMContentLoaded', () => {
-    themeModule.init();
-    fileUploadModule.init();
-    formModule.init();
+    themeModule.init(); // Initialize theme module on all pages
+    fileUploadModule.init(); // Initialize file upload module (only runs if elements exist)
+    formModule.init(); // Initialize form module (only runs if form exists)
 });
