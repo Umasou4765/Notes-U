@@ -4,6 +4,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // 2. Study tips array
   const tips = [
+    "📚 Study in 25-minute focused bursts, then take a 5-minute break.",
+    "✍️ Rewrite your notes to help retention.",
+    "🎧 Lo-fi music can boost your concentration.",
+    "💤 A short nap can improve memory and alertness.",
+    "🔁 Reviewing little but often works better than cramming.",
     "Review your notes after every class.",
     "Teach someone else to test your understanding.",
     "Take regular breaks while studying.",
@@ -22,9 +27,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
   if (tipBtn && studyTip) {
     tipBtn.addEventListener('click', function () {
-      // Pick a random tip
       const randomIndex = Math.floor(Math.random() * tips.length);
       studyTip.textContent = tips[randomIndex];
+      studyTip.classList.toggle('hidden'); // 
     });
   }
 });
