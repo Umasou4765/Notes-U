@@ -14,6 +14,7 @@
             margin: 0;
             background-color: #f8f8f8; /* Light background similar to the image */
             flex-direction: column;
+            box-sizing: border-box; /* Ensures padding and border are included in element's total width/height */
         }
 
         .container {
@@ -33,15 +34,14 @@
             align-items: center;
             height: 50px; /* Give it some height for the box effect */
             width: 50px;
-            border: 2px solid #333; /* Simple border for the 'N' look */
+            border: 2px solid #333; /* Simple border for the 'U' look */
             box-sizing: border-box; /* Include padding and border in the element's total width and height */
             margin: 0 auto 50px auto; /* Center the logo */
         }
 
         .logo span {
-            line-height: 1; /* Adjust line height to center 'N' vertically */
+            line-height: 1; /* Adjust line height to center 'U' vertically */
         }
-
 
         h1 {
             font-size: 2.2em; /* Adjust font size for the main heading */
@@ -61,16 +61,18 @@
             display: flex;
             flex-direction: column;
             gap: 15px; /* Space between buttons */
+            width: 80%; /* Make buttons take up 80% of container width */
+            margin: 0 auto; /* Center the button group */
         }
 
         .button {
-            padding: 15px 25px;
+            padding: 15px 0; /* Reduced horizontal padding for shorter buttons */
             border: none;
             border-radius: 8px; /* Slightly rounded corners */
             font-size: 1.1em;
             cursor: pointer;
             text-decoration: none; /* Remove underline for links */
-            display: inline-block; /* Ensure padding works correctly */
+            display: block; /* Make buttons block level to take full width of button-group */
             text-align: center;
             transition: background-color 0.3s ease;
             color: #fff; /* Default text color for buttons */
@@ -98,13 +100,13 @@
 <body>
     <div class="container">
         <div class="logo">
-            <span>N</span>
+            <span>U</span>
         </div>
-        <h1>Enhance Your Workspace Experience</h1>
-        <p>Write, plan, collaborate. Let AI be your powerful assistant.</p>
+        <h1>Accessible notes. For every subject. Every semester.</h1>
+        <p>A simple platform for students to share and access academic notes.</p>
         <div class="button-group">
-            <a href="login.html" class="button login">Log In</a>
-            <a href="register.html" class="button register">Sign Up</a>
+            <a href="login.html" class="button login">登录</a>
+            <a href="register.html" class="button register">注册</a>
         </div>
     </div>
 </body>
