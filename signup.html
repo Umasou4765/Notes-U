@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light dark">
+    <title>Sign Up - Note-U</title>
+    <style>
+        /* Base styles (Notion-like theme, optimized for all devices, primarily mobile) */
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center; /* Center content vertically and horizontally */
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f8f8f8; /* Light mode background */
+            color: #333; /* Light mode text color */
+            flex-direction: column;
+            box-sizing: border-box;
+            overflow-x: hidden;
+            width: 100%;
+            transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition for theme change */
+            padding-top: 20px; /* Adjust for potential header space */
+            padding-bottom: 20px; /* Adjust for potential footer space */
+        }
+
+        .container {
+            text-align: center;
+            padding: 20px;
+            max-width: 400px; /* Max width for mobile */
+            width: 90%; /* Occupy 90% width on small screens */
+            box-sizing: border-box;
+        }
+
+        .logo {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 30px; /* Reduced margin for login/signup pages */
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 50px;
+            width: 50px;
+            border: 2px solid #333;
+            box-sizing: border-box;
+            margin: 0 auto 30px auto;
+            transition: border-color 0.3s ease, color 0.3s ease;
+        }
+
+        .logo span {
+            line-height: 1;
+        }
+
+        h1 {
+            font-size: 2.2em; /* Mobile heading size */
+            margin-bottom: 10px; /* Adjusted for tighter spacing */
+            color: #333;
+            line-height: 1.3;
+            font-weight: 600; /* Slightly bolder for titles */
+        }
+
+        p {
+            font-size: 1.1em; /* Mobile paragraph size */
+            color: #666;
+            margin-bottom: 30px; /* Spacing below subtitle */
+        }
+
+        /* Authentication Button Styles */
+        .auth-button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px; /* Space between buttons */
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .auth-button {
+            padding: 12px 20px;
+            border: 1px solid rgba(55, 53, 47, 0.16); /* Notion-like border */
+            border-radius: 4px;
+            font-size: 1em;
+            cursor: pointer;
+            text-decoration: none;
+            display: flex; /* Use flex to center icon and text */
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+            color: #333; /* Default text color */
+            background-color: white; /* Default background */
+        }
+
+        .auth-button:hover {
+            background-color: rgba(55, 53, 47, 0.03);
+            border-color: rgba(55, 53, 47, 0.2);
+        }
+
+        .auth-button svg {
+            margin-right: 10px;
+            width: 20px;
+            height: 20px;
+            fill: currentColor; /* Inherit color from parent */
+            transition: fill 0.2s ease;
+        }
+        
+        .github-text {
+            font-weight: 500; /* Medium font weight for text */
+        }
+
+        /* "Or" separator (not needed if only one auth method, but kept for consistency) */
+        .separator {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 20px 0;
+            color: #999;
+        }
+
+        .separator::before,
+        .separator::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .separator:not(:empty)::before {
+            margin-right: .25em;
+        }
+
+        .separator:not(:empty)::after {
+            margin-left: .25em;
+        }
+
+        /* Link to other auth page */
+        .switch-link {
+            font-size: 0.95em;
+            color: #007bff;
+            text-decoration: none;
+            margin-top: 20px;
+            display: block;
+            transition: color 0.2s ease;
+        }
+        .switch-link:hover {
+            text-decoration: underline;
+            color: #0056b3;
+        }
+
+        /* Theme Toggle Button Styles */
+        .theme-toggle-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s ease;
+            z-index: 10;
+        }
+
+        .theme-toggle-btn:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        .theme-toggle-btn svg {
+            width: 24px;
+            height: 24px;
+            fill: #333; /* Default icon color in light mode */
+            transition: fill 0.3s ease;
+        }
+
+        /* Dark Mode Styles */
+        body.dark {
+            background-color: #121212;
+            color: white;
+        }
+
+        body.dark .container {
+            /* Optional: Add distinct background or shadow for container if desired in dark mode */
+        }
+
+        body.dark .logo {
+            color: white;
+            border-color: white;
+        }
+
+        body.dark h1,
+        body.dark p {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        body.dark .auth-button {
+            background-color: #252525;
+            color: white;
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+        body.dark .auth-button:hover {
+            background-color: #333;
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+        body.dark .auth-button svg {
+            fill: white;
+        }
+
+        body.dark .separator {
+            color: #aaa;
+        }
+        body.dark .separator::before,
+        body.dark .separator::after {
+            border-bottom-color: #444;
+        }
+
+        body.dark .switch-link {
+            color: #64b5f6; /* Lighter blue for dark mode links */
+        }
+        body.dark .switch-link:hover {
+            color: #90caf9;
+        }
+
+        body.dark .theme-toggle-btn svg {
+            fill: white;
+        }
+
+        /* Desktop specific styles */
+        @media (min-width: 768px) {
+            .container {
+                max-width: 450px; /* Slightly wider for desktop */
+                padding: 40px;
+                background-color: #fff; /* Card background */
+                border-radius: 10px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            }
+            body.dark .container {
+                background-color: #1a1a1a;
+                box-shadow: 0 4px 12px rgba(255,255,255,0.02);
+            }
+
+            .logo {
+                font-size: 3.5em;
+                height: 70px;
+                width: 70px;
+                margin-bottom: 40px;
+            }
+
+            h1 {
+                font-size: 2.5em;
+            }
+
+            p {
+                font-size: 1.2em;
+            }
+
+            .auth-button {
+                padding: 14px 25px; /* Slightly larger buttons */
+                font-size: 1.1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle theme">
+        <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+        <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+    </button>
+
+    <div class="container">
+        <div class="logo">
+            <span>U</span>
+        </div>
+        <h1>Sign Up for Note-U</h1>
+        <p>Join the community and share your knowledge.</p>
+
+        <div class="auth-button-group">
+            <a href="#" class="auth-button github-signup-btn">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.499.09.682-.217.682-.483 0-.237-.008-.865-.013-1.7-2.782.602-3.369-1.341-3.369-1.341-.454-1.156-1.11-1.46-1.11-1.46-.908-.619.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.529 2.341 1.088 2.91.83.091-.645.356-1.088.649-1.336-2.22-.253-4.555-1.113-4.555-4.953 0-1.092.39-1.983 1.029-2.675-.103-.253-.446-1.264.098-2.638 0 0 .84-.268 2.75 1.022A9.606 9.606 0 0112 6.844c.85.004 1.701.113 2.502.324 1.909-1.29 2.747-1.022 2.747-1.022.546 1.373.202 2.385.099 2.638.64.692 1.028 1.583 1.028 2.675 0 3.848-2.339 4.69-4.566 4.943.359.309.678.914.678 1.846 0 1.334-.012 2.41-.012 2.727 0 .268.18.592.687.483C21.133 20.197 24 16.442 24 12.017 24 6.484 19.522 2 12 2Z"></path>
+                </svg>
+                <span class="github-text">Sign Up with GitHub</span>
+            </a>
+        </div>
+
+        <a href="login.html" class="switch-link">Already have an account? Log In</a>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
