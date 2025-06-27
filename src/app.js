@@ -1,63 +1,30 @@
-// src/app.js
+document.addEventListener('DOMContentLoaded', function () {
+  // 1. Show a welcome alert
+  alert("Welcome to UniNotes! Good luck with your studies 🎓");
 
-document.addEventListener('DOMContentLoaded', function() {
-  const uploadForm = document.getElementById('uploadForm');
-  if (!uploadForm) {
-    console.error("Upload form with ID 'uploadForm' not found.");
-    return;
+  // 2. Study tips array
+  const tips = [
+    "Review your notes after every class.",
+    "Teach someone else to test your understanding.",
+    "Take regular breaks while studying.",
+    "Organize your notes by subject and topic.",
+    "Set specific study goals for each session.",
+    "Don't cram – space out your learning.",
+    "Practice with past exam papers.",
+    "Use diagrams and mind maps.",
+    "Ask questions if you don't understand something.",
+    "Stay hydrated and get enough sleep!"
+  ];
+
+  // 3. Button and tip display
+  const tipBtn = document.getElementById('tipBtn');
+  const studyTip = document.getElementById('studyTip');
+
+  if (tipBtn && studyTip) {
+    tipBtn.addEventListener('click', function () {
+      // Pick a random tip
+      const randomIndex = Math.floor(Math.random() * tips.length);
+      studyTip.textContent = tips[randomIndex];
+    });
   }
-
-  uploadForm.addEventListener('submit', function(e) {
-    let valid = true;
-
-    // Year
-    const year = document.getElementById('year');
-    const yearError = document.getElementById('yearError');
-    if (!year.value) {
-      yearError.classList.remove('hidden');
-      valid = false;
-    } else {
-      yearError.classList.add('hidden');
-    }
-
-    // Semester
-    const semester = document.getElementById('semester');
-    const semesterError = document.getElementById('semesterError');
-    if (!semester.value) {
-      semesterError.classList.remove('hidden');
-      valid = false;
-    } else {
-      semesterError.classList.add('hidden');
-    }
-
-    // Subject
-    const subject = document.getElementById('subject');
-    const subjectError = document.getElementById('subjectError');
-    if (!subject.value.trim()) {
-      subjectError.classList.remove('hidden');
-      valid = false;
-    } else {
-      subjectError.classList.add('hidden');
-    }
-
-    // File
-    const file = document.getElementById('file');
-    const fileError = document.getElementById('fileError');
-    if (!file.files.length) {
-      fileError.classList.remove('hidden');
-      valid = false;
-    } else {
-      fileError.classList.add('hidden');
-    }
-
-    // If not valid, prevent form submission and don't show alert
-    if (!valid) {
-      e.preventDefault();
-      return;
-    }
-
-    // If all valid, prevent form submission and show the pop-up prompt
-    e.preventDefault();
-    alert("🚧 Upload feature is under development. Please check back soon!");
-  });
 });
