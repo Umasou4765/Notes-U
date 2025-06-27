@@ -1,40 +1,111 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>UniNotes - Notes Library</title>
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UniNotes</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f8f8f8; /* Light background similar to the image */
+            flex-direction: column;
+        }
+
+        .container {
+            text-align: center;
+            padding: 20px;
+            max-width: 400px; /* Adjust as needed */
+            width: 100%;
+        }
+
+        .logo {
+            font-size: 2.5em; /* Adjust size as needed */
+            font-weight: bold;
+            margin-bottom: 50px; /* Space below the logo */
+            color: #333; /* Darker color for the logo */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 50px; /* Give it some height for the box effect */
+            width: 50px;
+            border: 2px solid #333; /* Simple border for the 'N' look */
+            box-sizing: border-box; /* Include padding and border in the element's total width and height */
+            margin: 0 auto 50px auto; /* Center the logo */
+        }
+
+        .logo span {
+            line-height: 1; /* Adjust line height to center 'N' vertically */
+        }
+
+
+        h1 {
+            font-size: 2.2em; /* Adjust font size for the main heading */
+            margin-bottom: 20px;
+            color: #333;
+            line-height: 1.3;
+            font-weight: normal; /* Make it less bold than default h1 */
+        }
+
+        p {
+            font-size: 1.1em;
+            color: #666;
+            margin-bottom: 40px;
+        }
+
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px; /* Space between buttons */
+        }
+
+        .button {
+            padding: 15px 25px;
+            border: none;
+            border-radius: 8px; /* Slightly rounded corners */
+            font-size: 1.1em;
+            cursor: pointer;
+            text-decoration: none; /* Remove underline for links */
+            display: inline-block; /* Ensure padding works correctly */
+            text-align: center;
+            transition: background-color 0.3s ease;
+            color: #fff; /* Default text color for buttons */
+        }
+
+        .button.login {
+            background-color: #007bff; /* Blue color for login button */
+        }
+
+        .button.login:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+        }
+
+        .button.register {
+            background-color: #f0f0f0; /* Light grey for register button */
+            color: #333; /* Darker text for register button */
+            border: 1px solid #ccc; /* Subtle border for register button */
+        }
+
+        .button.register:hover {
+            background-color: #e0e0e0; /* Slightly darker grey on hover */
+        }
+    </style>
 </head>
 <body>
-  <header>
-    <h1 class="title">📚 Class Notes Library</h1>
-    <button id="uploadBtn" class="upload-btn">＋ New Upload</button>
-  </header>
-
-  <main id="categories">
-    <div class="category-card" onclick="openCategory('math')">📘 Math</div>
-    <div class="category-card" onclick="openCategory('history')">📙 History</div>
-    <div class="category-card" onclick="openCategory('science')">📗 Science</div>
-    <div class="category-card" onclick="openCategory('literature')">📕 Literature</div>
-    <!-- Add more as needed -->
-  </main>
-
-  <!-- Upload Modal -->
-  <div id="uploadModal" class="modal hidden">
-    <div class="modal-content">
-      <h2>Upload a Note</h2>
-      <form>
-        <label>Title:</label><br />
-        <input type="text" placeholder="Enter note title" required /><br /><br />
-        <label>Upload file:</label><br />
-        <input type="file" required /><br /><br />
-        <button type="submit">Submit</button>
-      </form>
-      <button onclick="closeModal()">Cancel</button>
+    <div class="container">
+        <div class="logo">
+            <span>N</span>
+        </div>
+        <h1>Enhance Your Workspace Experience</h1>
+        <p>Write, plan, collaborate. Let AI be your powerful assistant.</p>
+        <div class="button-group">
+            <a href="login.html" class="button login">Log In</a>
+            <a href="register.html" class="button register">Sign Up</a>
+        </div>
     </div>
-  </div>
-
-  <script src="upload.js"></script>
 </body>
 </html>
