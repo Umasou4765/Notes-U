@@ -1,0 +1,14 @@
+/* Initial display of theme icons */
+.theme-toggle-btn .sun-icon {
+    display: none; /* Hidden by default in light mode */
+}
+.theme-toggle-btn .moon-icon {
+    display: block; /* Visible by default in light mode */
+}
+
+body.dark .theme-toggle-btn .sun-icon {
+    display: block; /* Visible in dark mode */
+}
+body.dark .theme-toggle-btn .moon-icon {
+    display: none; /* Hidden in dark mode */
+}
