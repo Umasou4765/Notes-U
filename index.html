@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Notes Upload</title>
+  <link href="style.css" rel="stylesheet" />
+</head>
+<body>
+  <h1>📘 Upload Your Notes</h1>
+
+  <form id="uploadForm">
+    <label for="year">Year:</label>
+    <select id="year">
+      <option>Year 1</option>
+      <option>Year 2</option>
+      <option>Year 3</option>
+    </select>
+
+    <label for="semester">Semester:</label>
+    <select id="semester">
+      <option>Semester 1</option>
+      <option>Semester 2</option>
+      <option>Semester 3</option>
+    </select>
+
+    <label for="subject">Subject:</label>
+    <input type="text" id="subject" required />
+
+    <label for="file">Select file:</label>
+    <input type="file" id="file" required />
+
+    <button type="submit">Upload</button>
+  </form>
+
+  <script src="app.js"></script>
+</body>
+</html>
