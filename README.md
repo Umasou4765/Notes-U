@@ -1,4 +1,4 @@
-# UniNotes
+# Notes-U
 A simple university notes sharing platform 
 
 # 📘 Student Notes Sharing Platform
