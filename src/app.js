@@ -227,3 +227,7 @@ document.addEventListener('DOMContentLoaded', () => {
     fileUploadModule.init(); // Initialize file upload module (only runs if elements exist)
     formModule.init(); // Initialize form module (only runs if form exists)
 });
+
+    <script src="app.js"></script>
+</body>
+</html>
