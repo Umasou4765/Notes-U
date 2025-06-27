@@ -1,5 +1,6 @@
 # UniNotes
 A simple university notes sharing platform 
+https://umasou4765.github.io/UniNotes/
 
 # 📘 Student Notes Sharing Platform
 
