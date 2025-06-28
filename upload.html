@@ -4,236 +4,498 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="color-scheme" content="light dark">
-    <title>UniNotes</title>
+    <title>Upload Notes - UniNotes</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
-        /* Base styles (optimized for all devices, primarily mobile) */
+        /* Base styles */
+        :root {
+            --light-bg: #f8f8f8;
+            --light-text: #333;
+            --light-label: #666;
+            --light-input-bg: white;
+            --light-input-border: rgba(55, 53, 47, 0.16);
+            --light-input-placeholder: rgba(55, 53, 47, 0.4);
+            --light-file-area-bg: white;
+            --light-file-area-border: rgba(55, 53, 47, 0.16);
+            --light-file-area-hover-bg: rgba(55, 53, 47, 0.03);
+            --light-file-area-dragover-bg: rgba(55, 53, 47, 0.08);
+            --light-icon-color: rgba(55, 53, 47, 0.3);
+            --light-file-text: rgba(55, 53, 47, 0.6);
+            --light-sm-text: rgba(55, 53, 47, 0.4);
+            --light-file-name: #333;
+            --light-error-color: #dc3545;
+            --light-toggle-icon: #333; /* This variable is no longer needed but kept for consistency if other elements used it */
+            --light-container-bg: white;
+            --light-container-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        body.dark {
+            --light-bg: #121212;
+            --light-text: white;
+            --light-label: rgba(255, 255, 255, 0.9);
+            --light-input-bg: #252525;
+            --light-input-border: rgba(255, 255, 255, 0.1);
+            --light-input-placeholder: rgba(255, 255, 255, 0.4);
+            --light-file-area-bg: #252525;
+            --light-file-area-border: rgba(255, 255, 255, 0.1);
+            --light-file-area-hover-bg: #333;
+            --light-file-area-dragover-bg: #333;
+            --light-icon-color: rgba(255, 255, 255, 0.3);
+            --light-file-text: rgba(255, 255, 255, 0.6);
+            --light-sm-text: rgba(255, 255, 255, 0.4);
+            --light-file-name: white;
+            --light-error-color: #ff6b6b;
+            --light-toggle-icon: white; /* This variable is no longer needed */
+            --light-container-bg: #1a1a1a;
+            --light-container-shadow: 0 4px 12px rgba(255,255,255,0.02);
+        }
+
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start;
             min-height: 100vh;
             margin: 0;
-            background-color: #f8f8f8; /* Light mode background */
-            color: #333; /* Light mode text color */
+            background-color: var(--light-bg);
+            color: var(--light-text);
             flex-direction: column;
             box-sizing: border-box;
             overflow-x: hidden;
             width: 100%;
-            transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition for theme change */
+            transition: background-color 0.3s ease, color 0.3s ease;
+            padding-top: 80px;
+            padding-bottom: 40px;
         }
 
         .container {
-            text-align: center;
-            padding: 20px;
-            max-width: 400px;
+            max-width: 680px;
             width: 90%;
-            box-sizing: border-box;
-        }
-
-        .logo {
-            font-size: 2.5em;
-            font-weight: bold;
-            margin-bottom: 50px;
-            color: #333;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 50px;
-            width: 50px;
-            border: 2px solid #333;
-            box-sizing: border-box;
-            margin: 0 auto 50px auto;
-            transition: border-color 0.3s ease, color 0.3s ease; /* Smooth transition for logo */
-        }
-
-        .logo span {
-            line-height: 1;
-        }
-
-        h1 {
-            font-size: 2.2em;
-            margin-bottom: 20px;
-            color: #333;
-            line-height: 1.3;
-            font-weight: normal;
-            transition: color 0.3s ease; /* Smooth transition for heading */
-        }
-
-        p {
-            font-size: 1.1em;
-            color: #666;
-            margin-bottom: 40px;
-            transition: color 0.3s ease; /* Smooth transition for paragraph */
-        }
-
-        .button-group {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            width: 100%;
             margin: 0 auto;
+            padding: 20px;
+            box-sizing: border-box;
         }
 
-        .button {
-            padding: 15px 0;
-            border: none;
-            border-radius: 8px;
-            font-size: 1.1em;
-            cursor: pointer;
-            text-decoration: none;
+        /* Notion-like Input Styles */
+        .notion-input-group {
+            margin-bottom: 24px;
+        }
+
+        .notion-label {
             display: block;
+            font-size: 0.875em;
+            font-weight: 500;
+            color: var(--light-label);
+            margin-bottom: 8px;
+            transition: color 0.3s ease;
+        }
+
+        .notion-input,
+        .notion-select {
+            display: block;
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--light-input-border);
+            border-radius: 4px;
+            background-color: var(--light-input-bg);
+            color: var(--light-text);
+            font-size: 1em;
+            line-height: 1.5;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+        }
+
+        .notion-input::placeholder {
+            color: var(--light-input-placeholder);
+        }
+
+        .notion-input:focus,
+        .notion-select:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 1px #007bff;
+        }
+
+        /* Error message styles */
+        .error-message {
+            color: var(--light-error-color);
+            font-size: 0.875em;
+            margin-top: 8px;
+            display: none;
+        }
+
+        /* Header Styles */
+        .header {
+            margin-bottom: 48px;
+        }
+        .header h1 {
+            font-size: 2.25em;
+            font-weight: 600;
+            color: var(--light-text);
+            margin-bottom: 8px;
+            transition: color 0.3s ease;
+        }
+        .header p {
+            font-size: 1em;
+            color: var(--light-label);
+            transition: color 0.3s ease;
+        }
+
+        /* File Upload Area */
+        .file-upload-area {
+            border: 2px dashed var(--light-file-area-border);
+            border-radius: 4px;
+            padding: 32px;
             text-align: center;
-            transition: background-color 0.3s ease, color 0.3s ease;
-            color: #fff;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background-color: var(--light-file-area-bg);
         }
 
-        .button.login {
+        .file-upload-area:hover {
+            background-color: var(--light-file-area-hover-bg);
+        }
+
+        .file-upload-area.dragover {
+            background-color: var(--light-file-area-dragover-bg);
+            border-color: #007bff;
+        }
+        
+        .file-upload-area svg {
+            color: var(--light-icon-color);
+            margin: 0 auto 16px auto;
+        }
+        .file-upload-area p {
+            color: var(--light-file-text);
+            margin-bottom: 8px;
+        }
+        .file-upload-area .text-sm {
+            font-size: 0.875em;
+            color: var(--light-sm-text);
+        }
+        .file-upload-area #fileInfo svg {
+            color: #28a745; /* Green for success */
+        }
+        .file-upload-area #fileName {
+            color: var(--light-file-name);
+            font-weight: 500;
+        }
+
+        /* Submit Button */
+        .submit-btn {
+            width: 100%;
             background-color: #007bff;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 4px;
+            font-weight: 500;
+            transition: background-color 0.2s ease;
+            cursor: pointer;
+            border: none;
+            text-align: center;
         }
-
-        .button.login:hover {
+        .submit-btn:hover {
             background-color: #0056b3;
         }
-
-        .button.register {
-            background-color: #f0f0f0;
-            color: #333;
-            border: 1px solid #ccc;
+        .submit-btn:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.5);
         }
-
-        .button.register:hover {
-            background-color: #e0e0e0;
-        }
-
-        /* Dark Mode Styles */
-        body.dark {
-            background-color: #121212;
-            color: white;
-        }
-
-        body.dark .logo {
-            color: white;
-            border-color: white;
-        }
-
-        body.dark h1,
-        body.dark p {
-            color: white;
-        }
-
-        body.dark .button.register {
-            background-color: #333; /* Darker background for register in dark mode */
-            color: white;
-            border-color: #555;
-        }
-
-        body.dark .button.sign {
-            background-color: #444;
+        .submit-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background-color: #007bff;
         }
 
         /* Desktop specific styles */
         @media (min-width: 768px) {
             body {
+                padding-top: 80px;
                 align-items: center;
             }
 
             .container {
-                max-width: 600px;
-                padding: 40px;
-                background-color: #fff;
-                border-radius: 10px;
-                box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+                padding: 40px 60px;
+                box-shadow: var(--light-container-shadow);
+                border-radius: 8px;
+                background-color: var(--light-container-bg);
             }
 
-            /* Dark mode specific styles for desktop container */
-            body.dark .container {
-                background-color: #1a1a1a; /* Darker background for container in dark mode */
-                box-shadow: 0 4px 8px rgba(255,255,255,0.05); /* Lighter shadow for dark mode */
-            }
-
-            .logo {
-                font-size: 3.5em;
-                height: 70px;
-                width: 70px;
-                margin-bottom: 70px;
-            }
-
-            h1 {
-                font-size: 3em;
-                margin-bottom: 30px;
-            }
-
-            p {
-                font-size: 1.3em;
-                margin-bottom: 50px;
-            }
-
-            .button-group {
-                flex-direction: row;
-                justify-content: center;
-                gap: 20px;
-                width: auto;
-            }
-
-            .button {
-                padding: 18px 40px;
-                font-size: 1.2em;
-                width: auto;
-                flex-grow: 1;
-                max-width: 180px;
+            .header h1 {
+                font-size: 2.5em;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="logo">
-            <span>U</span>
-        </div>
-        <h1>Accessible notes.</h1>
-        <p>A simple platform for students to share and access academic notes.</p>
-        <div class="button-group">
-            <a href="login.html" class="button login">Log In</a>
-            <a href="signup.html" class="button register">Sign Up</a>
-        </div>
+        <header class="header">
+            <h1>Upload Your Notes</h1>
+            <p>Share your knowledge and help other students by uploading your study materials.</p>
+        </header>
+
+        <form id="uploadForm" aria-labelledby="uploadFormHeading">
+            <div class="notion-input-group">
+                <label for="courseName" class="notion-label">Course Name</label>
+                <input type="text" id="courseName" class="notion-input" placeholder="e.g., Introduction to Computer Science" required aria-describedby="courseNameError">
+                <p id="courseNameError" class="error-message">Course name is required.</p>
+            </div>
+
+            <div class="notion-input-group">
+                <label for="lectureName" class="notion-label">Lecture/Topic Name</label>
+                <input type="text" id="lectureName" class="notion-input" placeholder="e.g., Data Structures and Algorithms" aria-describedby="lectureNameError">
+                <p id="lectureNameError" class="error-message">Lecture/Topic name is required.</p>
+            </div>
+
+            <div class="notion-input-group">
+                <label for="academicYear" class="notion-label">Academic Year</label>
+                <input type="number" id="academicYear" class="notion-input" min="2000" max="2099" placeholder="e.g., 2023" aria-describedby="academicYearError">
+                <p id="academicYearError" class="error-message">Please enter a valid academic year.</p>
+            </div>
+
+            <div class="notion-input-group">
+                <label for="notesType" class="notion-label">Type of Notes</label>
+                <select id="notesType" class="notion-select" required aria-describedby="notesTypeError">
+                    <option value="">Select a type</option>
+                    <option value="lecture_notes">Lecture Notes</option>
+                    <option value="tutorial_solutions">Tutorial Solutions</option>
+                    <option value="past_year_papers">Past Year Papers</option>
+                    <option value="summaries">Summaries</option>
+                    <option value="others">Others</option>
+                </select>
+                <p id="notesTypeError" class="error-message">Please select a type of notes.</p>
+            </div>
+
+            <div class="notion-input-group">
+                <label for="description" class="notion-label">Description (Optional)</label>
+                <textarea id="description" class="notion-input" rows="4" placeholder="Briefly describe the content of your notes..."></textarea>
+            </div>
+
+            <div class="notion-input-group">
+                <label for="fileUpload" class="notion-label">Upload File</label>
+                <input type="file" id="fileUpload" accept=".pdf,.doc,.docx" hidden aria-describedby="fileUploadError">
+                <div id="fileUploadArea" class="file-upload-area" role="button" tabindex="0" aria-label="Drag and drop your file here, or click to browse. Accepted formats: PDF, DOC, DOCX.">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-12 h-12">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
+                    </svg>
+                    <p>Drag and drop your file here, or <span style="color: #007bff; font-weight: 500;">click to browse</span></p>
+                    <p class="text-sm">Only PDF, DOC, and DOCX files are allowed (Max 25MB)</p>
+                    <div id="fileInfo" style="margin-top: 16px; display: none; align-items: center; justify-content: center; gap: 8px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.125-1.09L9 11.423l-1.604-1.604a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.06 0l3-3z" clip-rule="evenodd" />
+                        </svg>
+                        <span id="fileName"></span>
+                    </div>
+                </div>
+                <p id="fileUploadError" class="error-message">Please upload a valid file (PDF, DOC, DOCX).</p>
+            </div>
+
+            <button type="submit" class="submit-btn">Upload Notes</button>
+        </form>
     </div>
 
     <script>
-        // Function to set the theme based on the 'dark' class on body
-        function setTheme(isDark) {
-            if (isDark) {
-                document.body.classList.add("dark");
-                localStorage.setItem("theme", "dark");
-            } else {
-                document.body.classList.remove("dark");
-                localStorage.setItem("theme", "light");
-            }
+        // Theme Preference Logic
+        // Function to set theme
+        function setTheme(theme) {
+            document.body.classList.remove('light', 'dark'); // Remove existing themes
+            document.body.classList.add(theme); // Add new theme
+            localStorage.setItem('theme', theme); // Store preference
         }
 
-        // Set theme on page load
-        window.addEventListener("DOMContentLoaded", () => {
-            const storedTheme = localStorage.getItem("theme");
-
-            // Check for stored theme first
-            if (storedTheme === "dark") {
-                setTheme(true);
-            } else if (storedTheme === "light") {
-                setTheme(false);
+        // Initialize theme based on localStorage or system preference when DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            const storedTheme = localStorage.getItem('theme');
+            if (storedTheme) {
+                setTheme(storedTheme);
+            } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                setTheme('dark'); // System prefers dark
             } else {
-                // If no stored theme, check system preference
-                if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                    setTheme(true);
-                } else {
-                    setTheme(false);
-                }
+                setTheme('light'); // Default to light if no preference
             }
         });
 
-        // Listen for system theme changes and update if no user preference is set
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
-            if (!localStorage.getItem("theme")) { // Only apply if user hasn't manually set a preference
-                setTheme(event.matches);
+
+        // Form Validation and File Upload Logic
+        const form = document.getElementById('uploadForm');
+        const fileUpload = document.getElementById('fileUpload');
+        const fileUploadArea = document.getElementById('fileUploadArea');
+        const fileInfo = document.getElementById('fileInfo');
+        const fileNameSpan = document.getElementById('fileName');
+        const submitBtn = document.querySelector('.submit-btn');
+
+        const fields = [
+            { id: 'courseName', message: 'Course name is required.', validate: val => val.trim() !== '' },
+            { id: 'lectureName', message: 'Lecture/Topic name is required.', validate: val => val.trim() !== '' },
+            { id: 'academicYear', message: 'Please enter a valid academic year.', validate: val => {
+                const year = parseInt(val);
+                return !isNaN(year) && year >= 2000 && year <= 2099;
+            }},
+            { id: 'notesType', message: 'Please select a type of notes.', validate: val => val !== '' },
+            { id: 'fileUpload', message: 'Please upload a valid file (PDF, DOC, DOCX).', validate: () => fileUpload.files.length > 0 }
+        ];
+
+        function validateField(field) {
+            const inputElement = document.getElementById(field.id);
+            const errorElement = document.getElementById(`${field.id}Error`);
+            let isValid = true;
+
+            if (inputElement.type === 'file') {
+                isValid = field.validate();
+            } else {
+                isValid = field.validate(inputElement.value);
+            }
+
+            if (!isValid) {
+                errorElement.style.display = 'block';
+                inputElement.classList.add('invalid'); // Add a class for invalid state
+            } else {
+                errorElement.style.display = 'none';
+                inputElement.classList.remove('invalid');
+            }
+            return isValid;
+        }
+
+        function validateForm() {
+            let formIsValid = true;
+            fields.forEach(field => {
+                if (!validateField(field)) {
+                    formIsValid = false;
+                }
+            });
+            submitBtn.disabled = !formIsValid;
+            return formIsValid;
+        }
+
+        // --- File Upload Module ---
+
+        /**
+         * Updates the UI to show the selected file's name.
+         * @param {File | null} file The selected file object, or null if no file.
+         */
+        function updateFileInfoUI(file) {
+            if (file) {
+                fileNameSpan.textContent = file.name;
+                fileInfo.style.display = 'flex';
+            } else {
+                fileNameSpan.textContent = '';
+                fileInfo.style.display = 'none';
+            }
+            validateForm(); // Re-validate the form whenever file input changes
+        }
+
+        /**
+         * Handles the file selection via click (browse).
+         */
+        function handleFileBrowse() {
+            fileUpload.click();
+        }
+
+        /**
+         * Handles the change event of the hidden file input.
+         */
+        function handleFileInputChange() {
+            updateFileInfoUI(fileUpload.files.length > 0 ? fileUpload.files[0] : null);
+        }
+
+        /**
+         * Handles dragover event for the file upload area.
+         * @param {DragEvent} e The drag event.
+         */
+        function handleDragOver(e) {
+            e.preventDefault();
+            fileUploadArea.classList.add('dragover');
+        }
+
+        /**
+         * Handles dragleave event for the file upload area.
+         */
+        function handleDragLeave() {
+            fileUploadArea.classList.remove('dragover');
+        }
+
+        /**
+         * Handles drop event for the file upload area.
+         * @param {DragEvent} e The drop event.
+         */
+        function handleDrop(e) {
+            e.preventDefault();
+            fileUploadArea.classList.remove('dragover');
+            if (e.dataTransfer.files.length > 0) {
+                fileUpload.files = e.dataTransfer.files;
+                updateFileInfoUI(fileUpload.files[0]);
+            } else {
+                updateFileInfoUI(null);
+            }
+        }
+
+        /**
+         * Initializes all event listeners for the file upload area.
+         */
+        function initFileUploadListeners() {
+            // Click to browse
+            fileUploadArea.addEventListener('click', handleFileBrowse);
+            fileUpload.addEventListener('change', handleFileInputChange);
+
+            // Drag & Drop
+            fileUploadArea.addEventListener('dragover', handleDragOver);
+            fileUploadArea.addEventListener('dragleave', handleDragLeave);
+            fileUploadArea.addEventListener('drop', handleDrop);
+
+            // Keyboard navigation for accessibility
+            fileUploadArea.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    handleFileBrowse();
+                }
+            });
+        }
+        // --- End File Upload Module ---
+
+
+        // Initial setup on DOMContentLoaded
+        document.addEventListener('DOMContentLoaded', () => {
+            validateForm(); // Initial validation check to disable submit button if form is not filled
+            initFileUploadListeners(); // Initialize file upload event listeners
+        });
+
+        // Add event listeners for other input changes to trigger validation
+        fields.forEach(field => {
+            // Skip fileUpload as its events are handled by initFileUploadListeners
+            if (field.id === 'fileUpload') return; 
+
+            const inputElement = document.getElementById(field.id);
+            if (inputElement.tagName === 'SELECT') {
+                inputElement.addEventListener('change', validateForm);
+            } else {
+                inputElement.addEventListener('input', validateForm);
+            }
+        });
+
+
+        // Form Submission (for demonstration purposes)
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (validateForm()) {
+                // In a real application, you would send this data to a server
+                alert('Form submitted successfully! (This is a demo)');
+                console.log({
+                    courseName: document.getElementById('courseName').value,
+                    lectureName: document.getElementById('lectureName').value,
+                    academicYear: document.getElementById('academicYear').value,
+                    notesType: document.getElementById('notesType').value,
+                    description: document.getElementById('description').value,
+                    file: fileUpload.files[0] ? fileUpload.files[0].name : 'No file'
+                });
+                form.reset();
+                fileNameSpan.textContent = '';
+                fileInfo.style.display = 'none';
+                submitBtn.disabled = true; // Disable after submission until new input
+                // Optionally remove 'invalid' classes after successful submission
+                document.querySelectorAll('.invalid').forEach(el => el.classList.remove('invalid'));
+            } else {
+                alert('Please correct the errors in the form.');
             }
         });
     </script>
