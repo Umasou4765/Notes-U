@@ -68,8 +68,3 @@ We encourage you to explore the codebase and help us bring the full vision of No
 
 Notes-U is an **open-source initiative**. We believe in collaborative development and invite students, developers, and designers to contribute, suggest improvements, and help maintain this platform. Whether it's enhancing the UI, implementing new features, or fixing bugs, your contributions are highly valued. 
 
----
-
-## 🌐 Live Demo (UI Only)
- [https://umasou4765.github.io/Notes-U/](https://umasou4765.github.io/Notes-U/)
-
