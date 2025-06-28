@@ -26,9 +26,11 @@
             --light-sm-text: rgba(55, 53, 47, 0.4);
             --light-file-name: #333;
             --light-error-color: #dc3545;
-            --light-toggle-icon: #333; /* This variable is no longer needed but kept for consistency if other elements used it */
+            --light-toggle-icon: #333;
             --light-container-bg: white;
             --light-container-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            --light-accent-color: #007bff; /* Added for consistency with focus states */
+            --light-accent-hover: #0056b3; /* Added for consistency with button hover */
         }
 
         body.dark {
@@ -47,9 +49,11 @@
             --light-sm-text: rgba(255, 255, 255, 0.4);
             --light-file-name: white;
             --light-error-color: #ff6b6b;
-            --light-toggle-icon: white; /* This variable is no longer needed */
+            --light-toggle-icon: white;
             --light-container-bg: #1a1a1a;
             --light-container-shadow: 0 4px 12px rgba(255,255,255,0.02);
+            --light-accent-color: #007bff; /* Can be adjusted for dark mode if needed */
+            --light-accent-hover: #0056b3; /* Can be adjusted for dark mode if needed */
         }
 
         body {
@@ -93,7 +97,8 @@
         }
 
         .notion-input,
-        .notion-select {
+        .notion-select,
+        .notion-textarea { /* Added .notion-textarea selector */
             display: block;
             width: 100%;
             padding: 10px 12px;
@@ -104,19 +109,39 @@
             font-size: 1em;
             line-height: 1.5;
             transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+            box-sizing: border-box; /* Ensure padding and border are included in the width */
+            -webkit-appearance: none; /* Remove default styling for select/textarea on some browsers */
+            -moz-appearance: none;
+            appearance: none;
         }
 
-        .notion-input::placeholder {
+        .notion-input::placeholder,
+        .notion-textarea::placeholder { /* Added .notion-textarea placeholder */
             color: var(--light-input-placeholder);
         }
 
         .notion-input:focus,
-        .notion-select:focus {
+        .notion-select:focus,
+        .notion-textarea:focus { /* Added .notion-textarea focus */
             outline: none;
-            border-color: #007bff;
-            box-shadow: 0 0 0 1px #007bff;
+            border-color: var(--light-accent-color);
+            box-shadow: 0 0 0 1px var(--light-accent-color);
         }
 
+        /* Specific style for select dropdown arrow in light mode */
+        .notion-select {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23666'/%3E"); /* Default light grey arrow */
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 0.8rem auto;
+            padding-right: 2.5rem; /* Make space for the arrow */
+        }
+
+        /* Specific style for select dropdown arrow in dark mode */
+        body.dark .notion-select {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='white'/%3E"); /* White arrow for dark mode */
+        }
+        
         /* Error message styles */
         .error-message {
             color: var(--light-error-color);
@@ -146,11 +171,16 @@
         .file-upload-area {
             border: 2px dashed var(--light-file-area-border);
             border-radius: 4px;
-            padding: 32px;
+            padding: 32px; /* Uniform padding */
             text-align: center;
             cursor: pointer;
             transition: all 0.2s ease;
             background-color: var(--light-file-area-bg);
+            min-height: 150px; /* Ensure a consistent minimum height */
+            display: flex; /* Use flexbox for vertical centering */
+            flex-direction: column;
+            justify-content: center; /* Center content vertically */
+            align-items: center; /* Center content horizontally */
         }
 
         .file-upload-area:hover {
@@ -159,16 +189,19 @@
 
         .file-upload-area.dragover {
             background-color: var(--light-file-area-dragover-bg);
-            border-color: #007bff;
+            border-color: var(--light-accent-color);
         }
         
         .file-upload-area svg {
             color: var(--light-icon-color);
-            margin: 0 auto 16px auto;
+            margin-bottom: 16px; /* Spacing below icon */
+            width: 48px; /* Standardize SVG size */
+            height: 48px; /* Standardize SVG size */
         }
         .file-upload-area p {
             color: var(--light-file-text);
             margin-bottom: 8px;
+            margin-top: 0; /* Reset default paragraph margin-top */
         }
         .file-upload-area .text-sm {
             font-size: 0.875em;
@@ -185,7 +218,7 @@
         /* Submit Button */
         .submit-btn {
             width: 100%;
-            background-color: #007bff;
+            background-color: var(--light-accent-color);
             color: white;
             padding: 12px 24px;
             border-radius: 4px;
@@ -196,7 +229,7 @@
             text-align: center;
         }
         .submit-btn:hover {
-            background-color: #0056b3;
+            background-color: var(--light-accent-hover);
         }
         .submit-btn:focus {
             outline: none;
@@ -205,7 +238,7 @@
         .submit-btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
-            background-color: #007bff;
+            background-color: var(--light-accent-color); /* Keep primary color, just lower opacity */
         }
 
         /* Desktop specific styles */
@@ -269,7 +302,7 @@
 
             <div class="notion-input-group">
                 <label for="description" class="notion-label">Description (Optional)</label>
-                <textarea id="description" class="notion-input" rows="4" placeholder="Briefly describe the content of your notes..."></textarea>
+                <textarea id="description" class="notion-textarea" rows="4" placeholder="Briefly describe the content of your notes..."></textarea>
             </div>
 
             <div class="notion-input-group">
@@ -279,7 +312,7 @@
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-12 h-12">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
                     </svg>
-                    <p>Drag and drop your file here, or <span style="color: #007bff; font-weight: 500;">click to browse</span></p>
+                    <p>Drag and drop your file here, or <span style="color: var(--light-accent-color); font-weight: 500;">click to browse</span></p>
                     <p class="text-sm">Only PDF, DOC, and DOCX files are allowed (Max 25MB)</p>
                     <div id="fileInfo" style="margin-top: 16px; display: none; align-items: center; justify-content: center; gap: 8px;">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
@@ -466,7 +499,7 @@
             if (field.id === 'fileUpload') return; 
 
             const inputElement = document.getElementById(field.id);
-            if (inputElement.tagName === 'SELECT') {
+            if (inputElement.tagName === 'SELECT' || inputElement.tagName === 'TEXTAREA') { // Added TEXTAREA
                 inputElement.addEventListener('change', validateForm);
             } else {
                 inputElement.addEventListener('input', validateForm);
