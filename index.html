@@ -1,9 +1,10 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="color-scheme" content="light dark"> <title>UniNotes</title>
+    <meta name="color-scheme" content="light dark">
+    <title>UniNotes</title>
     <style>
         /* Base styles (optimized for all devices, primarily mobile) */
         body {
@@ -105,33 +106,6 @@
             background-color: #e0e0e0;
         }
 
-        /* Theme Toggle Button Styles */
-        .theme-toggle-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 8px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background-color 0.3s ease;
-        }
-
-        .theme-toggle-btn:hover {
-            background-color: rgba(0, 0, 0, 0.1);
-        }
-
-        .theme-toggle-btn svg {
-            width: 24px;
-            height: 24px;
-            fill: #333; /* Default icon color in light mode */
-            transition: fill 0.3s ease;
-        }
-
         /* Dark Mode Styles */
         body.dark {
             background-color: #121212;
@@ -154,12 +128,8 @@
             border-color: #555;
         }
 
-        body.dark .button.sign up:hover {
+        body.dark .button.sign {
             background-color: #444;
-        }
-
-        body.dark .theme-toggle-btn svg {
-            fill: white; /* Icon color in dark mode */
         }
 
         /* Desktop specific styles */
@@ -217,23 +187,6 @@
     </style>
 </head>
 <body>
-    <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle theme">
-        <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
-            <circle cx="12" cy="12" r="5"></circle>
-            <line x1="12" y1="1" x2="12" y2="3"></line>
-            <line x1="12" y1="21" x2="12" y2="23"></line>
-            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-            <line x1="1" y1="12" x2="3" y2="12"></line>
-            <line x1="21" y1="12" x2="23" y2="12"></line>
-            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-        </svg>
-        <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-        </svg>
-    </button>
-
     <div class="container">
         <div class="logo">
             <span>U</span>
@@ -247,28 +200,15 @@
     </div>
 
     <script>
-        const themeToggleButton = document.getElementById("theme-toggle");
-        const sunIcon = themeToggleButton.querySelector(".sun-icon");
-        const moonIcon = themeToggleButton.querySelector(".moon-icon");
-
         // Function to set the theme based on the 'dark' class on body
         function setTheme(isDark) {
             if (isDark) {
                 document.body.classList.add("dark");
-                sunIcon.style.display = "block";
-                moonIcon.style.display = "none";
+                localStorage.setItem("theme", "dark");
             } else {
                 document.body.classList.remove("dark");
-                sunIcon.style.display = "none";
-                moonIcon.style.display = "block";
+                localStorage.setItem("theme", "light");
             }
-        }
-
-        // Toggle theme and save setting
-        function toggleTheme() {
-            const isDark = document.body.classList.toggle("dark"); // Toggle on body directly
-            localStorage.setItem("theme", isDark ? "dark" : "light");
-            setTheme(isDark); // Update icons immediately
         }
 
         // Set theme on page load
@@ -290,10 +230,7 @@
             }
         });
 
-        // Add event listener to the button
-        themeToggleButton.addEventListener("click", toggleTheme);
-
-        // Listen for system theme changes (optional, but good for reactivity)
+        // Listen for system theme changes and update if no user preference is set
         window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
             if (!localStorage.getItem("theme")) { // Only apply if user hasn't manually set a preference
                 setTheme(event.matches);
@@ -302,5 +239,3 @@
     </script>
 </body>
 </html>
-
-<script src="app.js"></script>
