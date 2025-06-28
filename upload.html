@@ -442,27 +442,133 @@
             }
         });
 
-        // File Upload Drag & Drop and Click Functionality
-        fileUploadArea.addEventListener('click', () => {
-            fileUpload.click();
-        });
+        // --- File Upload Module ---
 
-        fileUpload.addEventListener('change', () => {
-            if (fileUpload.files.length > 0) {
-                const file = fileUpload.files[0];
+        /**
+         * Updates the UI to show the selected file's name.
+         * @param {File | null} file The selected file object, or null if no file.
+         */
+        function updateFileInfoUI(file) {
+            if (file) {
                 fileNameSpan.textContent = file.name;
                 fileInfo.style.display = 'flex';
             } else {
                 fileNameSpan.textContent = '';
                 fileInfo.style.display = 'none';
             }
-            validateForm(); // Re-validate form after file selection
-        });
+            validateForm(); // Re-validate the form whenever file input changes
+        }
 
-        fileUploadArea.addEventListener('dragover', (e) => {
+        /**
+         * Handles the file selection via click (browse).
+         */
+        function handleFileBrowse() {
+            fileUpload.click();
+        }
+
+        /**
+         * Handles the change event of the hidden file input.
+         */
+        function handleFileInputChange() {
+            updateFileInfoUI(fileUpload.files.length > 0 ? fileUpload.files[0] : null);
+        }
+
+        /**
+         * Handles dragover event for the file upload area.
+         * @param {DragEvent} e The drag event.
+         */
+        function handleDragOver(e) {
             e.preventDefault();
             fileUploadArea.classList.add('dragover');
+        }
+
+        /**
+         * Handles dragleave event for the file upload area.
+         */
+        function handleDragLeave() {
+            fileUploadArea.classList.remove('dragover');
+        }
+
+        /**
+         * Handles drop event for the file upload area.
+         * @param {DragEvent} e The drop event.
+         */
+        function handleDrop(e) {
+            e.preventDefault();
+            fileUploadArea.classList.remove('dragover');
+            if (e.dataTransfer.files.length > 0) {
+                fileUpload.files = e.dataTransfer.files;
+                updateFileInfoUI(fileUpload.files[0]);
+            } else {
+                updateFileInfoUI(null);
+            }
+        }
+
+        /**
+         * Initializes all event listeners for the file upload area.
+         */
+        function initFileUploadListeners() {
+            // Click to browse
+            fileUploadArea.addEventListener('click', handleFileBrowse);
+            fileUpload.addEventListener('change', handleFileInputChange);
+
+            // Drag & Drop
+            fileUploadArea.addEventListener('dragover', handleDragOver);
+            fileUploadArea.addEventListener('dragleave', handleDragLeave);
+            fileUploadArea.addEventListener('drop', handleDrop);
+
+            // Keyboard navigation for accessibility
+            fileUploadArea.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    handleFileBrowse();
+                }
+            });
+        }
+        // --- End File Upload Module ---
+
+
+        // Initial setup on DOMContentLoaded
+        document.addEventListener('DOMContentLoaded', () => {
+            validateForm(); // Initial validation check to disable submit button if form is not filled
+            initFileUploadListeners(); // Initialize file upload event listeners
         });
 
-        fileUploadArea.addEventListener('dragleave', () => {
-            fileUploa
+        // Add event listeners for other input changes to trigger validation
+        fields.forEach(field => {
+            // Skip fileUpload as its events are handled by initFileUploadListeners
+            if (field.id === 'fileUpload') return; 
+
+            const inputElement = document.getElementById(field.id);
+            if (inputElement.tagName === 'SELECT') {
+                inputElement.addEventListener('change', validateForm);
+            } else {
+                inputElement.addEventListener('input', validateForm);
+            }
+        });
+
+
+        // Form Submission (for demonstration purposes)
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (validateForm()) {
+                // In a real application, you would send this data to a server
+                alert('Form submitted successfully! (This is a demo)');
+                console.log({
+                    courseName: document.getElementById('courseName').value,
+                    lectureName: document.getElementById('lectureName').value,
+                    academicYear: document.getElementById('academicYear').value,
+                    notesType: document.getElementById('notesType').value,
+                    description: document.getElementById('description').value,
+                    file: fileUpload.files[0] ? fileUpload.files[0].name : 'No file'
+                });
+                form.reset();
+                fileNameSpan.textContent = '';
+                fileInfo.style.display = 'none';
+                submitBtn.disabled = true; // Disable after submission until new input
+                // Optionally remove 'invalid' classes after successful submission
+                document.querySelectorAll('.invalid').forEach(el => el.classList.remove('invalid'));
+            } else {
+                alert('Please correct the errors in the form.');
+            }
+        });
