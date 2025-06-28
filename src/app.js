@@ -3,7 +3,6 @@
 // --- Theme Toggling Module ---
 const themeModule = (() => {
     const themeToggleButton = document.getElementById("theme-toggle");
-    // No need to get sunIcon and moonIcon directly as CSS handles their visibility
 
     const setTheme = (isDark) => {
         if (isDark) {
@@ -11,12 +10,13 @@ const themeModule = (() => {
         } else {
             document.body.classList.remove("dark");
         }
+        // CSS rules handle the sun/moon icon display based on the 'dark' class
     };
 
     const toggleTheme = () => {
         const isDark = document.body.classList.toggle("dark"); // This toggles the class
         localStorage.setItem("theme", isDark ? "dark" : "light");
-        // The CSS will react to the class change, so no further JS display manipulation is needed here.
+        // The CSS will react to the class change automatically, no need to call setTheme here.
     };
 
     const initializeTheme = () => {
@@ -27,7 +27,7 @@ const themeModule = (() => {
         } else if (storedTheme === "light") {
             setTheme(false);
         } else {
-            // Check prefers-color-scheme only if no theme is stored
+            // If no preference stored, check system preference
             if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
                 setTheme(true);
             } else {
@@ -42,8 +42,8 @@ const themeModule = (() => {
         }
 
         // Listen for changes in system theme preference
+        // Only update if the user hasn't explicitly set a preference
         window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
-            // Only update if the user hasn't explicitly set a preference (i.e., localStorage is empty)
             if (!localStorage.getItem("theme")) {
                 setTheme(event.matches);
             }
@@ -59,9 +59,17 @@ const themeModule = (() => {
 })();
 
 // --- File Upload Module ---
+// This module will only initialize and run if its specific HTML elements are present on the page.
 const fileUploadModule = (() => {
+    // Check if the relevant elements exist before proceeding
     const fileInput = document.getElementById('file');
     const fileUploadArea = document.getElementById('fileUploadArea');
+
+    // If elements are not found, return an empty init function so it does nothing
+    if (!fileInput || !fileUploadArea) {
+        return { init: () => {}, reset: () => {} };
+    }
+
     const uploadPrompt = document.getElementById('uploadPrompt');
     const fileInfo = document.getElementById('fileInfo');
     const fileNameDisplay = document.getElementById('fileName');
@@ -77,7 +85,7 @@ const fileUploadModule = (() => {
     };
 
     const updateFileDisplay = () => {
-        const file = fileInput ? fileInput.files[0] : null;
+        const file = fileInput.files[0]; // fileInput is guaranteed to exist here
         if (file) {
             if (fileNameDisplay) fileNameDisplay.textContent = file.name;
             if (fileSizeDisplay) fileSizeDisplay.textContent = formatFileSize(file.size);
@@ -91,45 +99,48 @@ const fileUploadModule = (() => {
     };
 
     const setupListeners = () => {
-        // Ensure elements exist before adding listeners
-        if (fileInput && fileUploadArea) {
-            fileUploadArea.addEventListener('click', () => fileInput.click());
+        fileUploadArea.addEventListener('click', () => fileInput.click());
 
-            fileUploadArea.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                fileUploadArea.classList.add('dragover');
-            });
+        fileUploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            fileUploadArea.classList.add('dragover');
+        });
 
-            fileUploadArea.addEventListener('dragleave', () => {
-                fileUploadArea.classList.remove('dragover');
-            });
+        fileUploadArea.addEventListener('dragleave', () => {
+            fileUploadArea.classList.remove('dragover');
+        });
 
-            fileUploadArea.addEventListener('drop', (e) => {
-                e.preventDefault();
-                fileUploadArea.classList.remove('dragover');
-                if (e.dataTransfer && e.dataTransfer.files.length > 0) {
-                    fileInput.files = e.dataTransfer.files;
-                    updateFileDisplay();
-                }
-            });
-            fileInput.addEventListener('change', updateFileDisplay);
-        }
+        fileUploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            fileUploadArea.classList.remove('dragover');
+            if (e.dataTransfer && e.dataTransfer.files.length > 0) {
+                fileInput.files = e.dataTransfer.files;
+                updateFileDisplay();
+            }
+        });
+        fileInput.addEventListener('change', updateFileDisplay);
     };
 
     return {
         init: () => {
-            if (fileInput && fileUploadArea) { // Only initialize if upload elements exist
-                setupListeners();
-                updateFileDisplay(); // Set initial display
-            }
+            setupListeners();
+            updateFileDisplay(); // Set initial display
         },
         reset: updateFileDisplay // Expose reset for form module
     };
 })();
 
+
 // --- Form Validation and Submission Module ---
+// This module will only initialize and run if its specific HTML elements are present on the page.
 const formModule = (() => {
     const form = document.getElementById('uploadForm');
+    
+    // If form is not found, return an empty init function so it does nothing
+    if (!form) {
+        return { init: () => {} };
+    }
+
     const submitBtn = document.getElementById('submitBtn');
 
     const getField = (id) => document.getElementById(id);
@@ -139,9 +150,8 @@ const formModule = (() => {
         const errorElement = getErrorDisplay(errorId);
         let isValid = true;
 
-        // Check if element exists before accessing its properties
-        if (!element) {
-            return true; // Return true if element doesn't exist, so validation doesn't block the form
+        if (!element) { // Should ideally not happen if fieldsToValidate are chosen carefully
+            return true;
         }
 
         if (element.type === 'file') {
@@ -174,8 +184,8 @@ const formModule = (() => {
         ];
 
         fieldsToValidate.forEach(field => {
-            // Ensure element exists before validation and update formIsValid
-            if (!validateField(field.element, field.error)) {
+            // Only validate fields that actually exist on the current page
+            if (field.element && !validateField(field.element, field.error)) {
                 formIsValid = false;
             }
         });
@@ -189,9 +199,8 @@ const formModule = (() => {
             // Simulate API call
             setTimeout(() => {
                 alert('Notes uploaded successfully!');
-                if (form) form.reset();
-                // Safely call fileUploadModule.reset() if it exists
-                if (typeof fileUploadModule !== 'undefined' && fileUploadModule.reset) {
+                form.reset(); // form is guaranteed to exist here
+                if (fileUploadModule && fileUploadModule.reset) { // Safely call reset if module exists
                     fileUploadModule.reset();
                 }
                 if (submitBtn) {
@@ -203,34 +212,29 @@ const formModule = (() => {
     };
 
     const setupListeners = () => {
-        if (form) {
-            form.addEventListener('submit', handleSubmit);
+        form.addEventListener('submit', handleSubmit); // form is guaranteed to exist here
 
-            const yearSelect = getField('year');
-            const semesterSelect = getField('semester');
-            const subjectInput = getField('subject');
-            const fileInput = getField('file');
+        const yearSelect = getField('year');
+        const semesterSelect = getField('semester');
+        const subjectInput = getField('subject');
+        const fileInput = getField('file');
 
-            // Add listeners only if elements exist
-            if (yearSelect) yearSelect.addEventListener('change', () => validateField(yearSelect, 'yearError'));
-            if (semesterSelect) semesterSelect.addEventListener('change', () => validateField(semesterSelect, 'semesterError'));
-            if (subjectInput) subjectInput.addEventListener('input', () => validateField(subjectInput, 'subjectError'));
-            if (fileInput) fileInput.addEventListener('change', () => validateField(fileInput, 'fileError'));
-        }
+        if (yearSelect) yearSelect.addEventListener('change', () => validateField(yearSelect, 'yearError'));
+        if (semesterSelect) semesterSelect.addEventListener('change', () => validateField(semesterSelect, 'semesterError'));
+        if (subjectInput) subjectInput.addEventListener('input', () => validateField(subjectInput, 'subjectError'));
+        if (fileInput) fileInput.addEventListener('change', () => validateField(fileInput, 'fileError'));
     };
 
     return {
         init: () => {
-            if (form) { // Only initialize if form element exists
-                setupListeners();
-            }
+            setupListeners();
         }
     };
 })();
 
 // --- Universal Initialization ---
 document.addEventListener('DOMContentLoaded', () => {
-    themeModule.init(); // Initialize theme module on all pages
-    fileUploadModule.init(); // Initialize file upload module (only runs if elements exist)
-    formModule.init(); // Initialize form module (only runs if form exists)
+    themeModule.init(); // Initialize theme module on all pages (it will always find the button)
+    fileUploadModule.init(); // Initialize file upload module (only runs its setup if elements exist)
+    formModule.init(); // Initialize form module (only runs its setup if form exists)
 });
