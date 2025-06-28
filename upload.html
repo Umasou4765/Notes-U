@@ -115,6 +115,11 @@
             appearance: none;
         }
 
+        /* Fix: Disable textarea resizing */
+        .notion-textarea {
+            resize: none; /* Disables both horizontal and vertical resizing */
+        }
+
         .notion-input::placeholder,
         .notion-textarea::placeholder { /* Added .notion-textarea placeholder */
             color: var(--light-input-placeholder);
@@ -168,7 +173,12 @@
         }
 
         /* File Upload Area */
-        .file-upload-area {
+        .file-upload-wrapper {
+            /* This div wraps the file upload area and handles interactions */
+        }
+
+        /* The actual clickable area */
+        .file-upload-box { /* Renamed from .file-upload-area */
             border: 2px dashed var(--light-file-area-border);
             border-radius: 4px;
             padding: 32px; /* Uniform padding */
@@ -183,34 +193,34 @@
             align-items: center; /* Center content horizontally */
         }
 
-        .file-upload-area:hover {
+        .file-upload-box:hover { /* Renamed from .file-upload-area:hover */
             background-color: var(--light-file-area-hover-bg);
         }
 
-        .file-upload-area.dragover {
+        .file-upload-box.dragover { /* Renamed from .file-upload-area.dragover */
             background-color: var(--light-file-area-dragover-bg);
             border-color: var(--light-accent-color);
         }
         
-        .file-upload-area svg {
+        .file-upload-box svg { /* Renamed from .file-upload-area svg */
             color: var(--light-icon-color);
             margin-bottom: 16px; /* Spacing below icon */
             width: 48px; /* Standardize SVG size */
             height: 48px; /* Standardize SVG size */
         }
-        .file-upload-area p {
+        .file-upload-box p { /* Renamed from .file-upload-area p */
             color: var(--light-file-text);
             margin-bottom: 8px;
             margin-top: 0; /* Reset default paragraph margin-top */
         }
-        .file-upload-area .text-sm {
+        .file-upload-box .text-sm { /* Renamed from .file-upload-area .text-sm */
             font-size: 0.875em;
             color: var(--light-sm-text);
         }
-        .file-upload-area #fileInfo svg {
+        .file-upload-box #fileInfo svg { /* Renamed from .file-upload-area #fileInfo svg */
             color: #28a745; /* Green for success */
         }
-        .file-upload-area #fileName {
+        .file-upload-box #fileName { /* Renamed from .file-upload-area #fileName */
             color: var(--light-file-name);
             font-weight: 500;
         }
@@ -308,11 +318,11 @@
             <div class="notion-input-group">
                 <label for="fileUpload" class="notion-label">Upload File</label>
                 <input type="file" id="fileUpload" accept=".pdf,.doc,.docx" hidden aria-describedby="fileUploadError">
-                <div id="fileUploadArea" class="file-upload-area" role="button" tabindex="0" aria-label="Drag and drop your file here, or click to browse. Accepted formats: PDF, DOC, DOCX.">
+                <div id="fileUploadBox" class="file-upload-box" role="button" tabindex="0" aria-label="Drag and drop your file here, or click to browse. Accepted formats: PDF, DOC, DOCX.">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-12 h-12">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
                     </svg>
-                    <p>Drag and drop your file here, or <span style="color: var(--light-accent-color); font-weight: 500;">click to browse</span></p>
+                    <p>Drag and drop your file here, or <span id="browseText" style="color: var(--light-accent-color); font-weight: 500;">click to browse</span></p>
                     <p class="text-sm">Only PDF, DOC, and DOCX files are allowed (Max 25MB)</p>
                     <div id="fileInfo" style="margin-top: 16px; display: none; align-items: center; justify-content: center; gap: 8px;">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
@@ -353,7 +363,8 @@
         // Form Validation and File Upload Logic
         const form = document.getElementById('uploadForm');
         const fileUpload = document.getElementById('fileUpload');
-        const fileUploadArea = document.getElementById('fileUploadArea');
+        const fileUploadBox = document.getElementById('fileUploadBox'); // Changed to fileUploadBox
+        const browseText = document.getElementById('browseText'); // New: Added element for the clickable text
         const fileInfo = document.getElementById('fileInfo');
         const fileNameSpan = document.getElementById('fileName');
         const submitBtn = document.querySelector('.submit-btn');
@@ -438,14 +449,14 @@
          */
         function handleDragOver(e) {
             e.preventDefault();
-            fileUploadArea.classList.add('dragover');
+            fileUploadBox.classList.add('dragover'); // Changed to fileUploadBox
         }
 
         /**
          * Handles dragleave event for the file upload area.
          */
         function handleDragLeave() {
-            fileUploadArea.classList.remove('dragover');
+            fileUploadBox.classList.remove('dragover'); // Changed to fileUploadBox
         }
 
         /**
@@ -454,7 +465,7 @@
          */
         function handleDrop(e) {
             e.preventDefault();
-            fileUploadArea.classList.remove('dragover');
+            fileUploadBox.classList.remove('dragover'); // Changed to fileUploadBox
             if (e.dataTransfer.files.length > 0) {
                 fileUpload.files = e.dataTransfer.files;
                 updateFileInfoUI(fileUpload.files[0]);
@@ -467,17 +478,20 @@
          * Initializes all event listeners for the file upload area.
          */
         function initFileUploadListeners() {
-            // Click to browse
-            fileUploadArea.addEventListener('click', handleFileBrowse);
+            // Click to browse - NOW ONLY browseText (the "click to browse" span) triggers it
+            browseText.addEventListener('click', handleFileBrowse);
+            // Also allow clicking the entire fileUploadBox (the dashed area) to trigger browse
+            fileUploadBox.addEventListener('click', handleFileBrowse);
+
             fileUpload.addEventListener('change', handleFileInputChange);
 
-            // Drag & Drop
-            fileUploadArea.addEventListener('dragover', handleDragOver);
-            fileUploadArea.addEventListener('dragleave', handleDragLeave);
-            fileUploadArea.addEventListener('drop', handleDrop);
+            // Drag & Drop (still applies to the whole fileUploadBox)
+            fileUploadBox.addEventListener('dragover', handleDragOver);
+            fileUploadBox.addEventListener('dragleave', handleDragLeave);
+            fileUploadBox.addEventListener('drop', handleDrop);
 
-            // Keyboard navigation for accessibility
-            fileUploadArea.addEventListener('keydown', (e) => {
+            // Keyboard navigation for accessibility on the fileUploadBox
+            fileUploadBox.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
                     handleFileBrowse();
