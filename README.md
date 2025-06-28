@@ -71,11 +71,5 @@ Notes-U is an **open-source initiative**. We believe in collaborative developmen
 ---
 
 ## 🌐 Live Demo (UI Only)
+ [https://umasou4765.github.io/Notes-U/](https://umasou4765.github.io/Notes-U/)
 
-Explore the current user interface: [https://umasou4765.github.io/Notes-U/](https://umasou4765.github.io/Notes-U/)
-
----
-
-## 🔗 GitHub Repository
-
-Access the source code and contribute: [https://github.com/Umasou4765/Notes-U](https://github.com/Umasou4765/Notes-U)
