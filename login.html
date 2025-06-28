@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="color-scheme" content="light dark"> <title>Log In - Note-U</title>
+    <meta name="color-scheme" content="light dark">
+    <title>Notes-U</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         /* CSS Variables for better theme management */
@@ -43,7 +44,7 @@
             --color-icon-dark: white;
         }
 
-        /* Base styles */
+        /* Base styles (optimized for all devices, primarily mobile) */
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             display: flex;
@@ -51,20 +52,14 @@
             align-items: center;
             min-height: 100vh;
             margin: 0;
-            background-color: var(--color-bg-light);
-            color: var(--color-text-primary-light);
+            background-color: var(--color-bg-light); /* Light mode background */
+            color: var(--color-text-primary-light); /* Light mode text color */
             flex-direction: column;
             box-sizing: border-box;
             overflow-x: hidden;
             width: 100%;
-            transition: background-color 0.3s ease, color 0.3s ease;
+            transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition for theme change */
             padding: 20px;
-        }
-
-        /* Dark Mode application */
-        body.dark {
-            background-color: var(--color-bg-dark);
-            color: var(--color-text-primary-dark);
         }
 
         .container {
@@ -79,11 +74,7 @@
             transition: background-color 0.3s ease, box-shadow 0.3s ease;
         }
 
-        body.dark .container {
-            background-color: var(--color-card-bg-dark);
-            box-shadow: 0 6px 20px var(--color-shadow-dark);
-        }
-
+        /* Updated Logo Styles (copied from login/signup) */
         .logo {
             font-size: 2.8em;
             font-weight: 700;
@@ -102,11 +93,6 @@
             transition: border-color 0.3s ease, color 0.3s ease;
         }
 
-        body.dark .logo {
-            color: var(--color-text-primary-dark);
-            border-color: var(--color-text-primary-dark);
-        }
-
         .logo span {
             line-height: 1;
         }
@@ -120,10 +106,6 @@
             transition: color 0.3s ease;
         }
 
-        body.dark h1 {
-            color: var(--color-text-primary-dark);
-        }
-
         p {
             font-size: 1em;
             color: var(--color-text-secondary-light);
@@ -131,115 +113,50 @@
             transition: color 0.3s ease;
         }
 
-        body.dark p {
-            color: var(--color-text-secondary-dark);
-        }
-
-        /* Authentication Button Styles */
-        .auth-button-group {
+        .button-group {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 12px; /* Adjusted gap to match other pages */
             width: 100%;
+            margin: 0 auto;
         }
 
-        .auth-button {
-            padding: 14px 20px;
-            border: 1px solid var(--color-border-light);
+        .button {
+            padding: 14px 20px; /* Adjusted padding to match other pages */
+            border: 1px solid var(--color-border-light); /* Matched border style */
             border-radius: 8px;
-            font-size: 1.05em;
-            font-weight: 500;
+            font-size: 1.05em; /* Matched font size */
+            font-weight: 500; /* Matched font weight */
             cursor: pointer;
             text-decoration: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            display: block;
             text-align: center;
-            background-color: var(--color-input-bg-light);
-            color: var(--color-text-primary-light);
-            transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05); /* Added subtle shadow */
         }
 
-        .auth-button:hover {
-            background-color: var(--color-input-hover-light);
-            border-color: var(--color-input-border-hover-light);
+        .button.login {
+            background-color: var(--color-accent-blue);
+            color: #fff;
+            border-color: var(--color-accent-blue); /* Ensure consistent border */
+        }
+
+        .button.login:hover {
+            background-color: var(--color-accent-blue-hover);
+            border-color: var(--color-accent-blue-hover);
             box-shadow: 0 2px 6px rgba(0,0,0,0.08);
         }
 
-        body.dark .auth-button {
-            background-color: var(--color-input-bg-dark);
-            color: var(--color-text-primary-dark);
-            border-color: var(--color-border-dark);
-            box-shadow: 0 1px 3px rgba(255,255,255,0.03);
-        }
-        body.dark .auth-button:hover {
-            background-color: var(--color-input-hover-dark);
-            border-color: var(--color-input-border-hover-dark);
-            box-shadow: 0 2px 6px rgba(255,255,255,0.05);
+        .button.register {
+            background-color: var(--color-input-bg-light);
+            color: var(--color-text-primary-light);
+            border: 1px solid var(--color-border-light);
         }
 
-        .auth-button svg {
-            margin-right: 12px;
-            width: 22px;
-            height: 22px;
-            fill: currentColor;
-            transition: fill 0.2s ease;
-        }
-        
-        /* "Or" separator */
-        .separator {
-            display: flex;
-            align-items: center;
-            text-align: center;
-            margin: 24px 0;
-            color: var(--color-text-secondary-light);
-            font-size: 0.9em;
-        }
-
-        body.dark .separator {
-            color: var(--color-text-secondary-dark);
-        }
-
-        .separator::before,
-        .separator::after {
-            content: '';
-            flex: 1;
-            border-bottom: 1px solid var(--color-separator-line-light);
-        }
-
-        body.dark .separator::before,
-        body.dark .separator::after {
-            border-bottom-color: var(--color-separator-line-dark);
-        }
-
-        .separator:not(:empty)::before {
-            margin-right: .75em;
-        }
-
-        .separator:not(:empty)::after {
-            margin-left: .75em;
-        }
-
-        /* Link to other auth page */
-        .switch-link {
-            font-size: 0.95em;
-            color: var(--color-link-light);
-            text-decoration: none;
-            margin-top: 24px;
-            display: block;
-            transition: color 0.2s ease, text-decoration 0.2s ease;
-        }
-        .switch-link:hover {
-            text-decoration: underline;
-            color: var(--color-link-hover-light);
-        }
-
-        body.dark .switch-link {
-            color: var(--color-link-dark);
-        }
-        body.dark .switch-link:hover {
-            color: var(--color-link-hover-dark);
+        .button.register:hover {
+            background-color: var(--color-input-hover-light);
+            border-color: var(--color-input-border-hover-light);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
         }
 
         /* Theme Toggle Button Styles */
@@ -263,18 +180,65 @@
             background-color: rgba(0, 0, 0, 0.05);
         }
 
+        .theme-toggle-btn svg {
+            width: 24px;
+            height: 24px;
+            fill: var(--color-icon-light); /* Default icon color in light mode */
+            transition: fill 0.3s ease;
+        }
+
+        /* Dark Mode Styles */
+        body.dark {
+            background-color: var(--color-bg-dark);
+            color: var(--color-text-primary-dark);
+        }
+
+        body.dark .container {
+            background-color: var(--color-card-bg-dark); /* Darker background for container in dark mode */
+            box-shadow: 0 6px 20px var(--color-shadow-dark); /* Lighter shadow for dark mode */
+        }
+
+        body.dark .logo {
+            color: var(--color-text-primary-dark);
+            border-color: var(--color-text-primary-dark);
+        }
+
+        body.dark h1 {
+            color: var(--color-text-primary-dark);
+        }
+
+        body.dark p {
+            color: var(--color-text-secondary-dark);
+        }
+
+        body.dark .button.login {
+            background-color: var(--color-accent-blue);
+            border-color: var(--color-accent-blue);
+        }
+        body.dark .button.login:hover {
+            background-color: var(--color-accent-blue-hover);
+            border-color: var(--color-accent-blue-hover);
+            box-shadow: 0 2px 6px rgba(255,255,255,0.05);
+        }
+
+        body.dark .button.register {
+            background-color: var(--color-input-bg-dark); /* Darker background for register in dark mode */
+            color: var(--color-text-primary-dark);
+            border-color: var(--color-border-dark);
+        }
+
+        body.dark .button.register:hover {
+            background-color: var(--color-input-hover-dark);
+            border-color: var(--color-input-border-hover-dark);
+            box-shadow: 0 2px 6px rgba(255,255,255,0.05);
+        }
+
         body.dark .theme-toggle-btn:hover {
             background-color: rgba(255, 255, 255, 0.05);
         }
 
-        .theme-toggle-btn svg {
-            width: 24px;
-            height: 24px;
-            fill: var(--color-icon-light);
-            transition: fill 0.3s ease;
-        }
         body.dark .theme-toggle-btn svg {
-            fill: var(--color-icon-dark);
+            fill: var(--color-icon-dark); /* Icon color in dark mode */
         }
 
         /* Initial display of theme icons */
@@ -295,33 +259,46 @@
         /* Desktop specific styles */
         @media (min-width: 768px) {
             .container {
-                max-width: 480px;
-                padding: 48px;
-                border-radius: 16px;
-                box-shadow: 0 8px 30px var(--color-shadow-light);
+                max-width: 480px; /* Increased max-width to match login/signup */
+                padding: 48px; /* Increased padding */
+                border-radius: 16px; /* Increased border-radius */
+                box-shadow: 0 8px 30px var(--color-shadow-light); /* Adjusted shadow */
             }
+
             body.dark .container {
-                box-shadow: 0 8px 30px var(--color-shadow-dark);
+                box-shadow: 0 8px 30px var(--color-shadow-dark); /* Adjusted shadow for dark mode */
             }
 
             .logo {
-                font-size: 3.5em;
+                font-size: 3.5em; /* Larger logo on desktop */
                 height: 70px;
                 width: 70px;
-                margin-bottom: 32px;
+                margin-bottom: 32px; /* Adjusted margin */
             }
 
             h1 {
-                font-size: 2.5em;
+                font-size: 2.5em; /* Larger heading on desktop */
+                margin-bottom: 16px; /* Adjusted margin */
             }
 
             p {
-                font-size: 1.1em;
+                font-size: 1.1em; /* Larger paragraph on desktop */
+                margin-bottom: 40px; /* Adjusted margin */
             }
 
-            .auth-button {
-                padding: 16px 25px;
+            .button-group {
+                flex-direction: row;
+                justify-content: center;
+                gap: 20px;
+                width: auto;
+            }
+
+            .button {
+                padding: 16px 25px; /* Larger buttons on desktop */
                 font-size: 1.15em;
+                width: auto;
+                flex-grow: 1;
+                max-width: 180px;
             }
         }
     </style>
@@ -348,21 +325,67 @@
         <div class="logo" aria-label="Note-U Logo">
             <span>U</span>
         </div>
-        <h1>Log In to Note-U</h1>
-        <p>Access your shared academic notes with your GitHub account.</p>
-
-        <div class="auth-button-group">
-            <a href="https://github.com/login/oauth/authorize?client_id=YOUR_GITHUB_CLIENT_ID&scope=user:email" class="auth-button github-login-btn">
-                <svg role="img" viewBox="0 0 24 24" aria-hidden="true">
-                    <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.499.09.682-.217.682-.483 0-.237-.008-.865-.013-1.7-2.782.602-3.369-1.341-3.369-1.341-.454-1.156-1.11-1.46-1.11-1.46-.908-.619.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.529 2.341 1.088 2.91.83.091-.645.356-1.088.649-1.336-2.22-.253-4.555-1.113-4.555-4.953 0-1.092.39-1.983 1.029-2.675-.103-.253-.446-1.264.098-2.638 0 0 .84-.268 2.75 1.022A9.606 9.606 0 0112 6.844c.85.004 1.701.113 2.502.324 1.909-1.29 2.747-1.022 2.747-1.022.546 1.373.202 2.385.099 2.638.64.692 1.028 1.583 1.028 2.675 0 3.848-2.339 4.69-4.566 4.943.359.309.678.914.678 1.846 0 1.334-.012 2.41-.012 2.727 0 .268.18.592.687.483C21.133 20.197 24 16.442 24 12.017 24 6.484 19.522 2 12 2Z"></path>
-                </svg>
-                <span class="github-text">Continue with GitHub</span>
-            </a>
+        <h1>Accessible notes.</h1>
+        <p>A simple platform for students to share and access academic notes.</p>
+        <div class="button-group">
+            <a href="login.html" class="button login">Log In</a>
+            <a href="signup.html" class="button register">Sign Up</a>
         </div>
-
-        <div class="separator">Or</div>
-        <a href="signup.html" class="switch-link">Don't have an account? Create one now</a>
     </div>
 
-    <script src="app.js"></script> </body>
+    <script>
+        const themeToggleButton = document.getElementById("theme-toggle");
+        const sunIcon = themeToggleButton.querySelector(".sun-icon");
+        const moonIcon = themeToggleButton.querySelector(".moon-icon");
+
+        // Function to set the theme based on the 'dark' class on body
+        function setTheme(isDark) {
+            if (isDark) {
+                document.body.classList.add("dark");
+                sunIcon.style.display = "block";
+                moonIcon.style.display = "none";
+            } else {
+                document.body.classList.remove("dark");
+                sunIcon.style.display = "none";
+                moonIcon.style.display = "block";
+            }
+        }
+
+        // Toggle theme and save setting
+        function toggleTheme() {
+            const isDark = document.body.classList.toggle("dark"); // Toggle on body directly
+            localStorage.setItem("theme", isDark ? "dark" : "light");
+            setTheme(isDark); // Update icons immediately
+        }
+
+        // Set theme on page load
+        window.addEventListener("DOMContentLoaded", () => {
+            const storedTheme = localStorage.getItem("theme");
+
+            // Check for stored theme first
+            if (storedTheme === "dark") {
+                setTheme(true);
+            } else if (storedTheme === "light") {
+                setTheme(false);
+            } else {
+                // If no stored theme, check system preference
+                if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    setTheme(true);
+                } else {
+                    setTheme(false);
+                }
+            }
+        });
+
+        // Add event listener to the button
+        themeToggleButton.addEventListener("click", toggleTheme);
+
+        // Listen for system theme changes (optional, but good for reactivity)
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+            if (!localStorage.getItem("theme")) { // Only apply if user hasn't manually set a preference
+                setTheme(event.matches);
+            }
+        });
+    </script>
+</body>
 </html>
