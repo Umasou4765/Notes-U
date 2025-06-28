@@ -5,46 +5,90 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="color-scheme" content="light dark">
     <title>Upload Notes - UniNotes</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
-        /* Base styles (Notion-like theme, optimized for all devices, primarily mobile) */
+        /* Base styles */
+        :root {
+            --light-bg: #f8f8f8;
+            --light-text: #333;
+            --light-label: #666;
+            --light-input-bg: white;
+            --light-input-border: rgba(55, 53, 47, 0.16);
+            --light-input-placeholder: rgba(55, 53, 47, 0.4);
+            --light-file-area-bg: white;
+            --light-file-area-border: rgba(55, 53, 47, 0.16);
+            --light-file-area-hover-bg: rgba(55, 53, 47, 0.03);
+            --light-file-area-dragover-bg: rgba(55, 53, 47, 0.08);
+            --light-icon-color: rgba(55, 53, 47, 0.3);
+            --light-file-text: rgba(55, 53, 47, 0.6);
+            --light-sm-text: rgba(55, 53, 47, 0.4);
+            --light-file-name: #333;
+            --light-error-color: #dc3545;
+            --light-toggle-icon: #333;
+            --light-container-bg: white;
+            --light-container-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        body.dark {
+            --light-bg: #121212;
+            --light-text: white;
+            --light-label: rgba(255, 255, 255, 0.9);
+            --light-input-bg: #252525;
+            --light-input-border: rgba(255, 255, 255, 0.1);
+            --light-input-placeholder: rgba(255, 255, 255, 0.4);
+            --light-file-area-bg: #252525;
+            --light-file-area-border: rgba(255, 255, 255, 0.1);
+            --light-file-area-hover-bg: #333;
+            --light-file-area-dragover-bg: #333;
+            --light-icon-color: rgba(255, 255, 255, 0.3);
+            --light-file-text: rgba(255, 255, 255, 0.6);
+            --light-sm-text: rgba(255, 255, 255, 0.4);
+            --light-file-name: white;
+            --light-error-color: #ff6b6b;
+            --light-toggle-icon: white;
+            --light-container-bg: #1a1a1a;
+            --light-container-shadow: 0 4px 12px rgba(255,255,255,0.02);
+        }
+
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             display: flex;
             justify-content: center;
-            align-items: flex-start; /* Align to top for longer forms */
+            align-items: flex-start;
             min-height: 100vh;
             margin: 0;
-            background-color: #f8f8f8; /* Light mode background */
-            color: #333; /* Light mode text color */
+            background-color: var(--light-bg);
+            color: var(--light-text);
             flex-direction: column;
             box-sizing: border-box;
             overflow-x: hidden;
             width: 100%;
-            transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition for theme change */
-            padding-top: 80px; /* Space for the theme toggle button */
-            padding-bottom: 40px; /* Space at the bottom */
+            transition: background-color 0.3s ease, color 0.3s ease;
+            padding-top: 80px;
+            padding-bottom: 40px;
         }
 
         .container {
-            max-width: 680px; /* Wider container for forms, similar to Notion page width */
+            max-width: 680px;
             width: 90%;
             margin: 0 auto;
             padding: 20px;
             box-sizing: border-box;
-            /* No background or shadow by default, Notion pages are usually borderless on background */
         }
 
         /* Notion-like Input Styles */
         .notion-input-group {
-            margin-bottom: 24px; /* Spacing between form groups */
+            margin-bottom: 24px;
         }
 
         .notion-label {
             display: block;
-            font-size: 0.875em; /* text-sm equivalent */
-            font-weight: 500; /* medium equivalent */
-            color: #666; /* gray-700 equivalent */
-            margin-bottom: 8px; /* mb-2 equivalent */
+            font-size: 0.875em;
+            font-weight: 500;
+            color: var(--light-label);
+            margin-bottom: 8px;
             transition: color 0.3s ease;
         }
 
@@ -52,98 +96,98 @@
         .notion-select {
             display: block;
             width: 100%;
-            padding: 10px 12px; /* py-2.5 px-3 equivalent */
-            border: 1px solid rgba(55, 53, 47, 0.16); /* Notion border color */
-            border-radius: 4px; /* Slightly less rounded than original */
-            background-color: white;
-            color: #333;
+            padding: 10px 12px;
+            border: 1px solid var(--light-input-border);
+            border-radius: 4px;
+            background-color: var(--light-input-bg);
+            color: var(--light-text);
             font-size: 1em;
             line-height: 1.5;
             transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, color 0.2s ease;
         }
 
         .notion-input::placeholder {
-            color: rgba(55, 53, 47, 0.4); /* Placeholder color */
+            color: var(--light-input-placeholder);
         }
 
         .notion-input:focus,
         .notion-select:focus {
             outline: none;
-            border-color: #007bff; /* Primary color for focus */
-            box-shadow: 0 0 0 1px #007bff; /* Focus ring */
+            border-color: #007bff;
+            box-shadow: 0 0 0 1px #007bff;
         }
 
         /* Error message styles */
         .error-message {
-            color: #dc3545; /* Red color for errors */
-            font-size: 0.875em; /* text-sm */
-            margin-top: 8px; /* mt-2 */
-            display: none; /* Hidden by default */
+            color: var(--light-error-color);
+            font-size: 0.875em;
+            margin-top: 8px;
+            display: none;
         }
 
         /* Header Styles */
         .header {
-            margin-bottom: 48px; /* mb-12 equivalent */
+            margin-bottom: 48px;
         }
         .header h1 {
-            font-size: 2.25em; /* text-3xl equivalent */
-            font-weight: 600; /* font-semibold equivalent */
-            color: #333; /* text-gray-900 equivalent */
-            margin-bottom: 8px; /* mb-2 equivalent */
+            font-size: 2.25em;
+            font-weight: 600;
+            color: var(--light-text);
+            margin-bottom: 8px;
             transition: color 0.3s ease;
         }
         .header p {
-            font-size: 1em; /* base text size */
-            color: #666; /* text-gray-500 equivalent */
+            font-size: 1em;
+            color: var(--light-label);
             transition: color 0.3s ease;
         }
 
         /* File Upload Area */
         .file-upload-area {
-            border: 2px dashed rgba(55, 53, 47, 0.16); /* Notion-like dashed border */
+            border: 2px dashed var(--light-file-area-border);
             border-radius: 4px;
-            padding: 32px; /* p-8 equivalent */
+            padding: 32px;
             text-align: center;
             cursor: pointer;
             transition: all 0.2s ease;
-            background-color: white;
+            background-color: var(--light-file-area-bg);
         }
 
         .file-upload-area:hover {
-            background-color: rgba(55, 53, 47, 0.03); /* Lighter hover effect */
+            background-color: var(--light-file-area-hover-bg);
         }
 
         .file-upload-area.dragover {
-            background-color: rgba(55, 53, 47, 0.08);
-            border-color: #007bff; /* Primary color on dragover */
+            background-color: var(--light-file-area-dragover-bg);
+            border-color: #007bff;
         }
         
         .file-upload-area svg {
-            color: rgba(55, 53, 47, 0.3); /* text-gray-300 equivalent */
-            margin: 0 auto 16px auto; /* mx-auto mb-4 equivalent */
+            color: var(--light-icon-color);
+            margin: 0 auto 16px auto;
         }
         .file-upload-area p {
-            color: rgba(55, 53, 47, 0.6); /* text-gray-600 equivalent */
+            color: var(--light-file-text);
             margin-bottom: 8px;
         }
         .file-upload-area .text-sm {
             font-size: 0.875em;
-            color: rgba(55, 53, 47, 0.4); /* text-gray-400 equivalent */
+            color: var(--light-sm-text);
         }
         .file-upload-area #fileInfo svg {
-            color: #28a745; /* green-500 equivalent */
+            color: #28a745; /* Green for success */
         }
         .file-upload-area #fileName {
-            color: #333; /* text-gray-700 equivalent */
+            color: var(--light-file-name);
             font-weight: 500;
         }
 
         /* Submit Button */
         .submit-btn {
             width: 100%;
-            background-color: #007bff; /* Primary blue button */
+            background-color: #007bff;
             color: white;
-            padding: 12px 24px; /* py-3 px-6 equivalent */
+            padding: 12px 24px;
             border-radius: 4px;
             font-weight: 500;
             transition: background-color 0.2s ease;
@@ -156,15 +200,15 @@
         }
         .submit-btn:focus {
             outline: none;
-            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.5); /* Focus ring */
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.5);
         }
         .submit-btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
-            background-color: #007bff; /* Keep base color */
+            background-color: #007bff;
         }
 
-        /* Theme Toggle Button Styles (copied from index.html) */
+        /* Theme Toggle Button Styles */
         .theme-toggle-btn {
             position: absolute;
             top: 20px;
@@ -178,7 +222,7 @@
             align-items: center;
             justify-content: center;
             transition: background-color 0.3s ease;
-            z-index: 10; /* Ensure button is above other content */
+            z-index: 10;
         }
 
         .theme-toggle-btn:hover {
@@ -188,97 +232,230 @@
         .theme-toggle-btn svg {
             width: 24px;
             height: 24px;
-            fill: #333; /* Default icon color in light mode */
+            fill: var(--light-toggle-icon);
             transition: fill 0.3s ease;
-        }
-
-        /* Dark Mode Styles */
-        body.dark {
-            background-color: #121212;
-            color: white;
-        }
-
-        body.dark .container {
-            /* For upload page, container might not have distinct background by default,
-               but if you add one later, define it here */
-        }
-
-        body.dark .notion-label,
-        body.dark .header h1,
-        body.dark .header p {
-            color: rgba(255, 255, 255, 0.9); /* Lighter text in dark mode */
-        }
-
-        body.dark .notion-input,
-        body.dark .notion-select {
-            background-color: #252525; /* Darker background for inputs */
-            color: white;
-            border-color: rgba(255, 255, 255, 0.1); /* Lighter border for inputs */
-        }
-
-        body.dark .notion-input::placeholder {
-            color: rgba(255, 255, 255, 0.4);
-        }
-
-        body.dark .notion-input:focus,
-        body.dark .notion-select:focus {
-            border-color: #007bff; /* Keep focus blue */
-            box-shadow: 0 0 0 1px #007bff;
-        }
-
-        body.dark .file-upload-area {
-            background-color: #252525;
-            border-color: rgba(255, 255, 255, 0.1);
-        }
-        body.dark .file-upload-area:hover {
-            background-color: #333;
-        }
-        body.dark .file-upload-area.dragover {
-            background-color: #333;
-            border-color: #007bff;
-        }
-        body.dark .file-upload-area svg {
-            color: rgba(255, 255, 255, 0.3);
-        }
-        body.dark .file-upload-area p {
-            color: rgba(255, 255, 255, 0.6);
-        }
-        body.dark .file-upload-area .text-sm {
-            color: rgba(255, 255, 255, 0.4);
-        }
-        body.dark .file-upload-area #fileName {
-            color: white;
-        }
-
-        body.dark .error-message {
-            color: #ff6b6b; /* Lighter red for dark mode errors */
-        }
-
-        body.dark .theme-toggle-btn svg {
-            fill: white;
         }
 
         /* Desktop specific styles */
         @media (min-width: 768px) {
             body {
-                padding-top: 80px; /* Maintain padding for desktop */
-                align-items: center; /* Center horizontally for desktop */
+                padding-top: 80px;
+                align-items: center;
             }
 
             .container {
-                padding: 40px 60px; /* More padding for desktop forms */
-                box-shadow: 0 4px 12px rgba(0,0,0,0.05); /* Subtle shadow for desktop form card */
-                border-radius: 8px; /* Rounded corners for desktop form card */
-                background-color: white; /* Card background */
-            }
-            body.dark .container {
-                background-color: #1a1a1a;
-                box-shadow: 0 4px 12px rgba(255,255,255,0.02);
+                padding: 40px 60px;
+                box-shadow: var(--light-container-shadow);
+                border-radius: 8px;
+                background-color: var(--light-container-bg);
             }
 
             .header h1 {
-                font-size: 2.5em; /* Slightly larger heading for desktop */
+                font-size: 2.5em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button id="themeToggleBtn" class="theme-toggle-btn" aria-label="Toggle dark mode">
+        <svg id="themeIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 3a9 9 0 109 9c0-.46-.03-.92-.1-1.37a.75.75 0 01.12-.22c.07-.15.11-.32.11-.49V10.5h-.01c-.1-.7-.25-1.39-.44-2.06a.75.75 0 01.1-.38c.1-.14.23-.27.38-.38l.16-.1a9.006 9.006 0 00-.77-6.27l-.15-.14zm-1.5 8.25a.75.75 0 011.5 0v3a.75.75 0 01-1.5 0v-3zM10.5 7a.75.75 0 011.5 0v1.5a.75.75 0 01-1.5 0V7zM10.5 16.5a.75.75 0 011.5 0V18a.75.75 0 01-1.5 0v-1.5z"/>
+        </svg>
+    </button>
+
+    <div class="container">
+        <header class="header">
+            <h1>Upload Your Notes</h1>
+            <p>Share your knowledge and help other students by uploading your study materials.</p>
+        </header>
+
+        <form id="uploadForm" aria-labelledby="uploadFormHeading">
+            <div class="notion-input-group">
+                <label for="courseName" class="notion-label">Course Name</label>
+                <input type="text" id="courseName" class="notion-input" placeholder="e.g., Introduction to Computer Science" required aria-describedby="courseNameError">
+                <p id="courseNameError" class="error-message">Course name is required.</p>
+            </div>
+
+            <div class="notion-input-group">
+                <label for="courseCode" class="notion-label">Course Code</label>
+                <input type="text" id="courseCode" class="notion-input" placeholder="e.g., CSC101" required aria-describedby="courseCodeError">
+                <p id="courseCodeError" class="error-message">Course code is required.</p>
+            </div>
+
+            <div class="notion-input-group">
+                <label for="lectureName" class="notion-label">Lecture/Topic Name</label>
+                <input type="text" id="lectureName" class="notion-input" placeholder="e.g., Data Structures and Algorithms" aria-describedby="lectureNameError">
+                <p id="lectureNameError" class="error-message">Lecture/Topic name is required.</p>
+            </div>
+
+            <div class="notion-input-group">
+                <label for="academicYear" class="notion-label">Academic Year</label>
+                <input type="number" id="academicYear" class="notion-input" min="2000" max="2099" placeholder="e.g., 2023" aria-describedby="academicYearError">
+                <p id="academicYearError" class="error-message">Please enter a valid academic year.</p>
+            </div>
+
+            <div class="notion-input-group">
+                <label for="notesType" class="notion-label">Type of Notes</label>
+                <select id="notesType" class="notion-select" required aria-describedby="notesTypeError">
+                    <option value="">Select a type</option>
+                    <option value="lecture_notes">Lecture Notes</option>
+                    <option value="tutorial_solutions">Tutorial Solutions</option>
+                    <option value="past_year_papers">Past Year Papers</option>
+                    <option value="summaries">Summaries</option>
+                    <option value="others">Others</option>
+                </select>
+                <p id="notesTypeError" class="error-message">Please select a type of notes.</p>
+            </div>
+
+            <div class="notion-input-group">
+                <label for="description" class="notion-label">Description (Optional)</label>
+                <textarea id="description" class="notion-input" rows="4" placeholder="Briefly describe the content of your notes..."></textarea>
+            </div>
+
+            <div class="notion-input-group">
+                <label for="fileUpload" class="notion-label">Upload File</label>
+                <input type="file" id="fileUpload" accept=".pdf,.doc,.docx" hidden aria-describedby="fileUploadError">
+                <div id="fileUploadArea" class="file-upload-area" role="button" tabindex="0" aria-label="Drag and drop your file here, or click to browse. Accepted formats: PDF, DOC, DOCX.">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-12 h-12">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
+                    </svg>
+                    <p>Drag and drop your file here, or <span style="color: #007bff; font-weight: 500;">click to browse</span></p>
+                    <p class="text-sm">Only PDF, DOC, and DOCX files are allowed (Max 25MB)</p>
+                    <div id="fileInfo" style="margin-top: 16px; display: none; align-items: center; justify-content: center; gap: 8px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.125-1.09L9 11.423l-1.604-1.604a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.06 0l3-3z" clip-rule="evenodd" />
+                        </svg>
+                        <span id="fileName"></span>
+                    </div>
+                </div>
+                <p id="fileUploadError" class="error-message">Please upload a valid file (PDF, DOC, DOCX).</p>
+            </div>
+
+            <button type="submit" class="submit-btn">Upload Notes</button>
+        </form>
+    </div>
+
+    <script>
+        // Theme Toggle Logic
+        const themeToggleBtn = document.getElementById('themeToggleBtn');
+        const themeIcon = document.getElementById('themeIcon');
+        const currentTheme = localStorage.getItem('theme');
+
+        if (currentTheme) {
+            document.body.classList.add(currentTheme);
+            updateThemeIcon(currentTheme);
+        } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.body.classList.add('dark');
+            localStorage.setItem('theme', 'dark');
+            updateThemeIcon('dark');
+        } else {
+            document.body.classList.add('light');
+            localStorage.setItem('theme', 'light');
+            updateThemeIcon('light');
+        }
+
+        themeToggleBtn.addEventListener('click', () => {
+            if (document.body.classList.contains('dark')) {
+                document.body.classList.remove('dark');
+                document.body.classList.add('light');
+                localStorage.setItem('theme', 'light');
+                updateThemeIcon('light');
+            } else {
+                document.body.classList.remove('light');
+                document.body.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+                updateThemeIcon('dark');
+            }
+        });
+
+        function updateThemeIcon(theme) {
+            if (theme === 'dark') {
+                themeIcon.innerHTML = `
+                    <path d="M9.5 2.25c-3.9 0-7.053 3.098-7.053 6.913 0 3.567 2.443 6.643 5.753 7.556.76.216 1.348-.372 1.348-1.139V15c0-1.393.268-2.75-.714-3.943-.75-.924-2.228-2.042-3.539-1.107-.487.354-.735.632-.735.632l-.004.004-.007.005-.02.012-.03.018-.035.02-.04.024-.047.028a15.061 15.061 0 00-.733.456l-.048.03c-.053.03-.099.063-.146.096-.06.04-.12.083-.178.127a13.345 13.345 0 00-.796.657L2 14.5V17a1 1 0 001 1h4.156A7.954 7.954 0 0012.25 20.5c3.9 0 7.053-3.098 7.053-6.913 0-3.567-2.443-6.643-5.753-7.556-.76-.216-1.348.372-1.348 1.139V9c0 1.393-.268 2.75.714 3.943.75.924 2.228 2.042 3.539 1.107.487-.354.735-.632.735-.632l.004-.004.007-.005.02-.012.03-.018.035-.02.04-.024.047-.028a15.061 15.061 0 00.733-.456l.048-.03c.053-.03.099-.063.146-.096.06-.04.12-.083.178-.127a13.345 13.345 0 00.796-.657L22 9.5V7a1 1 0 00-1-1h-4.156A7.954 7.954 0 0011.75 3.5a7.953 7.953 0 00-2.25-1.25z"/>
+                `;
+            } else {
+                themeIcon.innerHTML = `
+                    <path d="M12 3a9 9 0 109 9c0-.46-.03-.92-.1-1.37a.75.75 0 01.12-.22c.07-.15.11-.32.11-.49V10.5h-.01c-.1-.7-.25-1.39-.44-2.06a.75.75 0 01.1-.38c.1-.14.23-.27.38-.38l.16-.1a9.006 9.006 0 00-.77-6.27l-.15-.14zm-1.5 8.25a.75.75 0 011.5 0v3a.75.75 0 01-1.5 0v-3zM10.5 7a.75.75 0 011.5 0v1.5a.75.75 0 01-1.5 0V7zM10.5 16.5a.75.75 0 011.5 0V18a.75.75 0 01-1.5 0v-1.5z"/>
+                `;
+            }
+        }
+
+        // Form Validation and File Upload Logic
+        const form = document.getElementById('uploadForm');
+        const fileUpload = document.getElementById('fileUpload');
+        const fileUploadArea = document.getElementById('fileUploadArea');
+        const fileInfo = document.getElementById('fileInfo');
+        const fileNameSpan = document.getElementById('fileName');
+        const submitBtn = document.querySelector('.submit-btn');
+
+        const fields = [
+            { id: 'courseName', message: 'Course name is required.', validate: val => val.trim() !== '' },
+            { id: 'courseCode', message: 'Course code is required.', validate: val => val.trim() !== '' },
+            { id: 'lectureName', message: 'Lecture/Topic name is required.', validate: val => val.trim() !== '' },
+            { id: 'academicYear', message: 'Please enter a valid academic year.', validate: val => {
+                const year = parseInt(val);
+                return !isNaN(year) && year >= 2000 && year <= 2099;
+            }},
+            { id: 'notesType', message: 'Please select a type of notes.', validate: val => val !== '' },
+            { id: 'fileUpload', message: 'Please upload a valid file (PDF, DOC, DOCX).', validate: () => fileUpload.files.length > 0 }
+        ];
+
+        function validateField(field) {
+            const inputElement = document.getElementById(field.id);
+            const errorElement = document.getElementById(`${field.id}Error`);
+            let isValid = true;
+
+            if (inputElement.type === 'file') {
+                isValid = field.validate();
+            } else {
+                isValid = field.validate(inputElement.value);
             }
 
-            .header p {
-                font-
+            if (!isValid) {
+                errorElement.style.display = 'block';
+                inputElement.classList.add('invalid'); // Add a class for invalid state
+            } else {
+                errorElement.style.display = 'none';
+                inputElement.classList.remove('invalid');
+            }
+            return isValid;
+        }
+
+        function validateForm() {
+            let formIsValid = true;
+            fields.forEach(field => {
+                if (!validateField(field)) {
+                    formIsValid = false;
+                }
+            });
+            submitBtn.disabled = !formIsValid;
+            return formIsValid;
+        }
+
+        // Initial validation check to disable submit button if form is not filled
+        document.addEventListener('DOMContentLoaded', validateForm);
+
+        // Add event listeners for input changes to trigger validation
+        fields.forEach(field => {
+            const inputElement = document.getElementById(field.id);
+            if (inputElement.type === 'file') {
+                inputElement.addEventListener('change', validateForm);
+            } else if (inputElement.tagName === 'SELECT') {
+                inputElement.addEventListener('change', validateForm);
+            } else {
+                inputElement.addEventListener('input', validateForm);
+            }
+        });
+
+        // File Upload Drag & Drop and Click Functionality
+        fileUploadArea.addEventListener('click', () => {
+            fileUpload.click();
+        });
+
+        fileUpload.addEventListener('change', () => {
+            if (fileUpload.files.length > 0) {
+                const file = fileUpload.files[0];
+                fileNameSpan.textContent = file.name;
+                fileInfo.style.display = 'flex';
+            } else {
+                fileNameSpan.textContent
