@@ -1,241 +1,136 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="color-scheme" content="light dark">
-    <title>Notes-U</title>
-    <style>
-        /* Base styles (optimized for all devices, primarily mobile) */
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            background-color: #f8f8f8; /* Light mode background */
-            color: #333; /* Light mode text color */
-            flex-direction: column;
-            box-sizing: border-box;
-            overflow-x: hidden;
-            width: 100%;
-            transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition for theme change */
-        }
-
-        .container {
-            text-align: center;
-            padding: 20px;
-            max-width: 400px;
-            width: 90%;
-            box-sizing: border-box;
-        }
-
-        .logo {
-            font-size: 2.5em;
-            font-weight: bold;
-            margin-bottom: 50px;
-            color: #333;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 50px;
-            width: 50px;
-            border: 2px solid #333;
-            box-sizing: border-box;
-            margin: 0 auto 50px auto;
-            transition: border-color 0.3s ease, color 0.3s ease; /* Smooth transition for logo */
-        }
-
-        .logo span {
-            line-height: 1;
-        }
-
-        h1 {
-            font-size: 2.2em;
-            margin-bottom: 20px;
-            color: #333;
-            line-height: 1.3;
-            font-weight: normal;
-            transition: color 0.3s ease; /* Smooth transition for heading */
-        }
-
-        p {
-            font-size: 1.1em;
-            color: #666;
-            margin-bottom: 40px;
-            transition: color 0.3s ease; /* Smooth transition for paragraph */
-        }
-
-        .button-group {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            width: 100%;
-            margin: 0 auto;
-        }
-
-        .button {
-            padding: 15px 0;
-            border: none;
-            border-radius: 8px;
-            font-size: 1.1em;
-            cursor: pointer;
-            text-decoration: none;
-            display: block;
-            text-align: center;
-            transition: background-color 0.3s ease, color 0.3s ease;
-            color: #fff;
-        }
-
-        .button.login {
-            background-color: #007bff;
-        }
-
-        .button.login:hover {
-            background-color: #0056b3;
-        }
-
-        .button.register {
-            background-color: #f0f0f0;
-            color: #333;
-            border: 1px solid #ccc;
-        }
-
-        .button.register:hover {
-            background-color: #e0e0e0;
-        }
-
-        /* Dark Mode Styles */
-        body.dark {
-            background-color: #121212;
-            color: white;
-        }
-
-        body.dark .logo {
-            color: white;
-            border-color: white;
-        }
-
-        body.dark h1,
-        body.dark p {
-            color: white;
-        }
-
-        body.dark .button.register {
-            background-color: #333; /* Darker background for register in dark mode */
-            color: white;
-            border-color: #555;
-        }
-
-        body.dark .button.sign {
-            background-color: #444;
-        }
-
-        /* Desktop specific styles */
-        @media (min-width: 768px) {
-            body {
-                align-items: center;
-            }
-
-            .container {
-                max-width: 600px;
-                padding: 40px;
-                background-color: #fff;
-                border-radius: 10px;
-                box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            }
-
-            /* Dark mode specific styles for desktop container */
-            body.dark .container {
-                background-color: #1a1a1a; /* Darker background for container in dark mode */
-                box-shadow: 0 4px 8px rgba(255,255,255,0.05); /* Lighter shadow for dark mode */
-            }
-
-            .logo {
-                font-size: 3.5em;
-                height: 70px;
-                width: 70px;
-                margin-bottom: 70px;
-            }
-
-            h1 {
-                font-size: 3em;
-                margin-bottom: 30px;
-            }
-
-            p {
-                font-size: 1.3em;
-                margin-bottom: 50px;
-            }
-
-            .button-group {
-                flex-direction: row;
-                justify-content: center;
-                gap: 20px;
-                width: auto;
-            }
-
-            .button {
-                padding: 18px 40px;
-                font-size: 1.2em;
-                width: auto;
-                flex-grow: 1;
-                max-width: 180px;
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Notes Upload</title>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com; script-src 'self' https://cdn.tailwindcss.com;">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="style.css" />
 </head>
-<body>
-    <div class="container">
-        <div class="logo">
-            <span>U</span>
-        </div>
-        <h1>Accessible notes.</h1>
-        <p>A simple platform for students to share and access academic notes.</p>
-        <div class="button-group">
-            <a href="login.html" class="button login">Log In</a>
-            <a href="signup.html" class="button register">Sign Up</a>
-        </div>
-    </div>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+  <div class="w-full max-w-md bg-white p-8 rounded-xl shadow-lg">
+    <h1 class="text-2xl font-bold text-center mb-6">📘 Upload Your Notes</h1>
 
-    <script>
-        // Function to set the theme based on the 'dark' class on body
-        function setTheme(isDark) {
-            if (isDark) {
-                document.body.classList.add("dark");
-                localStorage.setItem("theme", "dark");
-            } else {
-                document.body.classList.remove("dark");
-                localStorage.setItem("theme", "light");
-            }
-        }
+    <button id="tipBtn" class="bg-green-600 text-white py-1.5 px-4 rounded hover:bg-green-700 transition duration-300 mt-4">
+  Show Me a Study Tip!
+</button>
+<p id="studyTip" class="mt-2 text-blue-700 font-semibold"></p>
+    
+   <form id="uploadForm" class="flex flex-col gap-4" novalidate>
+  <div>
+    <label for="year" class="block text-sm font-medium text-gray-700 mb-1">Year:</label>
+    <select
+      id="year"
+      aria-label="Select Year"
+      aria-describedby="yearError"
+      required
+      class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+    >
+      <option value="">Select Year</option>
+      <option>Year 1</option>
+      <option>Year 2</option>
+    </select>
+    <small id="yearError" class="text-red-500 hidden" role="alert">Please select a year.</small>
+  </div>
+  <!-- ...other improved fields with similar accessibility and style... -->
+  <button
+    type="submit"
+    class="bg-blue-600 text-white py-1.5 px-4 rounded hover:bg-blue-700 transition duration-300 flex items-center justify-center gap-2"
+    aria-label="Upload Notes"
+    id="submitBtn"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 -mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true" role="img" focusable="false">
+      <title>Upload Icon</title>
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M12 12V4m0 0L8 8m4-4l4 4" />
+    </svg>
+    Submit Notes
+  </button>
+</form>
 
-        // Set theme on page load
-        window.addEventListener("DOMContentLoaded", () => {
-            const storedTheme = localStorage.getItem("theme");
+      <div>
+        <label for="semester" class="block text-sm font-medium text-gray-700 mb-1">Semester:</label>
+        <select id="semester" aria-label="Select Semester" class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
+          <option value="">Select Semester</option>
+          <option>Semester 1</option>
+          <option>Semester 2</option>
+          <option>Semester 3</option>
+        </select>
+        <small class="text-red-500 hidden" id="semesterError">Please select a semester.</small>
+      </div>
 
-            // Check for stored theme first
-            if (storedTheme === "dark") {
-                setTheme(true);
-            } else if (storedTheme === "light") {
-                setTheme(false);
-            } else {
-                // If no stored theme, check system preference
-                if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                    setTheme(true);
-                } else {
-                    setTheme(false);
-                }
-            }
-        });
+      <div>
+        <label for="subject" class="block text-sm font-medium text-gray-700 mb-1">Subject:</label>
+        <input type="text" id="subject" required placeholder="Enter subject name" aria-label="Subject" class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"/>
+        <small class="text-red-500 hidden" id="subjectError">Subject is required.</small>
+      </div>
 
-        // Listen for system theme changes and update if no user preference is set
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
-            if (!localStorage.getItem("theme")) { // Only apply if user hasn't manually set a preference
-                setTheme(event.matches);
-            }
-        });
-    </script>
-</body>
-</html>
+      <div>
+        <label for="file" class="block text-sm font-medium text-gray-700 mb-1">File:</label>
+        <input 
+          type="file" 
+          id="file" 
+          required 
+          aria-label="Upload File" 
+          accept=".pdf,.doc,.docx,.txt,.ppt,.pptx,.xls,.xlsx,.csv,.jpg,.jpeg,.png,.gif,.webp" 
+          class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"/>
+        <small class="text-red-500 hidden" id="fileError">Please select a file.</small>
+      </div>
+
+      <button type="submit" 
+        class="bg-blue-600 text-white py-1.5 px-4 rounded hover:bg-blue-700 transition duration-300 flex items-center justify-center gap-2"
+        aria-label="Upload Notes">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 -mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true" focusable="false">
+          <title>Upload Icon</title>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+            d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M12 12V4m0 0L8 8m4-4l4 4" />
+        </svg>
+        Upload
+      </button>      
+    </form>
+  </div>
+
+  <script defer>
+    // Basic client-side validation
+    document.getElementById('uploadForm').addEventListener('submit', function(event) {
+      let valid = true;
+      // Year
+      const year = document.getElementById('year');
+      const yearError = document.getElementById('yearError');
+      if (!year.value) {
+        yearError.classList.remove('hidden');
+        valid = false;
+      } else {
+        yearError.classList.add('hidden');
+      }
+      // Semester
+      const semester = document.getElementById('semester');
+      const semesterError = document.getElementById('semesterError');
+      if (!semester.value) {
+        semesterError.classList.remove('hidden');
+        valid = false;
+      } else {
+        semesterError.classList.add('hidden');
+      }
+      // Subject
+      const subject = document.getElementById('subject');
+      const subjectError = document.getElementById('subjectError');
+      if (!subject.value.trim()) {
+        subjectError.classList.remove('hidden');
+        valid = false;
+      } else {
+        subjectError.classList.add('hidden');
+      }
+      // File
+      const file = document.getElementById('file');
+      const fileError = document.getElementById('fileError');
+      if (!file.files.length) {
+        fileError.classList.remove('hidden');
+        valid = false;
+      } else {
+        fileError.classList.add('hidden');
+      }
+      if (!valid) event.preventDefault();
+    });
+   </script>
+  <script src="app.js" defer></script>
