@@ -7,46 +7,81 @@
   <title>Notes-U - Accessible Notes</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
+    /* CSS Variables for theming */
     :root {
+      /* Accent Colors */
       --color-accent-blue: #007bff;
       --color-accent-blue-hover: #0056b3;
+
+      /* Text Colors */
       --color-text-light: #333;
       --color-text-dark: rgba(255, 255, 255, 0.9);
       --color-text-secondary-light: #666;
       --color-text-secondary-dark: rgba(255, 255, 255, 0.6);
+
+      /* Background Colors */
       --color-bg-light: #f8f8f8;
       --color-bg-dark: #121212;
+
+      /* Card/Element Backgrounds */
       --color-card-light: #fff;
       --color-card-dark: #1a1a1a;
+      --color-button-dark: #252525; /* Specific for dark mode buttons */
+      --color-button-dark-hover: #333; /* Specific for dark mode button hover */
+
+      /* Border Colors */
       --color-border-light: rgba(55, 53, 47, 0.1);
       --color-border-dark: rgba(255, 255, 255, 0.1);
       --color-border-hover-light: rgba(55, 53, 47, 0.2);
       --color-border-hover-dark: rgba(255, 255, 255, 0.2);
-      --color-divider-light: #ddd;
-      --color-divider-dark: #444;
+
+      /* Shadows */
       --shadow-light: 0 6px 20px rgba(0, 0, 0, 0.05);
       --shadow-dark: 0 6px 20px rgba(255, 255, 255, 0.02);
       --shadow-button-light: 0 1px 3px rgba(0, 0, 0, 0.05);
       --shadow-button-dark: 0 1px 3px rgba(255, 255, 255, 0.03);
       --shadow-button-hover-light: 0 2px 6px rgba(0, 0, 0, 0.08);
       --shadow-button-hover-dark: 0 2px 6px rgba(255, 255, 255, 0.05);
+
+      /* Spacing & Sizing */
+      --spacing-sm: 8px;
+      --spacing-md: 12px;
+      --spacing-lg: 24px;
+      --spacing-xl: 32px;
+      --spacing-xxl: 48px;
+
+      /* Border Radii */
+      --border-radius-sm: 8px;
+      --border-radius-md: 12px;
+      --border-radius-lg: 16px;
+
+      /* Font Sizes */
+      --font-size-base: 1em;
+      --font-size-h1: 2em;
+      --font-size-h1-desktop: 2.5em;
+      --font-size-logo: 2.8em;
+      --font-size-logo-desktop: 3.5em;
+      --font-size-button: 1.05em;
+      --font-size-button-desktop: 1.15em;
     }
 
+    /* Base Styles */
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       display: flex;
       justify-content: center;
       align-items: center;
-      min-height: 100vh; /* Ensures the body takes at least the full viewport height */
+      min-height: 100vh;
       margin: 0;
-      padding: 20px;
+      padding: var(--spacing-lg);
       background-color: var(--color-bg-light);
       color: var(--color-text-light);
       transition: background-color 0.3s ease, color 0.3s ease;
-      box-sizing: border-box;
+      box-sizing: border-box; /* Ensures padding is included in the element's total width and height */
+      line-height: 1.6; /* Improved readability */
     }
 
-    /* Dark mode styles */
+    /* Dark Mode Styles */
     body.dark {
       background-color: var(--color-bg-dark);
       color: var(--color-text-dark);
@@ -56,16 +91,17 @@
       color: var(--color-text-secondary-dark);
     }
 
+    /* Main Container */
     .container {
       text-align: center;
-      padding: 32px;
+      padding: var(--spacing-xl);
       max-width: 420px;
       width: 100%;
       background-color: var(--color-card-light);
-      border-radius: 12px;
+      border-radius: var(--border-radius-md);
       box-shadow: var(--shadow-light);
       transition: background-color 0.3s ease, box-shadow 0.3s ease;
-      flex-shrink: 0; /* Prevent the container from shrinking */
+      flex-shrink: 0;
     }
 
     body.dark .container {
@@ -73,18 +109,22 @@
       box-shadow: var(--shadow-dark);
     }
 
+    /* Logo Styling */
     .logo {
-      font-size: 2.8em;
+      font-size: var(--font-size-logo);
       font-weight: 700;
-      margin: 0 auto 24px;
+      margin: 0 auto var(--spacing-lg);
       height: 60px;
       width: 60px;
       border: 2px solid var(--color-text-light);
-      border-radius: 8px;
+      border-radius: var(--border-radius-sm);
       display: flex;
       align-items: center;
       justify-content: center;
       transition: border-color 0.3s ease, color 0.3s ease;
+      /* Using 'outline' for better accessibility on focus for interactive elements */
+      outline: 2px solid transparent;
+      outline-offset: 2px;
     }
 
     body.dark .logo {
@@ -92,30 +132,33 @@
       color: var(--color-text-dark);
     }
 
+    /* Headings & Paragraphs */
     h1 {
-      font-size: 2em;
+      font-size: var(--font-size-h1);
       font-weight: 700;
-      margin-bottom: 8px;
+      margin-bottom: var(--spacing-sm);
     }
 
     p {
-      font-size: 1em;
+      font-size: var(--font-size-base);
       color: var(--color-text-secondary-light);
-      margin-bottom: 32px;
+      margin-bottom: var(--spacing-xl);
     }
 
+    /* Button Group */
     .button-group {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: var(--spacing-md);
       width: 100%;
     }
 
+    /* Generic Button Styles */
     .button {
       padding: 14px 20px;
       border: 1px solid var(--color-border-light);
-      border-radius: 8px;
-      font-size: 1.05em;
+      border-radius: var(--border-radius-sm);
+      font-size: var(--font-size-button);
       font-weight: 500;
       cursor: pointer;
       text-decoration: none;
@@ -126,6 +169,9 @@
       color: var(--color-text-light);
       transition: all 0.2s ease;
       box-shadow: var(--shadow-button-light);
+      /* Ensure focus state is visible */
+      outline: 2px solid transparent;
+      outline-offset: 2px;
     }
 
     .button:hover {
@@ -134,6 +180,11 @@
       box-shadow: var(--shadow-button-hover-light);
     }
 
+    .button:focus-visible {
+      outline-color: var(--color-accent-blue);
+    }
+
+    /* Primary Button Styles */
     .button.primary {
       background-color: var(--color-accent-blue);
       color: white;
@@ -144,24 +195,24 @@
     .button.primary:hover {
       background-color: var(--color-accent-blue-hover);
       border-color: var(--color-accent-blue-hover);
-      box-shadow: none;
     }
 
+    /* Dark Mode Button Overrides */
     body.dark .button {
-      background-color: #252525;
+      background-color: var(--color-button-dark);
       color: var(--color-text-dark);
       border-color: var(--color-border-dark);
       box-shadow: var(--shadow-button-dark);
     }
 
     body.dark .button:hover {
-      background-color: #333;
+      background-color: var(--color-button-dark-hover);
       border-color: var(--color-border-hover-dark);
       box-shadow: var(--shadow-button-hover-dark);
     }
 
     body.dark .button.primary {
-      background-color: var(--color-accent-blue);
+      background-color: var(--color-accent-blue); /* Primary remains vibrant */
       color: white;
       border-color: var(--color-accent-blue);
     }
@@ -171,45 +222,57 @@
       border-color: var(--color-accent-blue-hover);
     }
 
-    /* Theme toggle button */
+    /* Theme Toggle Button */
     .theme-toggle {
       position: absolute;
-      top: 20px;
-      right: 20px;
+      top: var(--spacing-lg);
+      right: var(--spacing-lg);
       background: none;
       border: none;
       cursor: pointer;
-      padding: 8px;
+      padding: var(--spacing-sm);
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       transition: background-color 0.3s ease, color 0.3s ease;
       z-index: 10;
-      line-height: 1;
+      line-height: 1; /* Prevents extra space around SVG */
+      outline: 2px solid transparent;
+      outline-offset: 2px;
     }
 
     .theme-toggle:hover {
       background-color: rgba(0, 0, 0, 0.05);
     }
 
-    /* Fix: Sun icon is for light mode, Moon icon for dark mode */
+    .theme-toggle:focus-visible {
+      outline-color: var(--color-accent-blue);
+    }
+
+    /* Icon Sizing for Theme Toggle */
+    .theme-toggle svg {
+      width: 24px; /* Consistent icon size */
+      height: 24px;
+    }
+
+    /* Sun/Moon Icon Visibility */
     .theme-toggle .sun-icon {
-      color: var(--color-text-light); /* Sun icon should be dark in light mode */
-      display: block; /* Default visible in light mode */
+      color: var(--color-text-light);
+      display: block;
     }
 
     .theme-toggle .moon-icon {
-      color: var(--color-text-dark); /* Moon icon should be light in dark mode */
-      display: none; /* Default hidden in light mode */
+      color: var(--color-text-dark);
+      display: none;
     }
 
     body.dark .theme-toggle .sun-icon {
-      display: none; /* Hide sun in dark mode */
+      display: none;
     }
 
     body.dark .theme-toggle .moon-icon {
-      display: block; /* Show moon in dark mode */
+      display: block;
     }
 
     /* Hover state for theme toggle in dark mode */
@@ -222,89 +285,98 @@
     @media (min-width: 768px) {
       .container {
         max-width: 480px;
-        padding: 48px;
-        border-radius: 16px;
+        padding: var(--spacing-xxl);
+        border-radius: var(--border-radius-lg);
       }
 
       .logo {
-        font-size: 3.5em;
+        font-size: var(--font-size-logo-desktop);
         height: 70px;
         width: 70px;
-        margin-bottom: 32px;
+        margin-bottom: var(--spacing-xl);
       }
 
       h1 {
-        font-size: 2.5em;
+        font-size: var(--font-size-h1-desktop);
       }
 
       p {
-        font-size: 1.1em;
+        font-size: 1.1em; /* Using relative unit for text */
       }
 
       .button-group {
         flex-direction: row;
         justify-content: center;
-        gap: 16px;
+        gap: var(--border-radius-lg); /* Consistent with other spacing */
       }
 
       .button {
         flex-grow: 1;
         max-width: 200px;
         padding: 16px 25px;
-        font-size: 1.15em;
+        font-size: var(--font-size-button-desktop);
       }
     }
   </style>
 </head>
 <body>
-  <button class="theme-toggle" id="themeToggle" title="Toggle Theme">
-    <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2">
-      <circle cx="12" cy="12" r="5"/>
-      <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
-    </svg>
-    <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M21 12.79A9 9 0 0 1 11.21 3 7 7 0 1 0 21 12.79z"/>
-    </svg>
-  </button>
+  <header>
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme, current theme is light">
+      <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2">
+        <title>Sun icon</title>
+        <circle cx="12" cy="12" r="5"/>
+        <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+      </svg>
+      <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+        <title>Moon icon</title>
+        <path d="M21 12.79A9 9 0 0 1 11.21 3 7 7 0 1 0 21 12.79z"/>
+      </svg>
+    </button>
+  </header>
 
-  <div class="container">
-    <div class="logo" aria-label="UniNotes Logo">
+  <main class="container">
+    <div class="logo" role="img" aria-label="Notes-U Logo">
       <span>U</span>
     </div>
     <h1>Accessible notes.</h1>
     <p>A simple platform for students to share and access academic notes.</p>
-    <div class="button-group">
+    <nav class="button-group">
       <a href="login.html" class="button primary">Log In</a>
       <a href="signup.html" class="button">Sign Up</a>
-    </div>
-  </div>
+    </nav>
+  </main>
 
   <script>
     const body = document.body;
-    const toggleBtn = document.getElementById('themeToggle');
+    const themeToggleBtn = document.getElementById('themeToggle');
 
-    // Function to set the theme based on a boolean (isDark)
+    /**
+     * Sets the theme of the page and stores it in localStorage.
+     * @param {boolean} isDark - True for dark mode, false for light mode.
+     */
     function setTheme(isDark) {
       body.classList.toggle('dark', isDark);
       localStorage.setItem('theme', isDark ? 'dark' : 'light');
-      // Update aria-label for accessibility
-      toggleBtn.setAttribute('aria-label', isDark ? 'Switch to light mode' : 'Switch to dark mode');
+      // Update aria-label for screen readers to announce the current theme
+      themeToggleBtn.setAttribute('aria-label', `Switch to ${isDark ? 'light' : 'dark'} mode`);
     }
 
-    // Initialize theme on page load
+    /**
+     * Initializes the theme on page load based on localStorage or system preference.
+     */
     function initTheme() {
       const storedTheme = localStorage.getItem("theme");
       const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
 
       // Determine the initial theme:
-      // 1. If a theme is stored in localStorage, use that.
+      // 1. If a theme is explicitly stored in localStorage, use that.
       // 2. Otherwise, use the user's system preference.
       const isDark = storedTheme === "dark" || (storedTheme === null && prefersDark);
       setTheme(isDark);
     }
 
-    // Add event listener for the theme toggle button
-    toggleBtn.addEventListener('click', () => {
+    // Add event listener for the theme toggle button click
+    themeToggleBtn.addEventListener('click', () => {
       const isDark = body.classList.contains('dark');
       setTheme(!isDark); // Toggle the theme
     });
@@ -313,11 +385,12 @@
     window.addEventListener('DOMContentLoaded', initTheme);
 
     // Listen for changes in system color scheme preference
+    // This will update the theme automatically if the user changes their system preference
+    // and they haven't explicitly set a theme via the toggle button (i.e., localStorage is null).
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
-        // Only update theme if no specific theme is stored in localStorage
-        if (localStorage.getItem("theme") === null) {
-            setTheme(event.matches);
-        }
+      if (localStorage.getItem("theme") === null) {
+        setTheme(event.matches);
+      }
     });
   </script>
 </body>
