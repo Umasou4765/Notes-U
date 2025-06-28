@@ -1,4 +1,12 @@
-GITHUB_CLIENT_ID=Ov23liequoOA8QGMvJGT
-GITHUB_CLIENT_SECRET=288d524be31e7b0a92811e6414a604d51a8f0bf1
-SESSION_SECRET=this-is-a-secret
-CALLBACK_URL=http://localhost:3000/auth/github/callback
+# GitHub OAuth credentials
+GITHUB_CLIENT_ID="Ov23liequoOA8QGMvJGT"
+GITHUB_CLIENT_SECRET="288d524be31e7b0a92811e6414a604d51a8f0bf1"
+
+# OAuth callback URL
+CALLBACK_URL="http://localhost:3000/auth/github/callback"
+
+# Secret for session management
+SESSION_SECRET="4d6e9f2a8c1b7e0d5f3c8a9b0e1f7d2c3a6b5c8d9e0f1a4b5c6d7e8f9a0b1c2d"
+
+# Port for the Node.js server
+PORT=3000
