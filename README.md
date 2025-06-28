@@ -55,4 +55,7 @@ Notes-U is built using modern web tools to ensure it stays fast, simple, and eas
 
 ## 🙌 Contribution
 
-Notes-U is an **open-source side project**, and contributions are always welcome. If you’re a student, developer, or designer who wants to help improve it — whether by tweaking the UI, fixing bugs, or building out features — your effort is appreciated. Let's build something useful together, one step at a time.
+This project is mainly built for students who are currently using it together.  
+If you'd like to improve the platform — whether it's fixing small issues, adjusting the layout, or uploading useful notes — feel free to contribute.
+
+Everyone’s small effort can make the experience smoother and more helpful for all of us. No need to be perfect — just helping out in any way you can is more than enough.
