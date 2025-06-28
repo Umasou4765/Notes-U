@@ -86,28 +86,10 @@ Mostly built as a side project for:
 
 ---
 
-## 📂 How to Use / Try It
-
-1. Clone the repo:
-   ```bash
-   git clone https://github.com/Umasou4765/Notes-U.git
-   cd Notes-U
-
-2. Open index.html in your browser.
-
-
-3. That’s it — explore the layout!
-
-
-
-
----
-
 🙌 Contributions?
 
 If you're in our class and feel like adding features or fixing bugs — go for it!
 Fork, PR, or just drop ideas in chat.
-Even uploading notes is already a big help.
 
 
 ---
