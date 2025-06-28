@@ -277,12 +277,6 @@
             </div>
 
             <div class="notion-input-group">
-                <label for="courseCode" class="notion-label">Course Code</label>
-                <input type="text" id="courseCode" class="notion-input" placeholder="e.g., CSC101" required aria-describedby="courseCodeError">
-                <p id="courseCodeError" class="error-message">Course code is required.</p>
-            </div>
-
-            <div class="notion-input-group">
                 <label for="lectureName" class="notion-label">Lecture/Topic Name</label>
                 <input type="text" id="lectureName" class="notion-input" placeholder="e.g., Data Structures and Algorithms" aria-describedby="lectureNameError">
                 <p id="lectureNameError" class="error-message">Lecture/Topic name is required.</p>
@@ -339,46 +333,48 @@
         // Theme Toggle Logic
         const themeToggleBtn = document.getElementById('themeToggleBtn');
         const themeIcon = document.getElementById('themeIcon');
-        const currentTheme = localStorage.getItem('theme');
-
-        if (currentTheme) {
-            document.body.classList.add(currentTheme);
-            updateThemeIcon(currentTheme);
-        } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            document.body.classList.add('dark');
-            localStorage.setItem('theme', 'dark');
-            updateThemeIcon('dark');
-        } else {
-            document.body.classList.add('light');
-            localStorage.setItem('theme', 'light');
-            updateThemeIcon('light');
+        
+        // Function to set theme
+        function setTheme(theme) {
+            document.body.classList.remove('light', 'dark'); // Remove existing themes
+            document.body.classList.add(theme); // Add new theme
+            localStorage.setItem('theme', theme); // Store preference
+            updateThemeIcon(theme); // Update icon
         }
 
-        themeToggleBtn.addEventListener('click', () => {
-            if (document.body.classList.contains('dark')) {
-                document.body.classList.remove('dark');
-                document.body.classList.add('light');
-                localStorage.setItem('theme', 'light');
-                updateThemeIcon('light');
-            } else {
-                document.body.classList.remove('light');
-                document.body.classList.add('dark');
-                localStorage.setItem('theme', 'dark');
-                updateThemeIcon('dark');
-            }
-        });
-
+        // Function to update SVG icon based on theme
         function updateThemeIcon(theme) {
             if (theme === 'dark') {
                 themeIcon.innerHTML = `
                     <path d="M9.5 2.25c-3.9 0-7.053 3.098-7.053 6.913 0 3.567 2.443 6.643 5.753 7.556.76.216 1.348-.372 1.348-1.139V15c0-1.393.268-2.75-.714-3.943-.75-.924-2.228-2.042-3.539-1.107-.487.354-.735.632-.735.632l-.004.004-.007.005-.02.012-.03.018-.035.02-.04.024-.047.028a15.061 15.061 0 00-.733.456l-.048.03c-.053.03-.099.063-.146.096-.06.04-.12.083-.178.127a13.345 13.345 0 00-.796.657L2 14.5V17a1 1 0 001 1h4.156A7.954 7.954 0 0012.25 20.5c3.9 0 7.053-3.098 7.053-6.913 0-3.567-2.443-6.643-5.753-7.556-.76-.216-1.348.372-1.348 1.139V9c0 1.393-.268 2.75.714 3.943.75.924 2.228 2.042 3.539 1.107.487-.354.735-.632.735-.632l.004-.004.007-.005.02-.012.03-.018.035-.02.04-.024.047-.028a15.061 15.061 0 00.733-.456l.048-.03c.053-.03.099-.063.146-.096.06-.04.12-.083.178-.127a13.345 13.345 0 00.796-.657L22 9.5V7a1 1 0 00-1-1h-4.156A7.954 7.954 0 0011.75 3.5a7.953 7.953 0 00-2.25-1.25z"/>
-                `;
+                `; // Moon icon
             } else {
                 themeIcon.innerHTML = `
                     <path d="M12 3a9 9 0 109 9c0-.46-.03-.92-.1-1.37a.75.75 0 01.12-.22c.07-.15.11-.32.11-.49V10.5h-.01c-.1-.7-.25-1.39-.44-2.06a.75.75 0 01.1-.38c.1-.14.23-.27.38-.38l.16-.1a9.006 9.006 0 00-.77-6.27l-.15-.14zm-1.5 8.25a.75.75 0 011.5 0v3a.75.75 0 01-1.5 0v-3zM10.5 7a.75.75 0 011.5 0v1.5a.75.75 0 01-1.5 0V7zM10.5 16.5a.75.75 0 011.5 0V18a.75.75 0 01-1.5 0v-1.5z"/>
-                `;
+                `; // Sun icon
             }
         }
+
+        // Initialize theme based on localStorage or system preference
+        document.addEventListener('DOMContentLoaded', () => {
+            const storedTheme = localStorage.getItem('theme');
+            if (storedTheme) {
+                setTheme(storedTheme);
+            } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                setTheme('dark'); // System prefers dark
+            } else {
+                setTheme('light'); // Default to light
+            }
+        });
+
+        // Toggle theme on button click
+        themeToggleBtn.addEventListener('click', () => {
+            if (document.body.classList.contains('dark')) {
+                setTheme('light');
+            } else {
+                setTheme('dark');
+            }
+        });
 
         // Form Validation and File Upload Logic
         const form = document.getElementById('uploadForm');
@@ -390,7 +386,6 @@
 
         const fields = [
             { id: 'courseName', message: 'Course name is required.', validate: val => val.trim() !== '' },
-            { id: 'courseCode', message: 'Course code is required.', validate: val => val.trim() !== '' },
             { id: 'lectureName', message: 'Lecture/Topic name is required.', validate: val => val.trim() !== '' },
             { id: 'academicYear', message: 'Please enter a valid academic year.', validate: val => {
                 const year = parseInt(val);
@@ -458,4 +453,16 @@
                 fileNameSpan.textContent = file.name;
                 fileInfo.style.display = 'flex';
             } else {
-                fileNameSpan.textContent
+                fileNameSpan.textContent = '';
+                fileInfo.style.display = 'none';
+            }
+            validateForm(); // Re-validate form after file selection
+        });
+
+        fileUploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            fileUploadArea.classList.add('dragover');
+        });
+
+        fileUploadArea.addEventListener('dragleave', () => {
+            fileUploa
