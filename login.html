@@ -61,68 +61,7 @@
             transition: background-color 0.3s ease, color 0.3s ease;
             padding: 20px;
         }
-        
-    <!-- ... -->
-<head>
-    <!-- ... your meta and style ... -->
-    <style>
-        /* ... all your CSS ... */
-    </style>
-</head>
-<body>
-    <!-- ... your HTML ... -->
 
-    <!-- Place the JS script here, at the end of body -->
-    <script>
-        const themeToggleButton = document.getElementById("theme-toggle");
-        const sunIcon = themeToggleButton.querySelector(".sun-icon");
-        const moonIcon = themeToggleButton.querySelector(".moon-icon");
-
-        function setTheme(isDark) {
-            if (isDark) {
-                document.body.classList.add("dark");
-                sunIcon.style.display = "block";
-                moonIcon.style.display = "none";
-            } else {
-                document.body.classList.remove("dark");
-                sunIcon.style.display = "none";
-                moonIcon.style.display = "block";
-            }
-        }
-
-        function toggleTheme() {
-            const isDark = document.body.classList.toggle("dark");
-            localStorage.setItem("theme", isDark ? "dark" : "light");
-            setTheme(isDark);
-        }
-
-        window.addEventListener("DOMContentLoaded", () => {
-            const storedTheme = localStorage.getItem("theme");
-            if (storedTheme === "dark") {
-                setTheme(true);
-            } else if (storedTheme === "light") {
-                setTheme(false);
-            } else {
-                if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                    setTheme(true);
-                } else {
-                    setTheme(false);
-                }
-            }
-        });
-
-        themeToggleButton.addEventListener("click", toggleTheme);
-
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
-            if (!localStorage.getItem("theme")) {
-                setTheme(event.matches);
-            }
-        });
-    </script>
-    <script src="app.js"></script>
-</body>
-<!-- ... -->
-    
         /* Dark Mode application */
         body.dark {
             background-color: var(--color-bg-dark);
