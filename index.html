@@ -4,10 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <meta name="color-scheme" content="light dark" />
-  <title>Notes-U - Log In</title>
+  <title>Login - Notes-U</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
-    /* CSS Variables for theming */
+    /* CSS Variables for theming (Copied from optimized index.html) */
     :root {
       /* Accent Colors */
       --color-accent-blue: #007bff;
@@ -18,8 +18,9 @@
       --color-text-dark: rgba(255, 255, 255, 0.9);
       --color-text-secondary-light: #666;
       --color-text-secondary-dark: rgba(255, 255, 255, 0.6);
-      --color-link-light: #007bff;
-      --color-link-dark: #6cb6ff;
+      --color-text-divider-light: #999; /* For 'Or' text */
+      --color-text-divider-dark: #bbb; /* For 'Or' text in dark mode */
+
 
       /* Background Colors */
       --color-bg-light: #f8f8f8;
@@ -36,9 +37,6 @@
       --color-border-dark: rgba(255, 255, 255, 0.1);
       --color-border-hover-light: rgba(55, 53, 47, 0.2);
       --color-border-hover-dark: rgba(255, 255, 255, 0.2);
-      --color-divider-light: #ddd;
-      --color-divider-dark: #444;
-
 
       /* Shadows */
       --shadow-light: 0 6px 20px rgba(0, 0, 0, 0.05);
@@ -54,6 +52,7 @@
       --spacing-lg: 24px;
       --spacing-xl: 32px;
       --spacing-xxl: 48px;
+      --spacing-xxxl: 64px; /* Added for larger margins if needed */
 
       /* Border Radii */
       --border-radius-sm: 8px;
@@ -68,7 +67,7 @@
       --font-size-logo-desktop: 3.5em;
       --font-size-button: 1.05em;
       --font-size-button-desktop: 1.15em;
-      --font-size-small: 0.9em;
+      --font-size-small: 0.9em; /* For "Or" and "Don't have an account" text */
     }
 
     /* Base Styles */
@@ -97,19 +96,15 @@
       color: var(--color-text-secondary-dark);
     }
 
-    body.dark a {
-      color: var(--color-link-dark);
-    }
-
-    /* Main Container */
+    /* Main Container (Login Box) */
     .container {
       text-align: center;
-      padding: var(--spacing-xl);
-      max-width: 420px;
+      padding: var(--spacing-xl); /* Matches index.html */
+      max-width: 420px; /* Matches index.html */
       width: 100%;
       background-color: var(--color-card-light);
-      border-radius: var(--border-radius-md);
-      box-shadow: var(--shadow-light);
+      border-radius: var(--border-radius-md); /* Matches index.html */
+      box-shadow: var(--shadow-light); /* Matches index.html */
       transition: background-color 0.3s ease, box-shadow 0.3s ease;
       flex-shrink: 0;
     }
@@ -119,15 +114,15 @@
       box-shadow: var(--shadow-dark);
     }
 
-    /* Logo Styling (remains the same) */
+    /* Logo Styling */
     .logo {
-      font-size: var(--font-size-logo);
+      font-size: var(--font-size-logo); /* Matches index.html */
       font-weight: 700;
-      margin: 0 auto var(--spacing-lg);
+      margin: 0 auto var(--spacing-lg); /* Matches index.html */
       height: 60px;
       width: 60px;
       border: 2px solid var(--color-text-light);
-      border-radius: var(--border-radius-sm);
+      border-radius: var(--border-radius-sm); /* Matches index.html */
       display: flex;
       align-items: center;
       justify-content: center;
@@ -143,18 +138,18 @@
 
     /* Headings & Paragraphs */
     h1 {
-      font-size: var(--font-size-h1);
+      font-size: var(--font-size-h1); /* Matches index.html */
       font-weight: 700;
-      margin-bottom: var(--spacing-sm); /* Adjusted for tighter spacing with subtitle */
+      margin-bottom: var(--spacing-sm);
     }
 
-    .subtitle {
-        font-size: var(--font-size-base);
-        color: var(--color-text-secondary-light);
-        margin-bottom: var(--spacing-xl);
+    p {
+      font-size: var(--font-size-base); /* Matches index.html */
+      color: var(--color-text-secondary-light);
+      margin-bottom: var(--spacing-xl); /* Matches index.html */
     }
 
-    /* Buttons */
+    /* Button Styling (Inherited from index.html) */
     .button {
       padding: 14px 20px;
       border: 1px solid var(--color-border-light);
@@ -184,28 +179,15 @@
       outline-color: var(--color-accent-blue);
     }
 
-    /* GitHub Button Specific Styles */
+    /* GitHub Button specific styling */
     .button.github {
         gap: var(--spacing-sm); /* Space between icon and text */
     }
 
     .button.github svg {
-        width: 20px;
+        width: 20px; /* Adjust GitHub icon size */
         height: 20px;
         fill: currentColor; /* Inherit color from button text */
-    }
-
-    /* Primary Button is not needed for this layout, but keeping for consistency if other pages use it */
-    .button.primary {
-      background-color: var(--color-accent-blue);
-      color: white;
-      border-color: var(--color-accent-blue);
-      box-shadow: none;
-    }
-
-    .button.primary:hover {
-      background-color: var(--color-accent-blue-hover);
-      border-color: var(--color-accent-blue-hover);
     }
 
     /* Dark Mode Button Overrides */
@@ -222,91 +204,71 @@
       box-shadow: var(--shadow-button-hover-dark);
     }
 
-    body.dark .button.primary {
-      background-color: var(--color-accent-blue);
-      color: white;
-      border-color: var(--color-accent-blue);
-    }
-
-    body.dark .button.primary:hover {
-      background-color: var(--color-accent-blue-hover);
-      border-color: var(--color-accent-blue-hover);
-    }
-
-    /* "Or" Divider */
-    .or-divider {
+    /* 'Or' Divider Styles */
+    .divider {
       display: flex;
       align-items: center;
       text-align: center;
-      color: var(--color-text-secondary-light);
+      margin: var(--spacing-xl) 0; /* Adjust vertical spacing for the divider */
+      color: var(--color-text-divider-light);
       font-size: var(--font-size-small);
-      margin: var(--spacing-md) 0; /* Vertical space for the divider */
-      user-select: none; /* Prevent text selection */
     }
 
-    body.dark .or-divider {
-        color: var(--color-text-secondary-dark);
-    }
-
-    .or-divider::before,
-    .or-divider::after {
+    .divider::before,
+    .divider::after {
       content: '';
       flex: 1;
-      border-bottom: 1px solid var(--color-divider-light);
+      border-bottom: 1px solid var(--color-border-light);
     }
 
-    body.dark .or-divider::before,
-    body.dark .or-divider::after {
-        border-bottom: 1px solid var(--color-divider-dark);
+    .divider:not(:empty)::before {
+      margin-right: .25em;
     }
 
-    .or-divider:not(:empty)::before {
-      margin-right: .5em;
+    .divider:not(:empty)::after {
+      margin-left: .25em;
     }
 
-    .or-divider:not(:empty)::after {
-      margin-left: .5em;
+    body.dark .divider {
+        color: var(--color-text-divider-dark);
     }
 
-    /* Sign Up Link */
-    .signup-link {
+    body.dark .divider::before,
+    body.dark .divider::after {
+        border-color: var(--color-border-dark);
+    }
+
+
+    /* Secondary Link (e.g., "Create one now") */
+    .secondary-link {
         font-size: var(--font-size-small);
-        margin-top: var(--spacing-lg); /* Space above the link */
         color: var(--color-text-secondary-light);
         text-decoration: none;
+        margin-top: var(--spacing-md); /* Space above the link */
+        display: inline-block; /* Allows margin-top */
         transition: color 0.2s ease;
-        outline: 2px solid transparent; /* For focus state */
+        outline: 2px solid transparent;
         outline-offset: 2px;
     }
 
-    .signup-link a {
-        color: var(--color-link-light);
-        font-weight: 500;
-        text-decoration: none;
-        transition: color 0.2s ease;
+    .secondary-link:hover {
+        color: var(--color-accent-blue);
     }
 
-    .signup-link a:hover,
-    .signup-link a:focus-visible {
-        text-decoration: underline;
-        color: var(--color-accent-blue-hover);
-        outline: none; /* Handled by parent */
+    .secondary-link:focus-visible {
+        outline-color: var(--color-accent-blue);
     }
 
-    body.dark .signup-link {
+    body.dark .secondary-link {
         color: var(--color-text-secondary-dark);
     }
 
-    body.dark .signup-link a {
-        color: var(--color-link-dark);
+    body.dark .secondary-link:hover {
+        color: var(--color-accent-blue);
     }
 
-    body.dark .signup-link a:hover,
-    body.dark .signup-link a:focus-visible {
-        color: #9acaff; /* Lighter hover for dark mode link */
-    }
 
-    /* Theme toggle button (remains the same) */
+    /* Theme Toggle Button (Copied from optimized index.html) */
     .theme-toggle {
       position: absolute;
       top: var(--spacing-lg);
@@ -362,36 +324,36 @@
     }
 
 
-    /* Media Queries for Desktop */
+    /* Media Queries for Desktop (Copied from optimized index.html) */
     @media (min-width: 768px) {
       .container {
-        max-width: 480px;
-        padding: var(--spacing-xxl);
-        border-radius: var(--border-radius-lg);
+        max-width: 480px; /* Matches index.html */
+        padding: var(--spacing-xxl); /* Matches index.html */
+        border-radius: var(--border-radius-lg); /* Matches index.html */
       }
 
       .logo {
-        font-size: var(--font-size-logo-desktop);
+        font-size: var(--font-size-logo-desktop); /* Matches index.html */
         height: 70px;
         width: 70px;
-        margin-bottom: var(--spacing-xl);
+        margin-bottom: var(--spacing-xl); /* Matches index.html */
       }
 
       h1 {
-        font-size: var(--font-size-h1-desktop);
+        font-size: var(--font-size-h1-desktop); /* Matches index.html */
       }
 
-      .subtitle {
-        font-size: 1.1em;
+      p {
+        font-size: 1.1em; /* Matches index.html */
       }
 
-      .button {
-        padding: 16px 25px;
-        font-size: var(--font-size-button-desktop);
-      }
-      /* Ensure GitHub button maintains desktop width */
+      /* In login, the button group has only one main button, so we don't need flex-direction row */
+      /* but we ensure the button itself matches the desktop size from index.html */
       .button.github {
-          max-width: none; /* Allow it to take full width of container */
+        max-width: 300px; /* Allow button to grow, but set a max-width for consistency */
+        margin: 0 auto; /* Center the button on desktop */
+        padding: 16px 25px; /* Matches index.html */
+        font-size: var(--font-size-button-desktop); /* Matches index.html */
       }
     }
   </style>
@@ -416,23 +378,18 @@
       <span>U</span>
     </div>
     <h1>Log In to Note-U</h1>
-    <p class="subtitle">Access your shared academic notes with your GitHub account.</p>
+    <p>Access your shared academic notes with your GitHub account.</p>
 
-    <div class="button-group">
-      <a href="#" class="button github">
+    <a href="#" class="button github">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-            <title>GitHub icon</title>
-            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.082-.745.087-.729.087-.729 1.197.087 1.833 1.22 1.833 1.22 1.065 1.828 2.807 1.303 3.492.997.107-.775.418-1.303.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.399.006 0 .012 0 .018 0 1.02.001 2.046.133 3.004.399 2.292-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.607.8.577 4.766-1.587 8.204-6.085 8.204-11.387C24 5.373 18.627 0 12 0z"/>
+            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.6.111.819-.258.819-.572 0-.281-.01-1.025-.015-2.008-3.337.724-4.042-1.61-4.042-1.61-.545-1.385-1.328-1.756-1.328-1.756-1.08-.738.083-.724.083-.724 1.192.084 1.815 1.226 1.815 1.226 1.058 1.813 2.809 1.29 3.491.984.108-.765.418-1.29.762-1.583-2.665-.304-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.523.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.046.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.873.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222 0 1.606-.015 2.899-.015 3.292 0 .315.216.696.823.571C20.564 22.179 24 17.688 24 12c0-6.627-5.373-12-12-12z"/>
         </svg>
-        <span>Continue with GitHub</span>
-      </a>
-    </div>
+        Continue with GitHub
+    </a>
 
-    <div class="or-divider">Or</div>
+    <div class="divider">Or</div>
 
-    <p class="signup-link">
-      Don't have an account? <a href="signup.html">Create one now</a>
-    </p>
+    <a href="signup.html" class="secondary-link">Don't have an account? Create one now</a>
   </main>
 
   <script>
@@ -460,16 +417,13 @@
       setTheme(isDark);
     }
 
-    // Add event listener for the theme toggle button click
     themeToggleBtn.addEventListener('click', () => {
       const isDark = body.classList.contains('dark');
-      setTheme(!isDark); // Toggle the theme
+      setTheme(!isDark);
     });
 
-    // Ensure theme is initialized when the DOM is fully loaded
     window.addEventListener('DOMContentLoaded', initTheme);
 
-    // Listen for changes in system color scheme preference
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
       if (localStorage.getItem("theme") === null) {
         setTheme(event.matches);
