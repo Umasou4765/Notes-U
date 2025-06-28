@@ -17,10 +17,6 @@ Notes-U is a simple web app for students designed to help university students ea
 
 ---
 
-## 🚀 Live Demo / Screenshot
-[Check out the live demo here!](Your-Vercel-Deployment-URL-Here)
-![Notes-U Screenshot](link-to-screenshot.png) ---
-
 ## 🔧 Tech Stack
 - HTML / Tailwind CSS
 - JavaScript
