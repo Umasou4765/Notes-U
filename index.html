@@ -37,14 +37,13 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      flex-direction: column; /* Allows content and toggle to stack if needed */
-      min-height: 100vh;
+      min-height: 100vh; /* Ensures the body takes at least the full viewport height */
       margin: 0;
       padding: 20px;
       background-color: var(--color-bg-light);
       color: var(--color-text-light);
       transition: background-color 0.3s ease, color 0.3s ease;
-      box-sizing: border-box; /* Include padding in element's total width and height */
+      box-sizing: border-box;
     }
 
     /* Dark mode styles */
@@ -66,6 +65,7 @@
       border-radius: 12px;
       box-shadow: var(--shadow-light);
       transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      flex-shrink: 0; /* Prevent the container from shrinking */
     }
 
     body.dark .container {
@@ -122,14 +122,14 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background-color: var(--color-card-light); /* Buttons inherit card background */
+      background-color: var(--color-card-light);
       color: var(--color-text-light);
       transition: all 0.2s ease;
       box-shadow: var(--shadow-button-light);
     }
 
     .button:hover {
-      background-color: rgba(55, 53, 47, 0.03); /* Subtle hover for light buttons */
+      background-color: rgba(55, 53, 47, 0.03);
       border-color: var(--color-border-hover-light);
       box-shadow: var(--shadow-button-hover-light);
     }
@@ -138,7 +138,7 @@
       background-color: var(--color-accent-blue);
       color: white;
       border-color: var(--color-accent-blue);
-      box-shadow: none; /* Primary button doesn't need external shadow */
+      box-shadow: none;
     }
 
     .button.primary:hover {
@@ -148,7 +148,7 @@
     }
 
     body.dark .button {
-      background-color: #252525; /* Dark background for buttons in dark mode */
+      background-color: #252525;
       color: var(--color-text-dark);
       border-color: var(--color-border-dark);
       box-shadow: var(--shadow-button-dark);
@@ -185,44 +185,36 @@
       align-items: center;
       justify-content: center;
       transition: background-color 0.3s ease, color 0.3s ease;
-      color: var(--color-text-light);
       z-index: 10;
-      line-height: 1; /* Fix vertical alignment */
+      line-height: 1;
     }
 
     .theme-toggle:hover {
       background-color: rgba(0, 0, 0, 0.05);
     }
 
-    body.dark .theme-toggle {
-      color: var(--color-text-dark);
-    }
-
-    body.dark .theme-toggle:hover {
-      background-color: rgba(255, 255, 255, 0.1);
-    }
-
-    .theme-toggle svg {
-      width: 24px;
-      height: 24px;
-      display: block; /* Ensure SVG is always visible */
-    }
-
-    /* Only show one icon based on theme */
+    /* Fix: Sun icon is for light mode, Moon icon for dark mode */
     .theme-toggle .sun-icon {
-      display: block;
+      color: var(--color-text-light); /* Sun icon should be dark in light mode */
+      display: block; /* Default visible in light mode */
     }
 
     .theme-toggle .moon-icon {
-      display: none;
+      color: var(--color-text-dark); /* Moon icon should be light in dark mode */
+      display: none; /* Default hidden in light mode */
     }
 
     body.dark .theme-toggle .sun-icon {
-      display: none;
+      display: none; /* Hide sun in dark mode */
     }
 
     body.dark .theme-toggle .moon-icon {
-      display: block;
+      display: block; /* Show moon in dark mode */
+    }
+
+    /* Hover state for theme toggle in dark mode */
+    body.dark .theme-toggle:hover {
+      background-color: rgba(255, 255, 255, 0.1);
     }
 
 
@@ -250,14 +242,14 @@
       }
 
       .button-group {
-        flex-direction: row; /* Horizontal buttons on desktop */
+        flex-direction: row;
         justify-content: center;
-        gap: 16px; /* Adjust gap for horizontal layout */
+        gap: 16px;
       }
 
       .button {
-        flex-grow: 1; /* Allow buttons to grow */
-        max-width: 200px; /* Max width for individual buttons */
+        flex-grow: 1;
+        max-width: 200px;
         padding: 16px 25px;
         font-size: 1.15em;
       }
