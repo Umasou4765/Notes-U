@@ -2,34 +2,34 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <meta name="color-scheme" content="light dark" />
-  <title>UniNotes</title>
+  <title>Notes-U - Accessible Notes</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --color-light: #333;
-      --color-dark: rgba(255, 255, 255, 0.9);
-      --bg-light: #f8f8f8;
-      --bg-dark: #121212;
-      --container-bg-light: #fff;
-      --container-bg-dark: #1a1a1a;
-      --color-text-p-light: #666;
-      --color-text-p-dark: rgba(255, 255, 255, 0.6);
       --color-accent-blue: #007bff;
       --color-accent-blue-hover: #0056b3;
-      --button-bg-light: white;
-      --button-bg-hover-light: rgba(55, 53, 47, 0.03);
-      --button-border-light: rgba(55, 53, 47, 0.1);
-      --button-border-hover-light: rgba(55, 53, 47, 0.2);
-      --button-shadow-light: rgba(0, 0, 0, 0.05);
-      --button-shadow-hover-light: rgba(0, 0, 0, 0.08);
-      --button-bg-dark: #252525;
-      --button-bg-hover-dark: #333;
-      --button-border-dark: rgba(255, 255, 255, 0.1);
-      --button-border-hover-dark: rgba(255, 255, 255, 0.2);
-      --button-shadow-dark: rgba(255, 255, 255, 0.03);
-      --button-shadow-hover-dark: rgba(255, 255, 255, 0.05);
+      --color-text-light: #333;
+      --color-text-dark: rgba(255, 255, 255, 0.9);
+      --color-text-secondary-light: #666;
+      --color-text-secondary-dark: rgba(255, 255, 255, 0.6);
+      --color-bg-light: #f8f8f8;
+      --color-bg-dark: #121212;
+      --color-card-light: #fff;
+      --color-card-dark: #1a1a1a;
+      --color-border-light: rgba(55, 53, 47, 0.1);
+      --color-border-dark: rgba(255, 255, 255, 0.1);
+      --color-border-hover-light: rgba(55, 53, 47, 0.2);
+      --color-border-hover-dark: rgba(255, 255, 255, 0.2);
+      --color-divider-light: #ddd;
+      --color-divider-dark: #444;
+      --shadow-light: 0 6px 20px rgba(0, 0, 0, 0.05);
+      --shadow-dark: 0 6px 20px rgba(255, 255, 255, 0.02);
+      --shadow-button-light: 0 1px 3px rgba(0, 0, 0, 0.05);
+      --shadow-button-dark: 0 1px 3px rgba(255, 255, 255, 0.03);
+      --shadow-button-hover-light: 0 2px 6px rgba(0, 0, 0, 0.08);
+      --shadow-button-hover-dark: 0 2px 6px rgba(255, 255, 255, 0.05);
     }
 
     body {
@@ -37,13 +37,24 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      flex-direction: column;
+      flex-direction: column; /* Allows content and toggle to stack if needed */
       min-height: 100vh;
       margin: 0;
       padding: 20px;
-      background-color: var(--bg-light);
-      color: var(--color-light);
+      background-color: var(--color-bg-light);
+      color: var(--color-text-light);
       transition: background-color 0.3s ease, color 0.3s ease;
+      box-sizing: border-box; /* Include padding in element's total width and height */
+    }
+
+    /* Dark mode styles */
+    body.dark {
+      background-color: var(--color-bg-dark);
+      color: var(--color-text-dark);
+    }
+
+    body.dark p {
+      color: var(--color-text-secondary-dark);
     }
 
     .container {
@@ -51,10 +62,15 @@
       padding: 32px;
       max-width: 420px;
       width: 100%;
-      background-color: var(--container-bg-light);
+      background-color: var(--color-card-light);
       border-radius: 12px;
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
-      box-sizing: border-box; /* Ensures padding is included in the element's total width and height */
+      box-shadow: var(--shadow-light);
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    body.dark .container {
+      background-color: var(--color-card-dark);
+      box-shadow: var(--shadow-dark);
     }
 
     .logo {
@@ -63,13 +79,17 @@
       margin: 0 auto 24px;
       height: 60px;
       width: 60px;
-      border: 2px solid var(--color-light);
+      border: 2px solid var(--color-text-light);
       border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: var(--color-light);
-      transition: color 0.3s ease, border-color 0.3s ease;
+      transition: border-color 0.3s ease, color 0.3s ease;
+    }
+
+    body.dark .logo {
+      border-color: var(--color-text-dark);
+      color: var(--color-text-dark);
     }
 
     h1 {
@@ -80,100 +100,133 @@
 
     p {
       font-size: 1em;
-      color: var(--color-text-p-light);
+      color: var(--color-text-secondary-light);
       margin-bottom: 32px;
     }
 
-    .auth-button-group {
+    .button-group {
       display: flex;
       flex-direction: column;
       gap: 12px;
       width: 100%;
     }
 
-    .auth-button {
+    .button {
       padding: 14px 20px;
-      border: 1px solid var(--button-border-light);
+      border: 1px solid var(--color-border-light);
       border-radius: 8px;
       font-size: 1.05em;
       font-weight: 500;
       cursor: pointer;
+      text-decoration: none;
       display: flex;
       align-items: center;
       justify-content: center;
-      background-color: var(--button-bg-light);
-      color: var(--color-light);
+      background-color: var(--color-card-light); /* Buttons inherit card background */
+      color: var(--color-text-light);
       transition: all 0.2s ease;
-      box-shadow: 0 1px 3px var(--button-shadow-light);
-      text-decoration: none;
+      box-shadow: var(--shadow-button-light);
     }
 
-    .auth-button:hover {
-      background-color: var(--button-bg-hover-light);
-      border-color: var(--button-border-hover-light);
-      box-shadow: 0 2px 6px var(--button-shadow-hover-light);
+    .button:hover {
+      background-color: rgba(55, 53, 47, 0.03); /* Subtle hover for light buttons */
+      border-color: var(--color-border-hover-light);
+      box-shadow: var(--shadow-button-hover-light);
     }
 
-    /* For specific button styling if needed, though the example implies a single style */
-    .auth-button.login {
+    .button.primary {
       background-color: var(--color-accent-blue);
-      color: #fff;
-      border-color: var(--color-accent-blue); /* Remove this if you want it to be borderless */
-      box-shadow: none; /* Remove this if you want it to have shadow */
+      color: white;
+      border-color: var(--color-accent-blue);
+      box-shadow: none; /* Primary button doesn't need external shadow */
     }
 
-    .auth-button.login:hover {
+    .button.primary:hover {
       background-color: var(--color-accent-blue-hover);
-      border-color: var(--color-accent-blue-hover); /* Remove this if you want it to be borderless */
-      box-shadow: none; /* Remove this if you want it to have shadow */
+      border-color: var(--color-accent-blue-hover);
+      box-shadow: none;
     }
 
-    /* Dark mode support */
-    @media (prefers-color-scheme: dark) {
-      body {
-        background-color: var(--bg-dark);
-        color: var(--color-dark);
-      }
-
-      .container {
-        background-color: var(--container-bg-dark);
-        box-shadow: 0 6px 20px rgba(255, 255, 255, 0.02);
-      }
-
-      .logo {
-        border-color: var(--color-dark);
-        color: var(--color-dark);
-      }
-
-      p {
-        color: var(--color-text-p-dark);
-      }
-
-      .auth-button {
-        background-color: var(--button-bg-dark);
-        color: var(--color-dark);
-        border-color: var(--button-border-dark);
-        box-shadow: 0 1px 3px var(--button-shadow-dark);
-      }
-
-      .auth-button:hover {
-        background-color: var(--button-bg-hover-dark);
-        border-color: var(--button-border-hover-dark);
-        box-shadow: 0 2px 6px var(--button-shadow-hover-dark);
-      }
-
-      .auth-button.login {
-        background-color: var(--color-accent-blue);
-        color: #fff;
-        border-color: var(--color-accent-blue);
-      }
-
-      .auth-button.login:hover {
-        background-color: var(--color-accent-blue-hover);
-        border-color: var(--color-accent-blue-hover);
-      }
+    body.dark .button {
+      background-color: #252525; /* Dark background for buttons in dark mode */
+      color: var(--color-text-dark);
+      border-color: var(--color-border-dark);
+      box-shadow: var(--shadow-button-dark);
     }
 
+    body.dark .button:hover {
+      background-color: #333;
+      border-color: var(--color-border-hover-dark);
+      box-shadow: var(--shadow-button-hover-dark);
+    }
+
+    body.dark .button.primary {
+      background-color: var(--color-accent-blue);
+      color: white;
+      border-color: var(--color-accent-blue);
+    }
+
+    body.dark .button.primary:hover {
+      background-color: var(--color-accent-blue-hover);
+      border-color: var(--color-accent-blue-hover);
+    }
+
+    /* Theme toggle button */
+    .theme-toggle {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.3s ease, color 0.3s ease;
+      color: var(--color-text-light);
+      z-index: 10;
+      line-height: 1; /* Fix vertical alignment */
+    }
+
+    .theme-toggle:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    body.dark .theme-toggle {
+      color: var(--color-text-dark);
+    }
+
+    body.dark .theme-toggle:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .theme-toggle svg {
+      width: 24px;
+      height: 24px;
+      display: block; /* Ensure SVG is always visible */
+    }
+
+    /* Only show one icon based on theme */
+    .theme-toggle .sun-icon {
+      display: block;
+    }
+
+    .theme-toggle .moon-icon {
+      display: none;
+    }
+
+    body.dark .theme-toggle .sun-icon {
+      display: none;
+    }
+
+    body.dark .theme-toggle .moon-icon {
+      display: block;
+    }
+
+
+    /* Media Queries for Desktop */
     @media (min-width: 768px) {
       .container {
         max-width: 480px;
@@ -196,28 +249,84 @@
         font-size: 1.1em;
       }
 
-      .auth-button {
+      .button-group {
+        flex-direction: row; /* Horizontal buttons on desktop */
+        justify-content: center;
+        gap: 16px; /* Adjust gap for horizontal layout */
+      }
+
+      .button {
+        flex-grow: 1; /* Allow buttons to grow */
+        max-width: 200px; /* Max width for individual buttons */
         padding: 16px 25px;
         font-size: 1.15em;
-      }
-      
-      .auth-button-group {
-        flex-direction: row;
-        justify-content: center;
-        gap: 20px;
       }
     }
   </style>
 </head>
 <body>
+  <button class="theme-toggle" id="themeToggle" title="Toggle Theme">
+    <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2">
+      <circle cx="12" cy="12" r="5"/>
+      <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+    </svg>
+    <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M21 12.79A9 9 0 0 1 11.21 3 7 7 0 1 0 21 12.79z"/>
+    </svg>
+  </button>
+
   <div class="container">
-    <div class="logo" aria-label="UniNotes Logo"><span>U</span></div>
+    <div class="logo" aria-label="UniNotes Logo">
+      <span>U</span>
+    </div>
     <h1>Accessible notes.</h1>
     <p>A simple platform for students to share and access academic notes.</p>
-    <div class="auth-button-group">
-      <a href="login.html" class="auth-button login">Log In</a>
-      <a href="signup.html" class="auth-button">Sign Up</a>
+    <div class="button-group">
+      <a href="login.html" class="button primary">Log In</a>
+      <a href="signup.html" class="button">Sign Up</a>
     </div>
   </div>
+
+  <script>
+    const body = document.body;
+    const toggleBtn = document.getElementById('themeToggle');
+
+    // Function to set the theme based on a boolean (isDark)
+    function setTheme(isDark) {
+      body.classList.toggle('dark', isDark);
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      // Update aria-label for accessibility
+      toggleBtn.setAttribute('aria-label', isDark ? 'Switch to light mode' : 'Switch to dark mode');
+    }
+
+    // Initialize theme on page load
+    function initTheme() {
+      const storedTheme = localStorage.getItem("theme");
+      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+      // Determine the initial theme:
+      // 1. If a theme is stored in localStorage, use that.
+      // 2. Otherwise, use the user's system preference.
+      const isDark = storedTheme === "dark" || (storedTheme === null && prefersDark);
+      setTheme(isDark);
+    }
+
+    // Add event listener for the theme toggle button
+    toggleBtn.addEventListener('click', () => {
+      const isDark = body.classList.contains('dark');
+      setTheme(!isDark); // Toggle the theme
+    });
+
+    // Ensure theme is initialized when the DOM is fully loaded
+    window.addEventListener('DOMContentLoaded', initTheme);
+
+    // Listen for changes in system color scheme preference
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+        // Only update theme if no specific theme is stored in localStorage
+        if (localStorage.getItem("theme") === null) {
+            setTheme(event.matches);
+        }
+    });
+  </script>
 </body>
 </html>
