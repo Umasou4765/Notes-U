@@ -1,0 +1,4 @@
+GITHUB_CLIENT_ID=Ov23liequoOA8QGMvJGT
+GITHUB_CLIENT_SECRET=288d524be31e7b0a92811e6414a604d51a8f0bf1
+SESSION_SECRET=this-is-a-secret
+CALLBACK_URL=http://localhost:3000/auth/github/callback
