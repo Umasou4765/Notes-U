@@ -66,7 +66,7 @@ We encourage you to explore the codebase and help us bring the full vision of No
 
 ## 🙌 Contribution
 
-Notes-U is an **open-source initiative**. We believe in collaborative development and invite students, developers, and designers to contribute, suggest improvements, and help maintain this platform. Whether it's enhancing the UI, implementing new features, or fixing bugs, your contributions are highly valued. Please refer to our (soon to be added) `CONTRIBUTING.md` for detailed guidelines.
+Notes-U is an **open-source initiative**. We believe in collaborative development and invite students, developers, and designers to contribute, suggest improvements, and help maintain this platform. Whether it's enhancing the UI, implementing new features, or fixing bugs, your contributions are highly valued. 
 
 ---
 
