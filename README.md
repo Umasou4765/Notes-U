@@ -1,78 +1,81 @@
-# Notes-U: Your Collaborative University Notes Hub
+# Notes-U: A Collaborative Student Notes Platform
 
 ---
 
-## 📘 Empowering Student Collaboration Through Shared Notes
+## 📘 Project Overview
 
-Notes-U is a simple, intuitive web application designed to help university students easily **upload, categorize, and share academic notes and resources** across different semesters and subjects. Say goodbye to scattered notes and hello to a centralized, searchable platform that fosters a collaborative learning environment.
-
-### ✨ Key Features
-
-* **Seamless GitHub Login (OAuth):** Get started quickly and securely using your existing GitHub account.
-* **Effortless Upload & Download:** Easily share your study materials and access notes from your peers.
-* **Organized by Year, Semester, & Subject:** Find exactly what you need, when you need it, with a clear and logical categorization system.
-* **Searchable File List:** Quickly locate specific notes with a built-in search functionality.
-* **Clean, Responsive User Interface:** Enjoy a modern and easy-to-navigate experience on any device.
-
-### 🔧 Tech Stack Under the Hood
-
-Notes-U is built with a modern and robust set of technologies:
-
-* **Frontend:** HTML, Tailwind CSS, JavaScript (for a dynamic and responsive user experience)
-* **Backend & Authentication:** Firebase (Auth for secure user management, Storage for reliable file handling)
-* **Deployment:** Vercel (for fast and efficient deployment)
+Notes-U is envisioned as a simple, intuitive web application designed to facilitate **student note-sharing**. It aims to provide a centralized platform where students can easily upload, categorize, and access academic resources and notes across various semesters and subjects.
 
 ---
 
-### 🚀 Getting Started (for Developers)
+## ✨ Current Features (UI Prototype)
 
-Want to run Notes-U locally or contribute to the project? Follow these simple steps:
+While under active development, the current public version of Notes-U showcases the **user interface and design vision** for the platform. Key UI features include:
 
-1.  **Clone the Repository:**
+* **Responsive and Clean User Interface:** A modern and intuitive design optimized for various devices.
+* **Navigation Structure:** UI elements are in place to support features like:
+    * **GitHub Login (OAuth) Integration:** Placeholder for secure user authentication.
+    * **Notes Organization:** Structured layouts for categorizing content by year, semester, and subject.
+    * **Searchable File List:** Interface elements designed for easy discovery of notes.
+
+---
+
+## 🚀 Development Roadmap (Future Plans)
+
+Our goal is to evolve Notes-U into a fully functional platform. Planned features include:
+
+* **Robust User Authentication:** Full implementation of GitHub OAuth for secure login.
+* **Secure File Management:**
+    * **Upload & Download Functionality:** Enable seamless sharing and retrieval of notes.
+    * **Firebase Storage Integration:** Secure and scalable storage for all uploaded files.
+* **Enhanced Content Discovery:**
+    * **Full-Text Search:** Powerful search capabilities within note content.
+    * **Subject Tagging:** Improve categorization and search precision with dynamic tags.
+* **User Roles and Permissions:** Introduce roles like moderators and dedicated uploaders for better content management.
+* **In-Browser File Previews:** Allow users to view notes directly without downloading.
+
+---
+
+## 🔧 Tech Stack (For Full Implementation)
+
+The project is built with a focus on modern web technologies to ensure scalability and ease of development:
+
+* **Frontend:** HTML, Tailwind CSS, JavaScript
+* **Backend/Services:** Firebase (Authentication and Storage)
+* **Deployment:** Vercel
+
+---
+
+## 📦 Getting Started (For Contributors)
+
+This project is open-source and welcomes contributions. To set up the development environment for the UI:
+
+1.  **Clone the repository:**
     ```bash
     git clone [https://github.com/Umasou4765/Notes-U.git](https://github.com/Umasou4765/Notes-U.git)
+    ```
+2.  **Navigate to the project directory:**
+    ```bash
     cd Notes-U
     ```
-2.  **Set up Firebase:**
-    * Create a new project on [Firebase Console](https://console.firebase.google.com/).
-    * Enable **Firebase Authentication** (GitHub provider) and **Cloud Storage**.
-    * Copy your Firebase configuration details and add them to your `index.html` (or a separate config file if you prefer, then link it).
-        *(Note: For security, consider using environment variables for sensitive keys in a real-world application, though for a client-side only app, this might be less critical if public keys are used.)*
-3.  **Open `index.html`:**
-    Simply open the `index.html` file in your web browser to see the application running.
+3.  **Open `index.html`** in your web browser to view the UI.
+
+We encourage you to explore the codebase and help us bring the full vision of Notes-U to life!
 
 ---
 
-### 🧠 Future Enhancements
+## 🙌 Contribution
 
-We're constantly looking to improve Notes-U! Here are some exciting features planned for the future:
-
-* **User Roles:** Implement moderator and uploader roles for better content management.
-* **Full-Text Search:** Allow users to search *within* the content of the notes, not just by file names.
-* **Subject Tagging:** Enhance categorization with custom subject tags for finer organization.
-* **File Previews:** Provide instant previews of documents directly in the browser before downloading.
+Notes-U is an **open-source initiative**. We believe in collaborative development and invite students, developers, and designers to contribute, suggest improvements, and help maintain this platform. Whether it's enhancing the UI, implementing new features, or fixing bugs, your contributions are highly valued. Please refer to our (soon to be added) `CONTRIBUTING.md` for detailed guidelines.
 
 ---
 
-### 🙌 Contribution
+## 🌐 Live Demo (UI Only)
 
-Notes-U is an **open-source project** and we welcome contributions from students and developers alike! Whether it's bug fixes, new features, or UI/UX improvements, your help is valuable.
-
-* Fork the repository.
-* Create your feature branch (`git checkout -b feature/AmazingFeature`).
-* Commit your changes (`git commit -m 'Add some AmazingFeature'`).
-* Push to the branch (`git push origin feature/AmazingFeature`).
-* Open a Pull Request.
+Explore the current user interface: [https://umasou4765.github.io/Notes-U/](https://umasou4765.github.io/Notes-U/)
 
 ---
 
-### 🔗 Project Links
+## 🔗 GitHub Repository
 
-* **GitHub Repository:** [https://github.com/Umasou4765/Notes-U](https://github.com/Umasou4765/Notes-U)
-* **Live Demo:** [https://umasou4765.github.io/Notes-U/](https://umasou4765.github.io/Notes-U/) *(Currently without a login feature, but showcasing the UI)*
-
----
-
-### 📄 License
-
-This project is licensed under the MIT License - see the `LICENSE` file for details.
+Access the source code and contribute: [https://github.com/Umasou4765/Notes-U](https://github.com/Umasou4765/Notes-U)
