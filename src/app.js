@@ -3,36 +3,31 @@
 // --- Theme Toggling Module ---
 const themeModule = (() => {
     const themeToggleButton = document.getElementById("theme-toggle");
-    const sunIcon = themeToggleButton ? themeToggleButton.querySelector(".sun-icon") : null;
-    const moonIcon = themeToggleButton ? themeToggleButton.querySelector(".moon-icon") : null;
+    // No need to get sunIcon and moonIcon directly as CSS handles their visibility
 
     const setTheme = (isDark) => {
         if (isDark) {
             document.body.classList.add("dark");
-            if (sunIcon) sunIcon.style.display = "block"; 
-            if (moonIcon) moonIcon.style.display = "none"; 
         } else {
             document.body.classList.remove("dark");
-            if (sunIcon) sunIcon.style.display = "none"; 
-            if (moonIcon) moonIcon.style.display = "block"; 
         }
     };
 
     const toggleTheme = () => {
-        const isDark = document.body.classList.toggle("dark");
+        const isDark = document.body.classList.toggle("dark"); // This toggles the class
         localStorage.setItem("theme", isDark ? "dark" : "light");
-        setTheme(isDark); // 调用 setTheme 来更新图标显示
+        // The CSS will react to the class change, so no further JS display manipulation is needed here.
     };
 
     const initializeTheme = () => {
         const storedTheme = localStorage.getItem("theme");
 
         if (storedTheme === "dark") {
-            setTheme(true); 
+            setTheme(true);
         } else if (storedTheme === "light") {
-            setTheme(false); 
+            setTheme(false);
         } else {
-           
+            // Check prefers-color-scheme only if no theme is stored
             if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
                 setTheme(true);
             } else {
@@ -46,9 +41,9 @@ const themeModule = (() => {
             themeToggleButton.addEventListener("click", toggleTheme);
         }
 
-       
+        // Listen for changes in system theme preference
         window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
-           
+            // Only update if the user hasn't explicitly set a preference (i.e., localStorage is empty)
             if (!localStorage.getItem("theme")) {
                 setTheme(event.matches);
             }
@@ -96,7 +91,8 @@ const fileUploadModule = (() => {
     };
 
     const setupListeners = () => {
-        if (fileUploadArea) {
+        // Ensure elements exist before adding listeners
+        if (fileInput && fileUploadArea) {
             fileUploadArea.addEventListener('click', () => fileInput.click());
 
             fileUploadArea.addEventListener('dragover', (e) => {
@@ -116,8 +112,6 @@ const fileUploadModule = (() => {
                     updateFileDisplay();
                 }
             });
-        }
-        if (fileInput) {
             fileInput.addEventListener('change', updateFileDisplay);
         }
     };
@@ -144,6 +138,11 @@ const formModule = (() => {
     const validateField = (element, errorId) => {
         const errorElement = getErrorDisplay(errorId);
         let isValid = true;
+
+        // Check if element exists before accessing its properties
+        if (!element) {
+            return true; // Return true if element doesn't exist, so validation doesn't block the form
+        }
 
         if (element.type === 'file') {
             if (!element.files.length) {
@@ -175,7 +174,8 @@ const formModule = (() => {
         ];
 
         fieldsToValidate.forEach(field => {
-            if (field.element && !validateField(field.element, field.error)) {
+            // Ensure element exists before validation and update formIsValid
+            if (!validateField(field.element, field.error)) {
                 formIsValid = false;
             }
         });
@@ -186,10 +186,14 @@ const formModule = (() => {
                 submitBtn.textContent = 'Uploading...';
             }
 
+            // Simulate API call
             setTimeout(() => {
                 alert('Notes uploaded successfully!');
                 if (form) form.reset();
-                fileUploadModule.reset(); // Reset file display using the file upload module's exposed method
+                // Safely call fileUploadModule.reset() if it exists
+                if (typeof fileUploadModule !== 'undefined' && fileUploadModule.reset) {
+                    fileUploadModule.reset();
+                }
                 if (submitBtn) {
                     submitBtn.disabled = false;
                     submitBtn.textContent = 'Upload Notes';
@@ -207,6 +211,7 @@ const formModule = (() => {
             const subjectInput = getField('subject');
             const fileInput = getField('file');
 
+            // Add listeners only if elements exist
             if (yearSelect) yearSelect.addEventListener('change', () => validateField(yearSelect, 'yearError'));
             if (semesterSelect) semesterSelect.addEventListener('change', () => validateField(semesterSelect, 'semesterError'));
             if (subjectInput) subjectInput.addEventListener('input', () => validateField(subjectInput, 'subjectError'));
@@ -216,7 +221,7 @@ const formModule = (() => {
 
     return {
         init: () => {
-            if (form) {
+            if (form) { // Only initialize if form element exists
                 setupListeners();
             }
         }
