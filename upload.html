@@ -330,7 +330,6 @@
     </div>
 
     <script>
-        
         // Theme Toggle Logic
         const themeToggleBtn = document.getElementById('themeToggleBtn');
         const themeIcon = document.getElementById('themeIcon');
@@ -427,21 +426,6 @@
             submitBtn.disabled = !formIsValid;
             return formIsValid;
         }
-
-        // Initial validation check to disable submit button if form is not filled
-        document.addEventListener('DOMContentLoaded', validateForm);
-
-        // Add event listeners for input changes to trigger validation
-        fields.forEach(field => {
-            const inputElement = document.getElementById(field.id);
-            if (inputElement.type === 'file') {
-                inputElement.addEventListener('change', validateForm);
-            } else if (inputElement.tagName === 'SELECT') {
-                inputElement.addEventListener('change', validateForm);
-            } else {
-                inputElement.addEventListener('input', validateForm);
-            }
-        });
 
         // --- File Upload Module ---
 
@@ -573,3 +557,6 @@
                 alert('Please correct the errors in the form.');
             }
         });
+    </script>
+</body>
+</html>
