@@ -1,1 +1,528 @@
- 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light dark">
+    <title>Home - Note-U</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* CSS Variables - Inherited or re-defined for consistency */
+        :root {
+            /* Light Theme Colors */
+            --color-bg-light: #f8f8f8;
+            --color-text-primary-light: #333;
+            --color-text-secondary-light: #666;
+            --color-border-light: rgba(55, 53, 47, 0.1);
+            --color-input-bg-light: white;
+            --color-input-hover-light: rgba(55, 53, 47, 0.03);
+            --color-input-border-hover-light: rgba(55, 53, 47, 0.2);
+            --color-separator-line-light: #ddd;
+            --color-link-light: #007bff;
+            --color-link-hover-light: #0056b3;
+            --color-card-bg-light: #fff;
+            --color-shadow-light: rgba(0,0,0,0.05);
+            --color-header-bg-light: #ffffff;
+            --color-button-secondary-light: #e9ecef;
+            --color-button-secondary-hover-light: #dae0e5;
+
+            /* Dark Theme Colors */
+            --color-bg-dark: #1a1a1a; /* Slightly darker than auth for content differentiation */
+            --color-text-primary-dark: rgba(255, 255, 255, 0.9);
+            --color-text-secondary-dark: rgba(255, 255, 255, 0.6);
+            --color-border-dark: rgba(255, 255, 255, 0.1);
+            --color-input-bg-dark: #2c2c2c;
+            --color-input-hover-dark: #3a3a3a;
+            --color-input-border-hover-dark: rgba(255, 255, 255, 0.2);
+            --color-separator-line-dark: #444;
+            --color-link-dark: #64b5f6;
+            --color-link-hover-dark: #90caf9;
+            --color-card-bg-dark: #252525;
+            --color-shadow-dark: rgba(255,255,255,0.02);
+            --color-header-bg-dark: #2c2c2c;
+            --color-button-secondary-dark: #3a3a3a;
+            --color-button-secondary-hover-dark: #4a4a4a;
+
+            /* Common Colors */
+            --color-accent-blue: #007bff;
+            --color-accent-blue-hover: #0056b3;
+        }
+
+        /* Base styles */
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            margin: 0;
+            background-color: var(--color-bg-light);
+            color: var(--color-text-primary-light);
+            transition: background-color 0.3s ease, color 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Dark Mode application */
+        body.dark {
+            background-color: var(--color-bg-dark);
+            color: var(--color-text-primary-dark);
+        }
+
+        /* Header */
+        header {
+            background-color: var(--color-header-bg-light);
+            padding: 15px 30px;
+            box-shadow: 0 2px 4px var(--color-shadow-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        body.dark header {
+            background-color: var(--color-header-bg-dark);
+            box-shadow: 0 2px 4px var(--color-shadow-dark);
+        }
+
+        header .logo {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: var(--color-text-primary-light);
+            text-decoration: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 40px;
+            width: 40px;
+            border: 2px solid var(--color-text-primary-light);
+            border-radius: 6px;
+            transition: border-color 0.3s ease, color 0.3s ease;
+        }
+        body.dark header .logo {
+            color: var(--color-text-primary-dark);
+            border-color: var(--color-text-primary-dark);
+        }
+
+        header .logo span {
+            line-height: 1;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px; /* Space between buttons */
+        }
+
+        .header-actions button {
+            padding: 8px 15px;
+            border: 1px solid var(--color-border-light);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 500;
+            transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .upload-button {
+            background-color: var(--color-accent-blue);
+            color: #fff;
+            border-color: var(--color-accent-blue);
+        }
+        .upload-button:hover {
+            background-color: var(--color-accent-blue-hover);
+            border-color: var(--color-accent-blue-hover);
+        }
+
+        .logout-button {
+            background-color: var(--color-button-secondary-light);
+            color: var(--color-text-primary-light);
+            border-color: var(--color-border-light);
+        }
+        .logout-button:hover {
+            background-color: var(--color-button-secondary-hover-light);
+        }
+
+        body.dark .logout-button {
+            background-color: var(--color-button-secondary-dark);
+            color: var(--color-text-primary-dark);
+            border-color: var(--color-border-dark);
+        }
+        body.dark .logout-button:hover {
+            background-color: var(--color-button-secondary-hover-dark);
+        }
+
+        /* Main Content Layout */
+        main {
+            flex-grow: 1;
+            padding: 30px;
+            display: grid;
+            grid-template-columns: 250px 1fr; /* Sidebar fixed width, content flexible */
+            gap: 30px;
+            max-width: 1200px; /* Max width for content */
+            margin: 30px auto; /* Center content */
+        }
+
+        /* Sidebar - Note Classification System */
+        .sidebar {
+            background-color: var(--color-card-bg-light);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px var(--color-shadow-light);
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        body.dark .sidebar {
+            background-color: var(--color-card-bg-dark);
+            box-shadow: 0 4px 15px var(--color-shadow-dark);
+        }
+
+        .sidebar h2 {
+            font-size: 1.5em;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--color-text-primary-light);
+        }
+        body.dark .sidebar h2 {
+            color: var(--color-text-primary-dark);
+        }
+
+        .category-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .category-list li {
+            margin-bottom: 10px;
+        }
+
+        .category-list a {
+            display: block;
+            padding: 10px 12px;
+            text-decoration: none;
+            color: var(--color-text-secondary-light);
+            background-color: transparent;
+            border-radius: 8px;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+        .category-list a:hover, .category-list a.active {
+            background-color: var(--color-button-secondary-light);
+            color: var(--color-text-primary-light);
+        }
+
+        body.dark .category-list a {
+            color: var(--color-text-secondary-dark);
+        }
+        body.dark .category-list a:hover, body.dark .category-list a.active {
+            background-color: var(--color-button-secondary-dark);
+            color: var(--color-text-primary-dark);
+        }
+
+        /* Content Area - Resource Area */
+        .content-area {
+            background-color: var(--color-card-bg-light);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px var(--color-shadow-light);
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        body.dark .content-area {
+            background-color: var(--color-card-bg-dark);
+            box-shadow: 0 4px 15px var(--color-shadow-dark);
+        }
+
+        .content-area h2 {
+            font-size: 1.8em;
+            font-weight: 700;
+            margin-bottom: 25px;
+            color: var(--color-text-primary-light);
+        }
+        body.dark .content-area h2 {
+            color: var(--color-text-primary-dark);
+        }
+
+        .note-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Responsive grid */
+            gap: 20px;
+        }
+
+        .note-card {
+            background-color: var(--color-input-bg-light);
+            border: 1px solid var(--color-border-light);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 8px var(--color-shadow-light);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+        }
+        .note-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px var(--color-shadow-light);
+        }
+
+        body.dark .note-card {
+            background-color: var(--color-input-bg-dark);
+            border-color: var(--color-border-dark);
+            box-shadow: 0 2px 8px var(--color-shadow-dark);
+        }
+        body.dark .note-card:hover {
+            box-shadow: 0 4px 12px var(--color-shadow-dark);
+        }
+
+        .note-card h3 {
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-top: 0;
+            margin-bottom: 10px;
+            color: var(--color-text-primary-light);
+        }
+        body.dark .note-card h3 {
+            color: var(--color-text-primary-dark);
+        }
+
+        .note-card p {
+            font-size: 0.9em;
+            color: var(--color-text-secondary-light);
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+        body.dark .note-card p {
+            color: var(--color-text-secondary-dark);
+        }
+
+        .note-card .category-tag {
+            display: inline-block;
+            background-color: var(--color-button-secondary-light);
+            color: var(--color-text-secondary-light);
+            font-size: 0.8em;
+            padding: 5px 10px;
+            border-radius: 5px;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+        body.dark .note-card .category-tag {
+            background-color: var(--color-button-secondary-dark);
+            color: var(--color-text-secondary-dark);
+        }
+
+        .note-card .note-actions a {
+            display: inline-block;
+            margin-right: 15px;
+            color: var(--color-link-light);
+            text-decoration: none;
+            font-size: 0.9em;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+        .note-card .note-actions a:hover {
+            color: var(--color-link-hover-light);
+            text-decoration: underline;
+        }
+        body.dark .note-card .note-actions a {
+            color: var(--color-link-dark);
+        }
+        body.dark .note-card .note-actions a:hover {
+            color: var(--color-link-hover-dark);
+        }
+
+        /* Footer */
+        footer {
+            padding: 20px;
+            text-align: center;
+            font-size: 0.9em;
+            color: var(--color-text-secondary-light);
+            margin-top: auto; /* Pushes footer to the bottom */
+            border-top: 1px solid var(--color-border-light);
+            transition: border-color 0.3s ease, color 0.3s ease;
+        }
+        body.dark footer {
+            color: var(--color-text-secondary-dark);
+            border-color: var(--color-border-dark);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            main {
+                grid-template-columns: 1fr; /* Stack sidebar and content */
+                padding: 20px;
+                margin: 20px auto;
+            }
+            header {
+                padding: 10px 20px;
+                flex-direction: column;
+                gap: 10px;
+            }
+            .header-actions {
+                width: 100%;
+                justify-content: center;
+            }
+            .sidebar, .content-area {
+                padding: 20px;
+            }
+            .note-grid {
+                grid-template-columns: 1fr; /* Single column on small screens */
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="#" class="logo" aria-label="Note-U Home">
+            <span>U</span>
+        </a>
+        <div class="header-actions">
+            <button class="upload-button" id="upload-note-btn">Upload Note</button>
+            <button class="logout-button" id="logout-btn">Log Out</button>
+        </div>
+    </header>
+
+    <main>
+        <aside class="sidebar">
+            <h2>Categories</h2>
+            <ul class="category-list">
+                <li><a href="#" class="active" data-category="all">All Notes</a></li>
+                <li><a href="#" data-category="mathematics">Mathematics</a></li>
+                <li><a href="#" data-category="physics">Physics</a></li>
+                <li><a href="#" data-category="chemistry">Chemistry</a></li>
+                <li><a href="#" data-category="computer-science">Computer Science</a></li>
+                <li><a href="#" data-category="biology">Biology</a></li>
+                <li><a href="#" data-category="history">History</a></li>
+                <li><a href="#" data-category="literature">Literature</a></li>
+                <li><a href="#" data-category="economics">Economics</a></li>
+                <li><a href="#" data-category="engineering">Engineering</a></li>
+                </ul>
+        </aside>
+
+        <section class="content-area">
+            <h2>Your Notes & Resources</h2>
+            <div id="notes-container" class="note-grid">
+                <div class="note-card" data-category="mathematics">
+                    <h3>Algebra Basics Review</h3>
+                    <p>A comprehensive review of fundamental algebra concepts, including linear equations and inequalities. Essential for beginners.</p>
+                    <div class="tags">
+                        <span class="category-tag">Mathematics</span>
+                        <span class="category-tag">Algebra</span>
+                    </div>
+                    <div class="note-actions">
+                        <a href="#">View Note</a>
+                        <a href="#">Download</a>
+                    </div>
+                </div>
+
+                <div class="note-card" data-category="physics">
+                    <h3>Classical Mechanics Lecture 1</h3>
+                    <p>Lecture notes covering Newton's laws of motion, work, and energy. Includes examples and practice problems.</p>
+                    <div class="tags">
+                        <span class="category-tag">Physics</span>
+                        <span class="category-tag">Mechanics</span>
+                    </div>
+                    <div class="note-actions">
+                        <a href="#">View Note</a>
+                        <a href="#">Download</a>
+                    </div>
+                </div>
+
+                 <div class="note-card" data-category="computer-science">
+                    <h3>Introduction to Algorithms</h3>
+                    <p>Notes on basic data structures and algorithms: arrays, linked lists, sorting (bubble, merge, quick sort).</p>
+                    <div class="tags">
+                        <span class="category-tag">Computer Science</span>
+                        <span class="category-tag">Algorithms</span>
+                        <span class="category-tag">Data Structures</span>
+                    </div>
+                    <div class="note-actions">
+                        <a href="#">View Note</a>
+                        <a href="#">Download</a>
+                    </div>
+                </div>
+
+                <div class="note-card" data-category="history">
+                    <h3>World War II: Causes and Impact</h3>
+                    <p>An overview of the principal causes, key events, and global impact of World War II.</p>
+                    <div class="tags">
+                        <span class="category-tag">History</span>
+                        <span class="category-tag">World War</span>
+                    </div>
+                    <div class="note-actions">
+                        <a href="#">View Note</a>
+                        <a href="#">Download</a>
+                    </div>
+                </div>
+
+                </div>
+        </section>
+    </main>
+
+    <footer>
+        &copy; 2025 Note-U. All rights reserved.
+    </footer>
+
+    <script>
+        // --- Theme Management (Copied from auth.html for consistency) ---
+        function setTheme(isDark) {
+            if (isDark) {
+                document.body.classList.add("dark");
+            } else {
+                document.body.classList.remove("dark");
+            }
+        }
+
+        // Apply theme on page load
+        document.addEventListener("DOMContentLoaded", () => {
+            const storedTheme = localStorage.getItem("theme");
+            if (storedTheme === "dark") {
+                setTheme(true);
+            } else if (storedTheme === "light") {
+                setTheme(false);
+            } else {
+                if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    setTheme(true);
+                } else {
+                    setTheme(false);
+                }
+            }
+
+            // --- Home Page Specific Logic ---
+            const logoutButton = document.getElementById('logout-btn');
+            const uploadNoteButton = document.getElementById('upload-note-btn');
+            const categoryLinks = document.querySelectorAll('.category-list a');
+            const notesContainer = document.getElementById('notes-container');
+
+            // Handle Logout
+            logoutButton.addEventListener('click', async () => {
+                try {
+                    const response = await fetch('/api/logout'); // Assumes /api/logout is the correct endpoint
+                    if (response.ok) {
+                        window.location.href = '/auth.html?mode=login'; // Redirect to login page
+                    } else {
+                        alert('Failed to log out. Please try again.');
+                    }
+                } catch (error) {
+                    console.error('Error during logout:', error);
+                    alert('An error occurred during logout.');
+                }
+            });
+
+            // Handle Upload Note Button
+            uploadNoteButton.addEventListener('click', () => {
+                alert('Upload Note functionality coming soon!');
+                // In a real application, this would open a modal or redirect to an upload page
+                // window.location.href = '/upload.html';
+            });
+
+            // Handle Category Filtering
+            categoryLinks.forEach(link => {
+                link.addEventListener('click', (event) => {
+                    event.preventDefault(); // Prevent default link behavior
+
+                    // Remove 'active' class from all links
+                    categoryLinks.forEach(l => l.classList.remove('active'));
+                    // Add 'active' class to the clicked link
+                    link.classList.add('active');
+
+                    const selectedCategory = link.dataset.category;
+                    const allNoteCards = notesContainer.querySelectorAll('.note-card');
+
+                    allNoteCards.forEach(card => {
+                        const cardCategory = card.dataset.category;
+                        if (selectedCategory === 'all' || cardCategory === selectedCategory 
