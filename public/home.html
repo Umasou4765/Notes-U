@@ -325,7 +325,7 @@
                 grid-template-columns: 1fr;
             }
             .sidebar {
-                max-height: 400px; /* Limit sidebar height on mobile for better scrolling */
+                max-height: 400px;
             }
         }
     </style>
@@ -370,18 +370,11 @@
                 <li><a href="#" data-category="ajel1723">AJEL1723 - Academic English</a></li>
 
                 <li class="category-semester-separator">--- Year 2 Semester 1 ---</li>
-                <li><a href="#" data-category="ecoq">ECOQ - Co-Curricular</a></li>
                 <li><a href="#" data-category="amcs2034">AMCS2034 - Introduction to Data Structures and Algorithms</a></li>
                 <li><a href="#" data-category="amcs2123">AMCS2123 - Systems and Programming Concepts</a></li>
                 <li><a href="#" data-category="amcs2104">AMCS2104 - Fundamentals of Artificial Intelligence</a></li>
                 <li><a href="#" data-category="amit3353">AMIT3353 - Mobile Application Development</a></li>
                 <li><a href="#" data-category="amis1012">AMIS1012 - Ethics in Computing</a></li>
-                <li><a href="#" data-category="egu2">EGU2 - Elective Course</a></li>
-                    <ul style="padding-left: 20px; list-style: none;">
-                        <li><a href="#" data-category="mpu2202">MPU-2202 Civic Consciousness and Volunteerism</a></li>
-                        <li><a href="#" data-category="mpu2212">MPU-2212 Bahasa Kebangsaan A</a></li>
-                    </ul>
-
                 <li class="category-semester-separator">--- Year 2 Semester 2 ---</li>
                 <li><a href="#" data-category="amcs2094">AMCS2094 - Mini Project</a></li>
                 <li><a href="#" data-category="amcs2103">AMCS2103 - Parallel and Distributed Computing</a></li>
@@ -396,91 +389,19 @@
         <section class="content-area">
             <h2>Your Notes & Resources</h2>
             <div id="notes-container" class="note-grid">
-                <div class="note-card" data-category="amcs1013">
-                    <h3>AMCS1013: Problem Solving - Week 1 Intro</h3>
-                    <p>Introduction to problem-solving methodologies and basic programming constructs in Python.</p>
+                <div class="note-card" data-category="placeholder-note">
+                    <h3>No Notes Found</h3>
+                    <p>It looks like there are no notes available for this category yet, or your notes haven't been loaded. Upload some notes to get started!</p>
                     <div class="tags">
-                        <span class="category-tag">AMCS1013</span>
-                        <span class="category-tag">Python</span>
-                        <span class="category-tag">Basics</span>
+                        <span class="category-tag">Information</span>
+                        <span class="category-tag">Get Started</span>
                     </div>
                     <div class="note-actions">
-                        <a href="#">View Note</a>
-                        <a href="#">Download</a>
+                        <a href="upload.html">Upload Now</a>
                     </div>
                 </div>
 
-                <div class="note-card" data-category="amms1623">
-                    <h3>AMMS1623: Calculus Derivatives Guide</h3>
-                    <p>Detailed guide on differentiation rules, chain rule, and applications of derivatives. Includes examples.</p>
-                    <div class="tags">
-                        <span class="category-tag">AMMS1623</span>
-                        <span class="category-tag">Calculus</span>
-                        <span class="category-tag">Math</span>
-                    </div>
-                    <div class="note-actions">
-                        <a href="#">View Note</a>
-                        <a href="#">Download</a>
-                    </div>
-                </div>
-
-                <div class="note-card" data-category="amcs1113">
-                    <h3>AMCS1113: CPU Architecture Fundamentals</h3>
-                    <p>Notes on CPU components, instruction cycles, and basic memory organization. Illustrated diagrams.</p>
-                    <div class="tags">
-                        <span class="category-tag">AMCS1113</span>
-                        <span class="category-tag">Hardware</span>
-                        <span class="category-tag">CPU</span>
-                    </div>
-                    <div class="note-actions">
-                        <a href="#">View Note</a>
-                        <a href="#">Download</a>
-                    </div>
-                </div>
-
-                <div class="note-card" data-category="amcs1043">
-                    <h3>AMCS1043: SQL Basics for Database Dev</h3>
-                    <p>Essential SQL commands for database creation, querying, and manipulation. For beginners.</p>
-                    <div class="tags">
-                        <span class="category-tag">AMCS1043</span>
-                        <span class="category-tag">Database</span>
-                        <span class="category-tag">SQL</span>
-                    </div>
-                    <div class="note-actions">
-                        <a href="#">View Note</a>
-                        <a href="#">Download</a>
-                    </div>
-                </div>
-
-                <div class="note-card" data-category="amcs2204">
-                    <h3>AMCS2204: OOP Principles in Java</h3>
-                    <p>Object-Oriented Programming concepts (Encapsulation, Inheritance, Polymorphism, Abstraction) explained with Java examples.</p>
-                    <div class="tags">
-                        <span class="category-tag">AMCS2204</span>
-                        <span class="category-tag">OOP</span>
-                        <span class="category-tag">Java</span>
-                    </div>
-                    <div class="note-actions">
-                        <a href="#">View Note</a>
-                        <a href="#">Download</a>
-                    </div>
-                </div>
-
-                <div class="note-card" data-category="amit320a">
-                    <h3>AMIT320A: Industrial Training Report Template</h3>
-                    <p>Template and guidelines for preparing your Industrial Training final report. Essential for Year 2 Sem 3.</p>
-                    <div class="tags">
-                        <span class="category-tag">AMIT320A</span>
-                        <span class="category-tag">Industrial Training</span>
-                        <span class="category-tag">Template</span>
-                    </div>
-                    <div class="note-actions">
-                        <a href="#">View Note</a>
-                        <a href="#">Download</a>
-                    </div>
-                </div>
-
-                </div>
+            </div>
         </section>
     </main>
 
@@ -539,17 +460,51 @@
 
                     const selectedCategory = link.dataset.category;
                     const allNoteCards = notesContainer.querySelectorAll('.note-card');
+                    let notesFound = false; // Flag to check if any notes are visible
 
                     allNoteCards.forEach(card => {
                         const cardCategory = card.dataset.category;
+                        // Skip the placeholder note when filtering
+                        if (card.dataset.category === 'placeholder-note') {
+                            card.style.display = 'none';
+                            return;
+                        }
+
                         if (selectedCategory === 'all' || cardCategory === selectedCategory) {
                             card.style.display = 'block'; // Show relevant notes
+                            notesFound = true;
                         } else {
                             card.style.display = 'none'; // Hide irrelevant notes
                         }
                     });
+
+                    // If no notes are found for the selected category, show the placeholder
+                    if (!notesFound && selectedCategory !== 'placeholder-note') {
+                         notesContainer.querySelector('[data-category="placeholder-note"]').style.display = 'block';
+                    }
+                     // If 'All Notes' is selected and there are no actual notes but the placeholder is there
+                     if (selectedCategory === 'all' && notesContainer.querySelectorAll('.note-card:not([data-category="placeholder-note"])').length === 0) {
+                        notesContainer.querySelector('[data-category="placeholder-note"]').style.display = 'block';
+                    }
                 });
             });
+
+            // Initially hide the placeholder if there are other notes, or show it if not.
+            // This runs once on load.
+            function managePlaceholderVisibility() {
+                const allActualNotes = notesContainer.querySelectorAll('.note-card:not([data-category="placeholder-note"])');
+                const placeholderNote = notesContainer.querySelector('[data-category="placeholder-note"]');
+
+                if (allActualNotes.length === 0) {
+                    if (placeholderNote) placeholderNote.style.display = 'block';
+                } else {
+                    if (placeholderNote) placeholderNote.style.display = 'none';
+                }
+            }
+
+            // Call it on page load to set initial state
+            managePlaceholderVisibility();
+
 
             // --- Basic User Info Fetch (Optional, for displaying welcome message or user email) ---
             async function fetchUserInfo() {
