@@ -14,7 +14,6 @@ The current version of Notes-U focuses on presenting the **user interface and la
 
 - **Responsive & Clean Interface:** A lightweight, modern layout that works well on different devices.
 - **Navigation Structure:** Includes placeholder elements for:
-  - **GitHub Login (OAuth):** Planned for simple and secure authentication.
   - **Notes Organization:** A clear structure to organize resources by year, semester, and subject.
   - **Search Functionality:** UI components are ready for browsing or filtering content easily.
 
@@ -23,9 +22,6 @@ The current version of Notes-U focuses on presenting the **user interface and la
 ## 🚀 Development Roadmap (Future Plans)
 
 Here’s what’s planned for Notes-U as development continues:
-
-- **User Authentication:**
-  - GitHub OAuth login for a smooth sign-in experience.
 
 - **File Management:**
   - Upload and download support for class materials.
