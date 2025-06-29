@@ -1,35 +1,45 @@
-// server.js (Revised)
-require("dotenv").config();
+// server.js
+require("dotenv").config(); // Loads environment variables from a .env file
 
 const express = require("express");
 const session = require("express-session");
-const bcrypt = require('bcrypt'); // New dependency for password hashing
-const path = require("path");
+const bcrypt = require('bcrypt'); // For password hashing
+const path = require("path"); // For working with file paths
 
 const app = express();
 
 // --- Middleware ---
-app.use(express.json()); // To parse JSON bodies (e.g., for API requests)
-app.use(express.urlencoded({ extended: true })); // To parse URL-encoded bodies (e.g., form submissions)
 
-// Session Setup
+// Parse JSON bodies for API requests
+app.use(express.json());
+
+// Parse URL-encoded bodies, typically for form submissions
+app.use(express.urlencoded({ extended: true }));
+
+// Session setup for managing user sessions
 app.use(session({
-  secret: process.env.SESSION_SECRET || 'a_strong_default_secret',
-  resave: false,
-  saveUninitialized: false,
+  secret: process.env.SESSION_SECRET || 'your_very_strong_and_long_secret_key', // **IMPORTANT: Change this to a truly random, long string**
+  resave: false, // Don't save session if unmodified
+  saveUninitialized: false, // Don't create session until something is stored
   cookie: {
-    maxAge: 1000 * 60 * 60 * 24, // 1 day
-    secure: process.env.NODE_ENV === 'production' // Use secure cookies in production (HTTPS)
+    maxAge: 1000 * 60 * 60 * 24, // Session lasts for 1 day
+    secure: process.env.NODE_ENV === 'production', // Use secure cookies (HTTPS) in production
+    httpOnly: true, // Prevents client-side JavaScript from accessing cookies
+    sameSite: 'Lax' // Protection against CSRF attacks
   }
 }));
 
-// --- Mock Database (Replace with a real database integration) ---
-// In a real application, you'd use a database like PostgreSQL, MongoDB, etc.
-const users = []; // Stores { id, username, email, hashedPassword }
+// --- Mock Database (!!! REPLACE WITH A REAL DATABASE IN PRODUCTION !!!) ---
+// This array will store user objects in memory and will be reset when the server restarts.
+const users = []; // Format: { id, email, hashedPassword }
 
 // --- Authentication API Routes ---
 
-// Signup Route
+/**
+ * @route POST /api/signup
+ * @description Handles user registration.
+ * @access Public
+ */
 app.post("/api/signup", async (req, res) => {
   const { email, password } = req.body;
 
@@ -37,25 +47,43 @@ app.post("/api/signup", async (req, res) => {
     return res.status(400).json({ error: "Email and password are required." });
   }
 
-  // Check if user already exists (mock)
-  if (users.find(u => u.email === email)) {
+  // Basic email format validation (more robust validation should be added)
+  if (!/\S+@\S+\.\S+/.test(email)) {
+    return res.status(400).json({ error: "Please enter a valid email address." });
+  }
+
+  // Password strength check (example - enhance as needed)
+  if (password.length < 8) {
+    return res.status(400).json({ error: "Password must be at least 8 characters long." });
+  }
+
+  // Check if user already exists (mock DB lookup)
+  if (users.some(u => u.email === email)) { // Using .some() for better readability
     return res.status(409).json({ error: "User with this email already exists." });
   }
 
   try {
-    const hashedPassword = await bcrypt.hash(password, 10); // Hash password with salt rounds = 10
-    const newUser = { id: Date.now().toString(), email, hashedPassword };
-    users.push(newUser); // Save to mock DB
+    // Hash the password with a salt (cost factor of 10)
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    console.log(`New user signed up: ${email}`);
-    res.status(201).json({ message: "Account created successfully!" });
+    // Create a new user object
+    const newUser = { id: Date.now().toString(), email, hashedPassword };
+    users.push(newUser); // Add to mock database
+
+    console.log(`[SIGNUP] New user created: ${email}`);
+    // Respond with success message. Do NOT send hashedPassword back.
+    res.status(201).json({ message: "Account created successfully! You can now log in." });
   } catch (error) {
-    console.error("Signup error:", error);
-    res.status(500).json({ error: "Server error during signup." });
+    console.error("[SIGNUP ERROR]", error);
+    res.status(500).json({ error: "Server error during signup. Please try again later." });
   }
 });
 
-// Login Route
+/**
+ * @route POST /api/login
+ * @description Handles user login and session creation.
+ * @access Public
+ */
 app.post("/api/login", async (req, res) => {
   const { email, password } = req.body;
 
@@ -63,73 +91,110 @@ app.post("/api/login", async (req, res) => {
     return res.status(400).json({ error: "Email and password are required." });
   }
 
-  // Find user (mock)
+  // Find user by email in the mock database
   const user = users.find(u => u.email === email);
+
+  // If user not found, or password doesn't match, return generic error for security
   if (!user) {
     return res.status(401).json({ error: "Invalid email or access code." });
   }
 
   try {
+    // Compare the provided password with the stored hashed password
     const passwordMatch = await bcrypt.compare(password, user.hashedPassword);
 
     if (passwordMatch) {
-      req.session.userId = user.id; // Establish session
-      console.log(`User logged in: ${user.email}`);
-      res.status(200).json({ message: "Login successful!", user: { id: user.id, email: user.email } });
+      req.session.userId = user.id; // Store user ID in session
+      req.session.userEmail = user.email; // Store user email in session (optional, for convenience)
+
+      console.log(`[LOGIN] User successfully logged in: ${user.email}`);
+      // Send a success response. Client-side JS will handle redirection.
+      res.status(200).json({ message: "Login successful!", redirect: "/home.html" });
     } else {
       res.status(401).json({ error: "Invalid email or access code." });
     }
   } catch (error) {
-    console.error("Login error:", error);
-    res.status(500).json({ error: "Server error during login." });
+    console.error("[LOGIN ERROR]", error);
+    res.status(500).json({ error: "Server error during login. Please try again later." });
   }
 });
 
-// --- API Routes (protected example) ---
+// --- Protected API Routes ---
 
-// Middleware to check if user is authenticated
+/**
+ * @description Middleware to protect routes, ensuring only authenticated users can access them.
+ */
 const isAuthenticated = (req, res, next) => {
-  if (req.session.userId) { // Check for your custom session variable
-    // In a real app, you'd fetch user details from DB here if needed
+  if (req.session && req.session.userId) {
+    // User is authenticated, proceed to the next middleware/route handler
     next();
   } else {
-    res.status(401).json({ error: "Unauthorized: Please log in." });
+    // User is not authenticated, send an unauthorized response
+    // Optionally, redirect to login page for browser requests
+    if (req.accepts('html')) { // If the client expects HTML
+      res.redirect('/auth.html?mode=login');
+    } else { // If it's an API request (e.g., from fetch)
+      res.status(401).json({ error: "Unauthorized: Please log in." });
+    }
   }
 };
 
-// Get current logged-in user information
+/**
+ * @route GET /api/user
+ * @description Returns current logged-in user information. Protected route.
+ * @access Private (requires authentication)
+ */
 app.get("/api/user", isAuthenticated, (req, res) => {
-  // In a real app, you'd fetch user from DB using req.session.userId
+  // In a real application, you might fetch fresh user data from the database
+  // using req.session.userId to ensure it's up-to-date.
   const user = users.find(u => u.id === req.session.userId);
   if (user) {
       res.json({ id: user.id, email: user.email });
   } else {
-      res.status(404).json({ error: "User not found." });
+      // This case should ideally not happen if isAuthenticated passed,
+      // but it's good for robustness, e.g., if mock 'users' array resets.
+      res.status(404).json({ error: "User data not found in session or mock DB." });
   }
 });
 
-// Logout route
-app.get("/logout", (req, res) => {
+/**
+ * @route GET /api/logout
+ * @description Destroys user session and logs them out.
+ * @access Public
+ */
+app.get("/api/logout", (req, res) => {
   req.session.destroy((err) => { // Destroy the session
     if (err) {
-      console.error("Error during logout:", err);
+      console.error("[LOGOUT ERROR]", err);
       return res.status(500).send("Error logging out.");
     }
-    console.log("User logged out successfully.");
-    res.redirect("/auth.html?mode=login"); // Redirect to the auth page
+    console.log("[LOGOUT] User session destroyed.");
+    // Redirect to the login page after successful logout
+    res.redirect("/auth.html?mode=login");
   });
 });
 
 // --- Static File Serving ---
+
+// Serve static files (HTML, CSS, JS, images) from the 'public' directory
 app.use(express.static(path.join(__dirname, "public")));
 
-// Catch-all route, redirects to index.html (or auth.html if not logged in)
+// --- Universal Route Handling (Catch-all) ---
+
+/**
+ * @route GET *
+ * @description A catch-all route to handle all other GET requests.
+ * Redirects based on authentication status.
+ * @access Public/Private (depending on state)
+ */
 app.get('*', (req, res) => {
-  // This logic can be more sophisticated based on whether a user is logged in
-  if (req.session.userId) {
-    res.sendFile(path.join(__dirname, 'public', 'dashboard.html')); // Example: redirect to dashboard if logged in
+  // If the user is logged in (session exists), send them to home.html
+  if (req.session && req.session.userId) {
+    res.sendFile(path.join(__dirname, 'public', 'home.html'));
   } else {
-    res.sendFile(path.join(__dirname, 'public', 'index.html')); // Default landing page
+    // If not logged in, send them to the main landing page (index.html)
+    // or you could send them directly to auth.html if all pages require login
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
   }
 });
 
@@ -138,5 +203,5 @@ app.get('*', (req, res) => {
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`✅ Server started at http://localhost:${PORT}`);
-  console.log(`Open your browser to http://localhost:${PORT}`); // Start from index.html
+  console.log(`Open your browser to http://localhost:${PORT} to begin.`);
 });
