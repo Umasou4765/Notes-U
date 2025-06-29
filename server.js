@@ -1,4 +1,4 @@
-Require("dotenv").config(); // Load .env file contents
+require("dotenv").config(); // Load .env file contents
 
 const express = require("express");
 const session = require("express-session");
