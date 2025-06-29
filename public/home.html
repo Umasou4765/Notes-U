@@ -5,72 +5,79 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="color-scheme" content="light dark">
     <title>Home - Note-U</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* CSS Variables - Inherited or re-defined for consistency */
+        /* CSS Variables - Inherited from upload.html/auth.html for consistency */
         :root {
             /* Light Theme Colors */
-            --color-bg-light: #f8f8f8;
-            --color-text-primary-light: #333;
-            --color-text-secondary-light: #666;
-            --color-border-light: rgba(55, 53, 47, 0.1);
-            --color-input-bg-light: white;
-            --color-input-hover-light: rgba(55, 53, 47, 0.03);
-            --color-input-border-hover-light: rgba(55, 53, 47, 0.2);
-            --color-separator-line-light: #ddd;
-            --color-link-light: #007bff;
-            --color-link-hover-light: #0056b3;
-            --color-card-bg-light: #fff;
-            --color-shadow-light: rgba(0,0,0,0.05);
-            --color-header-bg-light: #ffffff;
-            --color-button-secondary-light: #e9ecef;
-            --color-button-secondary-hover-light: #dae0e5;
+            --light-bg: #f8f8f8;
+            --light-text: #333;
+            --light-label: #666; /* Used for secondary text, descriptions */
+            --light-input-bg: white;
+            --light-input-border: rgba(55, 53, 47, 0.16);
+            --light-input-placeholder: rgba(55, 53, 47, 0.4);
+            --light-file-area-bg: white; /* Same as card background for consistency */
+            --light-file-area-border: rgba(55, 53, 47, 0.16);
+            --light-file-area-hover-bg: rgba(55, 53, 47, 0.03);
+            --light-file-area-dragover-bg: rgba(55, 53, 47, 0.08);
+            --light-icon-color: rgba(55, 53, 47, 0.3);
+            --light-file-text: rgba(55, 53, 47, 0.6);
+            --light-sm-text: rgba(55, 53, 47, 0.4);
+            --light-file-name: #333;
+            --light-error-color: #dc3545;
+            --light-toggle-icon: #333; /* Not explicitly used here but good to keep */
+            --light-container-bg: white; /* Card/Container background */
+            --light-container-shadow: 0 4px 12px rgba(0,0,0,0.05); /* Soft shadow */
+            --light-accent-color: #007bff; /* Primary action color */
+            --light-accent-hover: #0056b3; /* Primary action hover color */
+            --light-button-secondary-bg: #e9ecef; /* For secondary buttons */
+            --light-button-secondary-hover-bg: #dae0e5; /* Secondary button hover */
+        }
 
-            /* Dark Theme Colors */
-            --color-bg-dark: #1a1a1a; /* Slightly darker than auth for content differentiation */
-            --color-text-primary-dark: rgba(255, 255, 255, 0.9);
-            --color-text-secondary-dark: rgba(255, 255, 255, 0.6);
-            --color-border-dark: rgba(255, 255, 255, 0.1);
-            --color-input-bg-dark: #2c2c2c;
-            --color-input-hover-dark: #3a3a3a;
-            --color-input-border-hover-dark: rgba(255, 255, 255, 0.2);
-            --color-separator-line-dark: #444;
-            --color-link-dark: #64b5f6;
-            --color-link-hover-dark: #90caf9;
-            --color-card-bg-dark: #252525;
-            --color-shadow-dark: rgba(255,255,255,0.02);
-            --color-header-bg-dark: #2c2c2c;
-            --color-button-secondary-dark: #3a3a3a;
-            --color-button-secondary-hover-dark: #4a4a4a;
-
-            /* Common Colors */
-            --color-accent-blue: #007bff;
-            --color-accent-blue-hover: #0056b3;
+        body.dark {
+            --light-bg: #1a1a1a; /* Adjusted for dark mode, slightly darker than card */
+            --light-text: rgba(255, 255, 255, 0.9);
+            --light-label: rgba(255, 255, 255, 0.6);
+            --light-input-bg: #252525;
+            --light-input-border: rgba(255, 255, 255, 0.1);
+            --light-input-placeholder: rgba(255, 255, 255, 0.4);
+            --light-file-area-bg: #252525;
+            --light-file-area-border: rgba(255, 255, 255, 0.1);
+            --light-file-area-hover-bg: #3a3a3a;
+            --light-file-area-dragover-bg: #3a3a3a;
+            --light-icon-color: rgba(255, 255, 255, 0.3);
+            --light-file-text: rgba(255, 255, 255, 0.6);
+            --light-sm-text: rgba(255, 255, 255, 0.4);
+            --light-file-name: rgba(255, 255, 255, 0.9);
+            --light-error-color: #ff6b6b;
+            --light-toggle-icon: white;
+            --light-container-bg: #252525; /* Card/Container background */
+            --light-container-shadow: 0 4px 12px rgba(255,255,255,0.02);
+            --light-accent-color: #64b5f6; /* Adjusted accent for dark mode readability */
+            --light-accent-hover: #90caf9; /* Adjusted accent hover for dark mode readability */
+            --light-button-secondary-bg: #3a3a3a;
+            --light-button-secondary-hover-bg: #4a4a4a;
         }
 
         /* Base styles */
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             margin: 0;
-            background-color: var(--color-bg-light);
-            color: var(--color-text-primary-light);
+            background-color: var(--light-bg);
+            color: var(--light-text);
             transition: background-color 0.3s ease, color 0.3s ease;
             display: flex;
             flex-direction: column;
             min-height: 100vh;
         }
 
-        /* Dark Mode application */
-        body.dark {
-            background-color: var(--color-bg-dark);
-            color: var(--color-text-primary-dark);
-        }
-
         /* Header */
         header {
-            background-color: var(--color-header-bg-light);
+            background-color: var(--light-container-bg); /* Use container bg for header */
             padding: 15px 30px;
-            box-shadow: 0 2px 4px var(--color-shadow-light);
+            box-shadow: 0 2px 4px var(--light-container-shadow);
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -80,28 +87,19 @@
             z-index: 1000;
         }
 
-        body.dark header {
-            background-color: var(--color-header-bg-dark);
-            box-shadow: 0 2px 4px var(--color-shadow-dark);
-        }
-
         header .logo {
             font-size: 1.8em;
             font-weight: 700;
-            color: var(--color-text-primary-light);
+            color: var(--light-text);
             text-decoration: none;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 40px;
             width: 40px;
-            border: 2px solid var(--color-text-primary-light);
+            border: 2px solid var(--light-text);
             border-radius: 6px;
             transition: border-color 0.3s ease, color 0.3s ease;
-        }
-        body.dark header .logo {
-            color: var(--color-text-primary-dark);
-            border-color: var(--color-text-primary-dark);
         }
 
         header .logo span {
@@ -114,42 +112,35 @@
             gap: 15px; /* Space between buttons */
         }
 
-        .header-actions button {
+        .header-actions button,
+        .header-actions a.button { /* Style anchor tags as buttons too */
             padding: 8px 15px;
-            border: 1px solid var(--color-border-light);
+            border: none; /* Buttons have no border by default */
             border-radius: 6px;
             cursor: pointer;
             font-size: 0.9em;
             font-weight: 500;
-            transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+            text-decoration: none; /* For anchor tags */
+            display: inline-flex; /* For consistent alignment */
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
         }
 
         .upload-button {
-            background-color: var(--color-accent-blue);
+            background-color: var(--light-accent-color);
             color: #fff;
-            border-color: var(--color-accent-blue);
         }
         .upload-button:hover {
-            background-color: var(--color-accent-blue-hover);
-            border-color: var(--color-accent-blue-hover);
+            background-color: var(--light-accent-hover);
         }
 
         .logout-button {
-            background-color: var(--color-button-secondary-light);
-            color: var(--color-text-primary-light);
-            border-color: var(--color-border-light);
+            background-color: var(--light-button-secondary-bg);
+            color: var(--light-text);
         }
         .logout-button:hover {
-            background-color: var(--color-button-secondary-hover-light);
-        }
-
-        body.dark .logout-button {
-            background-color: var(--color-button-secondary-dark);
-            color: var(--color-text-primary-dark);
-            border-color: var(--color-border-dark);
-        }
-        body.dark .logout-button:hover {
-            background-color: var(--color-button-secondary-hover-dark);
+            background-color: var(--light-button-secondary-hover-bg);
         }
 
         /* Main Content Layout */
@@ -165,25 +156,18 @@
 
         /* Sidebar - Note Classification System */
         .sidebar {
-            background-color: var(--color-card-bg-light);
-            border-radius: 12px;
+            background-color: var(--light-container-bg);
+            border-radius: 8px; /* Consistent with container border-radius */
             padding: 25px;
-            box-shadow: 0 4px 15px var(--color-shadow-light);
+            box-shadow: var(--light-container-shadow);
             transition: background-color 0.3s ease, box-shadow 0.3s ease;
-        }
-        body.dark .sidebar {
-            background-color: var(--color-card-bg-dark);
-            box-shadow: 0 4px 15px var(--color-shadow-dark);
         }
 
         .sidebar h2 {
             font-size: 1.5em;
             font-weight: 600;
             margin-bottom: 20px;
-            color: var(--color-text-primary-light);
-        }
-        body.dark .sidebar h2 {
-            color: var(--color-text-primary-dark);
+            color: var(--light-text);
         }
 
         .category-list {
@@ -193,52 +177,38 @@
         }
 
         .category-list li {
-            margin-bottom: 10px;
+            margin-bottom: 8px; /* Slightly less margin for tighter list */
         }
 
         .category-list a {
             display: block;
             padding: 10px 12px;
             text-decoration: none;
-            color: var(--color-text-secondary-light);
+            color: var(--light-label); /* Secondary text color */
             background-color: transparent;
-            border-radius: 8px;
+            border-radius: 4px; /* Consistent with input border-radius */
             transition: background-color 0.2s ease, color 0.2s ease;
         }
         .category-list a:hover, .category-list a.active {
-            background-color: var(--color-button-secondary-light);
-            color: var(--color-text-primary-light);
+            background-color: var(--light-button-secondary-bg);
+            color: var(--light-text); /* Primary text for active/hover */
         }
 
-        body.dark .category-list a {
-            color: var(--color-text-secondary-dark);
-        }
-        body.dark .category-list a:hover, body.dark .category-list a.active {
-            background-color: var(--color-button-secondary-dark);
-            color: var(--color-text-primary-dark);
-        }
 
         /* Content Area - Resource Area */
         .content-area {
-            background-color: var(--color-card-bg-light);
-            border-radius: 12px;
+            background-color: var(--light-container-bg);
+            border-radius: 8px; /* Consistent with container border-radius */
             padding: 25px;
-            box-shadow: 0 4px 15px var(--color-shadow-light);
+            box-shadow: var(--light-container-shadow);
             transition: background-color 0.3s ease, box-shadow 0.3s ease;
-        }
-        body.dark .content-area {
-            background-color: var(--color-card-bg-dark);
-            box-shadow: 0 4px 15px var(--color-shadow-dark);
         }
 
         .content-area h2 {
             font-size: 1.8em;
             font-weight: 700;
             margin-bottom: 25px;
-            color: var(--color-text-primary-light);
-        }
-        body.dark .content-area h2 {
-            color: var(--color-text-primary-dark);
+            color: var(--light-text);
         }
 
         .note-grid {
@@ -248,25 +218,22 @@
         }
 
         .note-card {
-            background-color: var(--color-input-bg-light);
-            border: 1px solid var(--color-border-light);
-            border-radius: 10px;
+            background-color: var(--light-input-bg); /* Use input bg for note cards */
+            border: 1px solid var(--light-input-border); /* Use input border */
+            border-radius: 8px; /* Consistent with container border-radius */
             padding: 20px;
-            box-shadow: 0 2px 8px var(--color-shadow-light);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03); /* Lighter shadow */
             transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
         }
         .note-card:hover {
             transform: translateY(-3px);
-            box-shadow: 0 4px 12px var(--color-shadow-light);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
         }
-
         body.dark .note-card {
-            background-color: var(--color-input-bg-dark);
-            border-color: var(--color-border-dark);
-            box-shadow: 0 2px 8px var(--color-shadow-dark);
+            box-shadow: 0 2px 8px rgba(255,255,255,0.01);
         }
         body.dark .note-card:hover {
-            box-shadow: 0 4px 12px var(--color-shadow-dark);
+            box-shadow: 0 4px 12px rgba(255,255,255,0.03);
         }
 
         .note-card h3 {
@@ -274,55 +241,39 @@
             font-weight: 600;
             margin-top: 0;
             margin-bottom: 10px;
-            color: var(--color-text-primary-light);
-        }
-        body.dark .note-card h3 {
-            color: var(--color-text-primary-dark);
+            color: var(--light-text);
         }
 
         .note-card p {
             font-size: 0.9em;
-            color: var(--color-text-secondary-light);
+            color: var(--light-label); /* Secondary text color */
             line-height: 1.5;
             margin-bottom: 15px;
-        }
-        body.dark .note-card p {
-            color: var(--color-text-secondary-dark);
         }
 
         .note-card .category-tag {
             display: inline-block;
-            background-color: var(--color-button-secondary-light);
-            color: var(--color-text-secondary-light);
+            background-color: var(--light-button-secondary-bg);
+            color: var(--light-label); /* Secondary text color */
             font-size: 0.8em;
             padding: 5px 10px;
-            border-radius: 5px;
+            border-radius: 4px;
             margin-right: 8px;
             margin-bottom: 8px;
-        }
-        body.dark .note-card .category-tag {
-            background-color: var(--color-button-secondary-dark);
-            color: var(--color-text-secondary-dark);
         }
 
         .note-card .note-actions a {
             display: inline-block;
             margin-right: 15px;
-            color: var(--color-link-light);
+            color: var(--light-accent-color);
             text-decoration: none;
             font-size: 0.9em;
             font-weight: 500;
             transition: color 0.2s ease;
         }
         .note-card .note-actions a:hover {
-            color: var(--color-link-hover-light);
+            color: var(--light-accent-hover);
             text-decoration: underline;
-        }
-        body.dark .note-card .note-actions a {
-            color: var(--color-link-dark);
-        }
-        body.dark .note-card .note-actions a:hover {
-            color: var(--color-link-hover-dark);
         }
 
         /* Footer */
@@ -330,14 +281,10 @@
             padding: 20px;
             text-align: center;
             font-size: 0.9em;
-            color: var(--color-text-secondary-light);
+            color: var(--light-label); /* Secondary text color */
             margin-top: auto; /* Pushes footer to the bottom */
-            border-top: 1px solid var(--color-border-light);
+            border-top: 1px solid var(--light-input-border); /* Use input border for subtle separator */
             transition: border-color 0.3s ease, color 0.3s ease;
-        }
-        body.dark footer {
-            color: var(--color-text-secondary-dark);
-            border-color: var(--color-border-dark);
         }
 
         /* Responsive adjustments */
@@ -367,41 +314,52 @@
 </head>
 <body>
     <header>
-        <a href="#" class="logo" aria-label="Note-U Home">
+        <a href="/" class="logo" aria-label="Note-U Home">
             <span>U</span>
         </a>
         <div class="header-actions">
-            <button class="upload-button" id="upload-note-btn">Upload Note</button>
+            <a href="upload.html" class="button upload-button" id="upload-note-btn">Upload Note</a>
             <button class="logout-button" id="logout-btn">Log Out</button>
         </div>
     </header>
 
     <main>
         <aside class="sidebar">
-            <h2>Categories</h2>
+            <h2>Categories - Year 1</h2>
             <ul class="category-list">
                 <li><a href="#" class="active" data-category="all">All Notes</a></li>
-                <li><a href="#" data-category="mathematics">Mathematics</a></li>
-                <li><a href="#" data-category="physics">Physics</a></li>
-                <li><a href="#" data-category="chemistry">Chemistry</a></li>
-                <li><a href="#" data-category="computer-science">Computer Science</a></li>
-                <li><a href="#" data-category="biology">Biology</a></li>
-                <li><a href="#" data-category="history">History</a></li>
-                <li><a href="#" data-category="literature">Literature</a></li>
-                <li><a href="#" data-category="economics">Economics</a></li>
-                <li><a href="#" data-category="engineering">Engineering</a></li>
-                </ul>
+                <li class="separator-item">--- Year 1 Semester 1 ---</li>
+                <li><a href="#" data-category="amcs1013">AMCS1013 - Problem Solving and Programming</a></li>
+                <li><a href="#" data-category="amcs1113">AMCS1113 - Computer Architecture</a></li>
+                <li><a href="#" data-category="amit1303">AMIT1303 - Introduction to Interface Design</a></li>
+                <li><a href="#" data-category="amms1623">AMMS1623 - Calculus and Algebra</a></li>
+                <li><a href="#" data-category="ajel1713">AJEL1713 - English for Tertiary Studies</a></li>
+                <li><a href="#" data-category="mpu2302">MPU-2302 - Integrity and Anti-Corruption</a></li>
+                <li><a href="#" data-category="mpu2123">MPU-2123 - Penghayatan Etika dan Peradaban</a></li>
+                <li class="separator-item">--- Year 1 Semester 2 ---</li>
+                <li><a href="#" data-category="amcs1043">AMCS1043 - Database Development and Applications</a></li>
+                <li><a href="#" data-category="amcs1034">AMCS1034 - Software Development Fundamentals</a></li>
+                <li><a href="#" data-category="amms2613">AMMS2613 - Probability and Statistics</a></li>
+                <li class="separator-item">--- Year 1 Semester 3 ---</li>
+                <li><a href="#" data-category="amit2034">AMIT2034 - Fundamentals of Computer Networks</a></li>
+                <li><a href="#" data-category="amcs2204">AMCS2204 - Object-Oriented Programming Techniques</a></li>
+                <li><a href="#" data-category="amcs2093">AMCS2093 - Operating Systems</a></li>
+                <li><a href="#" data-category="amis1013">AMIS1013 - Systems Analysis and Design</a></li>
+                <li><a href="#" data-category="amms2603">AMMS2603 - Discrete Mathematics</a></li>
+                <li><a href="#" data-category="ajel1723">AJEL1723 - Academic English</a></li>
+            </ul>
         </aside>
 
         <section class="content-area">
             <h2>Your Notes & Resources</h2>
             <div id="notes-container" class="note-grid">
-                <div class="note-card" data-category="mathematics">
-                    <h3>Algebra Basics Review</h3>
-                    <p>A comprehensive review of fundamental algebra concepts, including linear equations and inequalities. Essential for beginners.</p>
+                <div class="note-card" data-category="amcs1013">
+                    <h3>AMCS1013: Problem Solving - Week 1 Intro</h3>
+                    <p>Introduction to problem-solving methodologies and basic programming constructs in Python.</p>
                     <div class="tags">
-                        <span class="category-tag">Mathematics</span>
-                        <span class="category-tag">Algebra</span>
+                        <span class="category-tag">AMCS1013</span>
+                        <span class="category-tag">Python</span>
+                        <span class="category-tag">Basics</span>
                     </div>
                     <div class="note-actions">
                         <a href="#">View Note</a>
@@ -409,12 +367,13 @@
                     </div>
                 </div>
 
-                <div class="note-card" data-category="physics">
-                    <h3>Classical Mechanics Lecture 1</h3>
-                    <p>Lecture notes covering Newton's laws of motion, work, and energy. Includes examples and practice problems.</p>
+                <div class="note-card" data-category="amms1623">
+                    <h3>AMMS1623: Calculus Derivatives Guide</h3>
+                    <p>Detailed guide on differentiation rules, chain rule, and applications of derivatives. Includes examples.</p>
                     <div class="tags">
-                        <span class="category-tag">Physics</span>
-                        <span class="category-tag">Mechanics</span>
+                        <span class="category-tag">AMMS1623</span>
+                        <span class="category-tag">Calculus</span>
+                        <span class="category-tag">Math</span>
                     </div>
                     <div class="note-actions">
                         <a href="#">View Note</a>
@@ -422,13 +381,13 @@
                     </div>
                 </div>
 
-                 <div class="note-card" data-category="computer-science">
-                    <h3>Introduction to Algorithms</h3>
-                    <p>Notes on basic data structures and algorithms: arrays, linked lists, sorting (bubble, merge, quick sort).</p>
+                <div class="note-card" data-category="amcs1113">
+                    <h3>AMCS1113: CPU Architecture Fundamentals</h3>
+                    <p>Notes on CPU components, instruction cycles, and basic memory organization. Illustrated diagrams.</p>
                     <div class="tags">
-                        <span class="category-tag">Computer Science</span>
-                        <span class="category-tag">Algorithms</span>
-                        <span class="category-tag">Data Structures</span>
+                        <span class="category-tag">AMCS1113</span>
+                        <span class="category-tag">Hardware</span>
+                        <span class="category-tag">CPU</span>
                     </div>
                     <div class="note-actions">
                         <a href="#">View Note</a>
@@ -436,12 +395,27 @@
                     </div>
                 </div>
 
-                <div class="note-card" data-category="history">
-                    <h3>World War II: Causes and Impact</h3>
-                    <p>An overview of the principal causes, key events, and global impact of World War II.</p>
+                <div class="note-card" data-category="amcs1043">
+                    <h3>AMCS1043: SQL Basics for Database Dev</h3>
+                    <p>Essential SQL commands for database creation, querying, and manipulation. For beginners.</p>
                     <div class="tags">
-                        <span class="category-tag">History</span>
-                        <span class="category-tag">World War</span>
+                        <span class="category-tag">AMCS1043</span>
+                        <span class="category-tag">Database</span>
+                        <span class="category-tag">SQL</span>
+                    </div>
+                    <div class="note-actions">
+                        <a href="#">View Note</a>
+                        <a href="#">Download</a>
+                    </div>
+                </div>
+
+                <div class="note-card" data-category="amcs2204">
+                    <h3>AMCS2204: OOP Principles in Java</h3>
+                    <p>Object-Oriented Programming concepts (Encapsulation, Inheritance, Polymorphism, Abstraction) explained with Java examples.</p>
+                    <div class="tags">
+                        <span class="category-tag">AMCS2204</span>
+                        <span class="category-tag">OOP</span>
+                        <span class="category-tag">Java</span>
                     </div>
                     <div class="note-actions">
                         <a href="#">View Note</a>
@@ -458,42 +432,35 @@
     </footer>
 
     <script>
-        // --- Theme Management (Copied from auth.html for consistency) ---
-        function setTheme(isDark) {
-            if (isDark) {
-                document.body.classList.add("dark");
-            } else {
-                document.body.classList.remove("dark");
-            }
+        // --- Theme Management ---
+        function setTheme(theme) {
+            document.body.classList.remove('light', 'dark');
+            document.body.classList.add(theme);
+            localStorage.setItem('theme', theme);
         }
 
         // Apply theme on page load
-        document.addEventListener("DOMContentLoaded", () => {
-            const storedTheme = localStorage.getItem("theme");
-            if (storedTheme === "dark") {
-                setTheme(true);
-            } else if (storedTheme === "light") {
-                setTheme(false);
+        document.addEventListener('DOMContentLoaded', () => {
+            const storedTheme = localStorage.getItem('theme');
+            if (storedTheme) {
+                setTheme(storedTheme);
+            } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                setTheme('dark');
             } else {
-                if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                    setTheme(true);
-                } else {
-                    setTheme(false);
-                }
+                setTheme('light');
             }
 
             // --- Home Page Specific Logic ---
             const logoutButton = document.getElementById('logout-btn');
-            const uploadNoteButton = document.getElementById('upload-note-btn');
             const categoryLinks = document.querySelectorAll('.category-list a');
             const notesContainer = document.getElementById('notes-container');
 
             // Handle Logout
             logoutButton.addEventListener('click', async () => {
                 try {
-                    const response = await fetch('/api/logout'); // Assumes /api/logout is the correct endpoint
+                    const response = await fetch('/api/logout');
                     if (response.ok) {
-                        window.location.href = '/auth.html?mode=login'; // Redirect to login page
+                        window.location.href = '/auth.html?mode=login';
                     } else {
                         alert('Failed to log out. Please try again.');
                     }
@@ -503,17 +470,10 @@
                 }
             });
 
-            // Handle Upload Note Button
-            uploadNoteButton.addEventListener('click', () => {
-                alert('Upload Note functionality coming soon!');
-                // In a real application, this would open a modal or redirect to an upload page
-                // window.location.href = '/upload.html';
-            });
-
             // Handle Category Filtering
             categoryLinks.forEach(link => {
                 link.addEventListener('click', (event) => {
-                    event.preventDefault(); // Prevent default link behavior
+                    event.preventDefault();
 
                     // Remove 'active' class from all links
                     categoryLinks.forEach(l => l.classList.remove('active'));
@@ -525,4 +485,53 @@
 
                     allNoteCards.forEach(card => {
                         const cardCategory = card.dataset.category;
-                        if (selectedCategory === 'all' || cardCategory === selectedCategory 
+                        if (selectedCategory === 'all' || cardCategory === selectedCategory) {
+                            card.style.display = 'block';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                });
+            });
+
+            // --- Basic User Info Fetch (Optional, for displaying welcome message or user email) ---
+            async function fetchUserInfo() {
+                try {
+                    const response = await fetch('/api/user');
+                    if (response.ok) {
+                        const user = await response.json();
+                        // You could update a welcome message in the header like:
+                        // const welcomeSpan = document.getElementById('welcome-message');
+                        // if (welcomeSpan) welcomeSpan.textContent = `Welcome, ${user.email.split('@')[0]}!`;
+                        console.log('Logged in user:', user.email); // For debugging
+                    } else if (response.status === 401) {
+                        // User is not authenticated, redirect to login
+                        window.location.href = '/auth.html?mode=login';
+                    } else {
+                        console.error('Failed to fetch user info:', response.status);
+                    }
+                } catch (error) {
+                    console.error('Network error fetching user info:', error);
+                    // Consider redirecting to login if network issues prevent user info validation
+                    // window.location.href = '/auth.html?mode=login';
+                }
+            }
+            fetchUserInfo(); // Call this function when the page loads
+        });
+
+        // Listen for changes in localStorage for 'theme' (e.g., if changed from another tab)
+        window.addEventListener('storage', (event) => {
+            if (event.key === 'theme') {
+                setTheme(event.newValue);
+            }
+        });
+
+        // Listen for system theme changes (if no manual preference is set)
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+            if (!localStorage.getItem("theme")) { // Only apply if user hasn't manually set a preference
+                setTheme(event.matches ? 'dark' : 'light');
+            }
+        });
+    </script>
+</body>
+</html>
