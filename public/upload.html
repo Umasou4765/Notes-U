@@ -612,27 +612,54 @@
             }
         });
 
-        // Form Submission (for demonstration purposes)
-        form.addEventListener('submit', (e) => {
+        // Form Submission
+        form.addEventListener('submit', async (e) => {
             e.preventDefault();
             if (validateForm()) {
-                // In a real application, you would send this data to a server
-                alert('Form submitted successfully! (This is a demo)');
-                console.log({
-                    academicYear: academicYearSelect.value,
-                    semester: semesterSelect.value,
-                    subject: subjectSelect.value,
-                    notesType: notesTypeSelect.value,
-                    description: document.getElementById('description').value,
-                    file: fileUpload.files[0] ? fileUpload.files[0].name : 'No file'
-                });
-                // Reset form and UI
-                form.reset();
-                updateFileInfoUI(null); // Clear file info display
-                populateSemesters(); // Reset semesters and subjects dropdowns
-                populateSubjects();
-                submitBtn.disabled = true; // Disable after submission until new input
-                document.querySelectorAll('.invalid').forEach(el => el.classList.remove('invalid')); // Clear validation styles
+                const formData = new FormData();
+                formData.append('academicYear', academicYearSelect.value);
+                formData.append('semester', semesterSelect.value);
+                formData.append('subject', subjectSelect.value);
+                formData.append('notesType', notesTypeSelect.value);
+                formData.append('description', document.getElementById('description').value);
+                
+                // Add the file
+                if (fileUpload.files.length > 0) {
+                    formData.append('file', fileUpload.files[0]);
+                    // Use the filename without extension as a default title
+                    const defaultTitle = fileUpload.files[0].name.split('.').slice(0, -1).join('.');
+                    formData.append('title', defaultTitle); 
+                } else {
+                    alert('Please select a file to upload.');
+                    return;
+                }
+
+                submitBtn.disabled = true; // Disable button during upload
+                submitBtn.textContent = 'Uploading...';
+
+                try {
+                    const response = await fetch('/api/upload_note', { // Assuming your backend Flask route is /api/upload_note
+                        method: 'POST',
+                        body: formData 
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok) {
+                        alert(result.message);
+                        // Redirect to home.html after successful upload
+                        window.location.href = '/home.html'; 
+                    } else {
+                        alert(`Upload failed: ${result.message}`);
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = 'Upload Notes';
+                    }
+                } catch (error) {
+                    console.error('Error during upload:', error);
+                    alert('An error occurred during upload. Please check your network.');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Upload Notes';
+                }
             } else {
                 alert('Please correct the errors in the form before submitting.');
             }
