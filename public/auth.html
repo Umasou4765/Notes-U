@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="color-scheme" content="light dark">
-    <title>Log In - Note-U</title>
+    <title>Auth - Note-U</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         /* CSS Variables for better theme management */
@@ -136,56 +136,81 @@
             color: var(--color-text-secondary-dark);
         }
 
-        /* Authentication Button Styles */
-        .auth-button-group {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            width: 100%;
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left; /* Align labels and inputs to the left */
         }
 
-        .auth-button {
-            padding: 14px 20px;
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--color-text-primary-light);
+            transition: color 0.3s ease;
+        }
+
+        body.dark .form-group label {
+            color: var(--color-text-primary-dark);
+        }
+
+        .form-group input[type="email"],
+        .form-group input[type="password"] {
+            width: 100%;
+            padding: 12px 15px;
             border: 1px solid var(--color-border-light);
             border-radius: 8px;
-            font-size: 1.05em;
-            font-weight: 500;
-            cursor: pointer;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
+            font-size: 1em;
             background-color: var(--color-input-bg-light);
             color: var(--color-text-primary-light);
-            transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            box-sizing: border-box; /* Include padding in width calculation */
+            transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
         }
 
-        .auth-button:hover {
-            background-color: var(--color-input-hover-light);
-            border-color: var(--color-input-border-hover-light);
-            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        .form-group input[type="email"]:focus,
+        .form-group input[type="password"]:focus {
+            outline: none;
+            border-color: var(--color-accent-blue);
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
         }
 
-        body.dark .auth-button {
+        body.dark .form-group input[type="email"],
+        body.dark .form-group input[type="password"] {
             background-color: var(--color-input-bg-dark);
             color: var(--color-text-primary-dark);
             border-color: var(--color-border-dark);
-            box-shadow: 0 1px 3px rgba(255,255,255,0.03);
         }
-        body.dark .auth-button:hover {
-            background-color: var(--color-input-hover-dark);
-            border-color: var(--color-input-border-hover-dark);
-            box-shadow: 0 2px 6px rgba(255,255,255,0.05);
+        body.dark .form-group input[type="email"]:focus,
+        body.dark .form-group input[type="password"]:focus {
+            border-color: var(--color-link-dark);
+            box-shadow: 0 0 0 3px rgba(100, 181, 246, 0.25);
         }
 
-        .auth-button svg {
-            margin-right: 12px;
-            width: 22px;
-            height: 22px;
-            fill: currentColor;
-            transition: fill 0.2s ease;
+        .submit-button {
+            width: 100%;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 8px;
+            background-color: var(--color-accent-blue);
+            color: #fff;
+            font-size: 1.05em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .submit-button:hover {
+            background-color: var(--color-accent-blue-hover);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+
+        body.dark .submit-button {
+            background-color: var(--color-accent-blue);
+        }
+        body.dark .submit-button:hover {
+            background-color: var(--color-accent-blue-hover);
+            box-shadow: 0 2px 6px rgba(255,255,255,0.05);
         }
 
         /* "Or" separator */
@@ -243,6 +268,14 @@
             color: var(--color-link-hover-dark);
         }
 
+        /* Form display control */
+        .auth-form {
+            display: none; /* Hidden by default */
+        }
+        .auth-form.active {
+            display: block; /* Visible when active */
+        }
+
         /* Desktop specific styles */
         @media (min-width: 768px) {
             .container {
@@ -270,7 +303,7 @@
                 font-size: 1.1em;
             }
 
-            .auth-button {
+            .submit-button {
                 padding: 16px 25px;
                 font-size: 1.15em;
             }
@@ -282,20 +315,42 @@
         <div class="logo" aria-label="Note-U Logo">
             <span>U</span>
         </div>
-        <h1>Log In to Note-U</h1>
-        <p>Access your shared academic notes with your GitHub account.</p>
+        <h1 id="auth-title"></h1>
+        <p id="auth-description"></p>
 
-       <div class="auth-button-group">
-            <a href="https://github.com/login/oauth/authorize?client_id=YOUR_GITHUB_CLIENT_ID&scope=user:email" class="auth-button github-login-btn">
-                <svg role="img" viewBox="0 0 24 24" aria-hidden="true">
-                    <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.499.09.682-.217.682-.483 0-.237-.008-.865-.013-1.7-2.782.602-3.369-1.341-3.369-1.341-.454-1.156-1.11-1.46-1.11-1.46-.908-.619.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.529 2.341 1.088 2.91.83.091-.645.356-1.088.649-1.336-2.22-.253-4.555-1.113-4.555-4.953 0-1.092.39-1.983 1.029-2.675-.103-.253-.446-1.264.098-2.638 0 0 .84-.268 2.75 1.022A9.606 9.606 0 0112 6.844c.85.004 1.701.113 2.502.324 1.909-1.29 2.747-1.022 2.747-1.022.546 1.373.202 2.385.099 2.638.64.692 1.028 1.583 1.028 2.675 0 3.848-2.339 4.69-4.566 4.943.359.309.678.914.678 1.846 0 1.334-.012 2.41-.012 2.727 0 .268.18.592.687.483C21.133 20.197 24 16.442 24 12.017 24 6.484 19.522 2 12 2Z"></path>
-                </svg>
-                <span class="github-text">Continue with GitHub</span>
-            </a>
+        <div id="login-form" class="auth-form">
+            <form>
+                <div class="form-group">
+                    <label for="login-email">Email or Username</label>
+                    <input type="email" id="login-email" name="email" required placeholder="Enter your email or username">
+                </div>
+                <div class="form-group">
+                    <label for="login-access-code">Access Code</label>
+                    <input type="password" id="login-access-code" name="accessCode" required placeholder="Enter your access code">
+                </div>
+                <button type="submit" class="submit-button">Log In</button>
+            </form>
+            <a href="auth.html?mode=signup" class="switch-link">Don't have an account? Create one now</a>
         </div>
 
-        <div class="separator">Or</div>
-        <a href="signup.html" class="switch-link">Don't have an account? Create one now</a>
+        <div id="signup-form" class="auth-form">
+            <form>
+                <div class="form-group">
+                    <label for="signup-email">Email or Username</label>
+                    <input type="email" id="signup-email" name="email" required placeholder="Enter your email or username">
+                </div>
+                <div class="form-group">
+                    <label for="signup-access-code">Create Access Code</label>
+                    <input type="password" id="signup-access-code" name="accessCode" required placeholder="Create an access code">
+                </div>
+                <div class="form-group">
+                    <label for="signup-confirm-access-code">Confirm Access Code</label>
+                    <input type="password" id="signup-confirm-access-code" name="confirmAccessCode" required placeholder="Confirm your access code">
+                </div>
+                <button type="submit" class="submit-button">Sign Up</button>
+            </form>
+            <a href="auth.html?mode=login" class="switch-link">Already have an account? Log In instead</a>
+        </div>
     </div>
 
     <script>
@@ -308,16 +363,36 @@
             }
         }
 
-        // Set theme on page load
+        // Script to handle switching between login and signup forms
         window.addEventListener("DOMContentLoaded", () => {
-            const storedTheme = localStorage.getItem("theme");
+            const urlParams = new URLSearchParams(window.location.search);
+            const mode = urlParams.get('mode'); // 'login' or 'signup'
 
+            const loginForm = document.getElementById('login-form');
+            const signupForm = document.getElementById('signup-form');
+            const authTitle = document.getElementById('auth-title');
+            const authDescription = document.getElementById('auth-description');
+
+            if (mode === 'signup') {
+                signupForm.classList.add('active');
+                loginForm.classList.remove('active');
+                authTitle.textContent = 'Sign Up for Note-U';
+                authDescription.textContent = 'Create your account to access shared academic notes.';
+            } else {
+                // Default to login if mode is not 'signup' or not provided
+                loginForm.classList.add('active');
+                signupForm.classList.remove('active');
+                authTitle.textContent = 'Log In to Note-U';
+                authDescription.textContent = 'Access your shared academic notes with your account.';
+            }
+
+            // Theme setting logic (from your original files)
+            const storedTheme = localStorage.getItem("theme");
             if (storedTheme === "dark") {
                 setTheme(true);
             } else if (storedTheme === "light") {
                 setTheme(false);
             } else {
-                // Fallback to system preference if no stored theme
                 if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
                     setTheme(true);
                 } else {
