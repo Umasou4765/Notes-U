@@ -53,8 +53,8 @@
             --light-toggle-icon: white;
             --light-container-bg: #1a1a1a;
             --light-container-shadow: 0 4px 12px rgba(255,255,255,0.02);
-            --light-accent-color: #64b5f6; /* Adjusted accent color for dark mode */
-            --light-accent-hover: #90caf9; /* Adjusted accent hover for dark mode */
+            --light-accent-color: #64b5f6;
+            --light-accent-hover: #90caf9;
         }
 
         body {
@@ -287,7 +287,6 @@
                     <option value="">Select Year</option>
                     <option value="year1">Year 1</option>
                     <option value="year2">Year 2</option>
-                    <option value="year3">Year 3 (Industrial Training)</option>
                 </select>
                 <p id="academicYearError" class="error-message">Please select an academic year.</p>
             </div>
@@ -306,12 +305,6 @@
                     <option value="">Select Subject</option>
                 </select>
                 <p id="subjectError" class="error-message">Please select a subject.</p>
-            </div>
-
-            <div class="notion-input-group">
-                <label for="lectureName" class="notion-label">Lecture/Topic Name</label>
-                <input type="text" id="lectureName" class="notion-input" placeholder="e.g., Data Structures and Algorithms - Week 5 Arrays" required aria-describedby="lectureNameError">
-                <p id="lectureNameError" class="error-message">Lecture/Topic name is required.</p>
             </div>
 
             <div class="notion-input-group">
@@ -417,11 +410,6 @@
                 'semester3': [
                     { code: 'AMIT320A', name: 'Industrial Training' }
                 ]
-            },
-            'year3': { // Industrial Training is the only category for Year 3 as per your home.html
-                'semester3': [ // Keeping it consistent with semester naming, but it's just industrial training
-                    { code: 'AMIT320A', name: 'Industrial Training' }
-                ]
             }
         };
 
@@ -430,7 +418,6 @@
         const academicYearSelect = document.getElementById('academicYearSelect');
         const semesterSelect = document.getElementById('semesterSelect');
         const subjectSelect = document.getElementById('subjectSelect');
-        const lectureNameInput = document.getElementById('lectureName');
         const notesTypeSelect = document.getElementById('notesType');
         const fileUpload = document.getElementById('fileUpload');
         const fileUploadBox = document.getElementById('fileUploadBox');
@@ -443,7 +430,6 @@
             { id: 'academicYearSelect', message: 'Please select an academic year.', validate: val => val !== '' },
             { id: 'semesterSelect', message: 'Please select a semester.', validate: val => val !== '' },
             { id: 'subjectSelect', message: 'Please select a subject.', validate: val => val !== '' },
-            { id: 'lectureName', message: 'Lecture/Topic name is required.', validate: val => val.trim() !== '' },
             { id: 'notesType', message: 'Please select a type of notes.', validate: val => val !== '' },
             { id: 'fileUpload', message: 'Please upload a valid file (PDF, DOC, DOCX).', validate: () => fileUpload.files.length > 0 }
         ];
@@ -515,9 +501,6 @@
                     option.value = sem;
                     // Format semester display name (e.g., 'semester1' -> 'Semester 1')
                     option.textContent = sem.replace('semester', 'Semester ');
-                    if (selectedYear === 'year3' && sem === 'semester3') {
-                        option.textContent = 'Semester 3 (Industrial Training)';
-                    }
                     semesterSelect.appendChild(option);
                 });
                 semesterSelect.disabled = false;
@@ -639,7 +622,6 @@
                     academicYear: academicYearSelect.value,
                     semester: semesterSelect.value,
                     subject: subjectSelect.value,
-                    lectureName: lectureNameInput.value,
                     notesType: notesTypeSelect.value,
                     description: document.getElementById('description').value,
                     file: fileUpload.files[0] ? fileUpload.files[0].name : 'No file'
