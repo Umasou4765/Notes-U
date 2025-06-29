@@ -9,16 +9,16 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* CSS Variables - Inherited from upload.html/auth.html for consistency */
+        /* CSS Variables - Consistent across auth.html, upload.html, home.html */
         :root {
             /* Light Theme Colors */
             --light-bg: #f8f8f8;
             --light-text: #333;
-            --light-label: #666; /* Used for secondary text, descriptions */
-            --light-input-bg: white;
-            --light-input-border: rgba(55, 53, 47, 0.16);
+            --light-label: #666; /* Secondary text, descriptions, inactive links */
+            --light-input-bg: white; /* Card and input background */
+            --light-input-border: rgba(55, 53, 47, 0.16); /* Border for inputs, cards */
             --light-input-placeholder: rgba(55, 53, 47, 0.4);
-            --light-file-area-bg: white; /* Same as card background for consistency */
+            --light-file-area-bg: white;
             --light-file-area-border: rgba(55, 53, 47, 0.16);
             --light-file-area-hover-bg: rgba(55, 53, 47, 0.03);
             --light-file-area-dragover-bg: rgba(55, 53, 47, 0.08);
@@ -27,17 +27,17 @@
             --light-sm-text: rgba(55, 53, 47, 0.4);
             --light-file-name: #333;
             --light-error-color: #dc3545;
-            --light-toggle-icon: #333; /* Not explicitly used here but good to keep */
-            --light-container-bg: white; /* Card/Container background */
-            --light-container-shadow: 0 4px 12px rgba(0,0,0,0.05); /* Soft shadow */
-            --light-accent-color: #007bff; /* Primary action color */
+            --light-container-bg: white; /* Main content background */
+            --light-container-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            --light-accent-color: #007bff; /* Primary action color (buttons, links) */
             --light-accent-hover: #0056b3; /* Primary action hover color */
-            --light-button-secondary-bg: #e9ecef; /* For secondary buttons */
+            --light-button-secondary-bg: #e9ecef; /* For secondary buttons, active category links */
             --light-button-secondary-hover-bg: #dae0e5; /* Secondary button hover */
+            --light-separator-color: #bbb; /* Color for semester separators */
         }
 
         body.dark {
-            --light-bg: #1a1a1a; /* Adjusted for dark mode, slightly darker than card */
+            --light-bg: #1a1a1a;
             --light-text: rgba(255, 255, 255, 0.9);
             --light-label: rgba(255, 255, 255, 0.6);
             --light-input-bg: #252525;
@@ -52,13 +52,13 @@
             --light-sm-text: rgba(255, 255, 255, 0.4);
             --light-file-name: rgba(255, 255, 255, 0.9);
             --light-error-color: #ff6b6b;
-            --light-toggle-icon: white;
-            --light-container-bg: #252525; /* Card/Container background */
+            --light-container-bg: #252525;
             --light-container-shadow: 0 4px 12px rgba(255,255,255,0.02);
-            --light-accent-color: #64b5f6; /* Adjusted accent for dark mode readability */
-            --light-accent-hover: #90caf9; /* Adjusted accent hover for dark mode readability */
+            --light-accent-color: #64b5f6;
+            --light-accent-hover: #90caf9;
             --light-button-secondary-bg: #3a3a3a;
             --light-button-secondary-hover-bg: #4a4a4a;
+            --light-separator-color: #666;
         }
 
         /* Base styles */
@@ -75,7 +75,7 @@
 
         /* Header */
         header {
-            background-color: var(--light-container-bg); /* Use container bg for header */
+            background-color: var(--light-container-bg);
             padding: 15px 30px;
             box-shadow: 0 2px 4px var(--light-container-shadow);
             display: flex;
@@ -109,19 +109,19 @@
         .header-actions {
             display: flex;
             align-items: center;
-            gap: 15px; /* Space between buttons */
+            gap: 15px;
         }
 
         .header-actions button,
-        .header-actions a.button { /* Style anchor tags as buttons too */
+        .header-actions a.button {
             padding: 8px 15px;
-            border: none; /* Buttons have no border by default */
+            border: none;
             border-radius: 6px;
             cursor: pointer;
             font-size: 0.9em;
             font-weight: 500;
-            text-decoration: none; /* For anchor tags */
-            display: inline-flex; /* For consistent alignment */
+            text-decoration: none;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
             transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
@@ -148,19 +148,21 @@
             flex-grow: 1;
             padding: 30px;
             display: grid;
-            grid-template-columns: 250px 1fr; /* Sidebar fixed width, content flexible */
+            grid-template-columns: 280px 1fr; /* Slightly wider sidebar for longer subject names */
             gap: 30px;
-            max-width: 1200px; /* Max width for content */
+            max-width: 1400px; /* Max width for content */
             margin: 30px auto; /* Center content */
         }
 
         /* Sidebar - Note Classification System */
         .sidebar {
             background-color: var(--light-container-bg);
-            border-radius: 8px; /* Consistent with container border-radius */
+            border-radius: 8px;
             padding: 25px;
             box-shadow: var(--light-container-shadow);
             transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            overflow-y: auto; /* Enable scrolling for long lists */
+            max-height: calc(100vh - 60px - 60px); /* Adjust max-height to fit viewport, 60px for header/footer */
         }
 
         .sidebar h2 {
@@ -177,28 +179,41 @@
         }
 
         .category-list li {
-            margin-bottom: 8px; /* Slightly less margin for tighter list */
+            margin-bottom: 6px; /* Reduced margin for tighter list */
         }
 
         .category-list a {
             display: block;
             padding: 10px 12px;
             text-decoration: none;
-            color: var(--light-label); /* Secondary text color */
+            color: var(--light-label);
             background-color: transparent;
-            border-radius: 4px; /* Consistent with input border-radius */
+            border-radius: 4px;
             transition: background-color 0.2s ease, color 0.2s ease;
+            white-space: nowrap; /* Prevent subject names from wrapping */
+            overflow: hidden;
+            text-overflow: ellipsis; /* Add ellipsis for long names */
         }
         .category-list a:hover, .category-list a.active {
             background-color: var(--light-button-secondary-bg);
-            color: var(--light-text); /* Primary text for active/hover */
+            color: var(--light-text);
         }
 
+        /* Semester Separator within Category List */
+        .category-semester-separator {
+            font-size: 0.85em;
+            font-weight: 600;
+            color: var(--light-separator-color);
+            margin: 15px 0 10px 0; /* More vertical space */
+            padding-left: 12px; /* Align with link padding */
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
 
         /* Content Area - Resource Area */
         .content-area {
             background-color: var(--light-container-bg);
-            border-radius: 8px; /* Consistent with container border-radius */
+            border-radius: 8px;
             padding: 25px;
             box-shadow: var(--light-container-shadow);
             transition: background-color 0.3s ease, box-shadow 0.3s ease;
@@ -213,16 +228,16 @@
 
         .note-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Responsive grid */
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 20px;
         }
 
         .note-card {
-            background-color: var(--light-input-bg); /* Use input bg for note cards */
-            border: 1px solid var(--light-input-border); /* Use input border */
-            border-radius: 8px; /* Consistent with container border-radius */
+            background-color: var(--light-input-bg);
+            border: 1px solid var(--light-input-border);
+            border-radius: 8px;
             padding: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.03); /* Lighter shadow */
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
             transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
         }
         .note-card:hover {
@@ -246,7 +261,7 @@
 
         .note-card p {
             font-size: 0.9em;
-            color: var(--light-label); /* Secondary text color */
+            color: var(--light-label);
             line-height: 1.5;
             margin-bottom: 15px;
         }
@@ -254,7 +269,7 @@
         .note-card .category-tag {
             display: inline-block;
             background-color: var(--light-button-secondary-bg);
-            color: var(--light-label); /* Secondary text color */
+            color: var(--light-label);
             font-size: 0.8em;
             padding: 5px 10px;
             border-radius: 4px;
@@ -281,16 +296,16 @@
             padding: 20px;
             text-align: center;
             font-size: 0.9em;
-            color: var(--light-label); /* Secondary text color */
-            margin-top: auto; /* Pushes footer to the bottom */
-            border-top: 1px solid var(--light-input-border); /* Use input border for subtle separator */
+            color: var(--light-label);
+            margin-top: auto;
+            border-top: 1px solid var(--light-input-border);
             transition: border-color 0.3s ease, color 0.3s ease;
         }
 
         /* Responsive adjustments */
         @media (max-width: 768px) {
             main {
-                grid-template-columns: 1fr; /* Stack sidebar and content */
+                grid-template-columns: 1fr;
                 padding: 20px;
                 margin: 20px auto;
             }
@@ -307,7 +322,10 @@
                 padding: 20px;
             }
             .note-grid {
-                grid-template-columns: 1fr; /* Single column on small screens */
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                max-height: 400px; /* Limit sidebar height on mobile for better scrolling */
             }
         }
     </style>
@@ -325,10 +343,11 @@
 
     <main>
         <aside class="sidebar">
-            <h2>Categories - Year 1</h2>
+            <h2>Academic Categories</h2>
             <ul class="category-list">
                 <li><a href="#" class="active" data-category="all">All Notes</a></li>
-                <li class="separator-item">--- Year 1 Semester 1 ---</li>
+
+                <li class="category-semester-separator">--- Year 1 Semester 1 ---</li>
                 <li><a href="#" data-category="amcs1013">AMCS1013 - Problem Solving and Programming</a></li>
                 <li><a href="#" data-category="amcs1113">AMCS1113 - Computer Architecture</a></li>
                 <li><a href="#" data-category="amit1303">AMIT1303 - Introduction to Interface Design</a></li>
@@ -336,18 +355,42 @@
                 <li><a href="#" data-category="ajel1713">AJEL1713 - English for Tertiary Studies</a></li>
                 <li><a href="#" data-category="mpu2302">MPU-2302 - Integrity and Anti-Corruption</a></li>
                 <li><a href="#" data-category="mpu2123">MPU-2123 - Penghayatan Etika dan Peradaban</a></li>
-                <li class="separator-item">--- Year 1 Semester 2 ---</li>
+
+                <li class="category-semester-separator">--- Year 1 Semester 2 ---</li>
                 <li><a href="#" data-category="amcs1043">AMCS1043 - Database Development and Applications</a></li>
                 <li><a href="#" data-category="amcs1034">AMCS1034 - Software Development Fundamentals</a></li>
                 <li><a href="#" data-category="amms2613">AMMS2613 - Probability and Statistics</a></li>
-                <li class="separator-item">--- Year 1 Semester 3 ---</li>
+
+                <li class="category-semester-separator">--- Year 1 Semester 3 ---</li>
                 <li><a href="#" data-category="amit2034">AMIT2034 - Fundamentals of Computer Networks</a></li>
                 <li><a href="#" data-category="amcs2204">AMCS2204 - Object-Oriented Programming Techniques</a></li>
                 <li><a href="#" data-category="amcs2093">AMCS2093 - Operating Systems</a></li>
                 <li><a href="#" data-category="amis1013">AMIS1013 - Systems Analysis and Design</a></li>
                 <li><a href="#" data-category="amms2603">AMMS2603 - Discrete Mathematics</a></li>
                 <li><a href="#" data-category="ajel1723">AJEL1723 - Academic English</a></li>
-            </ul>
+
+                <li class="category-semester-separator">--- Year 2 Semester 1 ---</li>
+                <li><a href="#" data-category="ecoq">ECOQ - Co-Curricular</a></li>
+                <li><a href="#" data-category="amcs2034">AMCS2034 - Introduction to Data Structures and Algorithms</a></li>
+                <li><a href="#" data-category="amcs2123">AMCS2123 - Systems and Programming Concepts</a></li>
+                <li><a href="#" data-category="amcs2104">AMCS2104 - Fundamentals of Artificial Intelligence</a></li>
+                <li><a href="#" data-category="amit3353">AMIT3353 - Mobile Application Development</a></li>
+                <li><a href="#" data-category="amis1012">AMIS1012 - Ethics in Computing</a></li>
+                <li><a href="#" data-category="egu2">EGU2 - Elective Course</a></li>
+                    <ul style="padding-left: 20px; list-style: none;">
+                        <li><a href="#" data-category="mpu2202">MPU-2202 Civic Consciousness and Volunteerism</a></li>
+                        <li><a href="#" data-category="mpu2212">MPU-2212 Bahasa Kebangsaan A</a></li>
+                    </ul>
+
+                <li class="category-semester-separator">--- Year 2 Semester 2 ---</li>
+                <li><a href="#" data-category="amcs2094">AMCS2094 - Mini Project</a></li>
+                <li><a href="#" data-category="amcs2103">AMCS2103 - Parallel and Distributed Computing</a></li>
+                <li><a href="#" data-category="amis1003">AMIS1003 - Introduction to Cybersecurity</a></li>
+
+                <li class="category-semester-separator">--- Year 2 Semester 3 ---</li>
+                <li><a href="#" data-category="amit320a">AMIT320A - Industrial Training</a></li>
+
+                </ul>
         </aside>
 
         <section class="content-area">
@@ -423,6 +466,20 @@
                     </div>
                 </div>
 
+                <div class="note-card" data-category="amit320a">
+                    <h3>AMIT320A: Industrial Training Report Template</h3>
+                    <p>Template and guidelines for preparing your Industrial Training final report. Essential for Year 2 Sem 3.</p>
+                    <div class="tags">
+                        <span class="category-tag">AMIT320A</span>
+                        <span class="category-tag">Industrial Training</span>
+                        <span class="category-tag">Template</span>
+                    </div>
+                    <div class="note-actions">
+                        <a href="#">View Note</a>
+                        <a href="#">Download</a>
+                    </div>
+                </div>
+
                 </div>
         </section>
     </main>
@@ -486,9 +543,9 @@
                     allNoteCards.forEach(card => {
                         const cardCategory = card.dataset.category;
                         if (selectedCategory === 'all' || cardCategory === selectedCategory) {
-                            card.style.display = 'block';
+                            card.style.display = 'block'; // Show relevant notes
                         } else {
-                            card.style.display = 'none';
+                            card.style.display = 'none'; // Hide irrelevant notes
                         }
                     });
                 });
@@ -512,7 +569,7 @@
                     }
                 } catch (error) {
                     console.error('Network error fetching user info:', error);
-                    // Consider redirecting to login if network issues prevent user info validation
+                    // Consider redirecting to login if network issues are persistent
                     // window.location.href = '/auth.html?mode=login';
                 }
             }
@@ -528,7 +585,7 @@
 
         // Listen for system theme changes (if no manual preference is set)
         window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
-            if (!localStorage.getItem("theme")) { // Only apply if user hasn't manually set a preference
+            if (!localStorage.getItem("theme")) {
                 setTheme(event.matches ? 'dark' : 'light');
             }
         });
