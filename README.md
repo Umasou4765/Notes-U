@@ -42,8 +42,8 @@ Notes-U is built with a focus on simplicity, maintainability, and scalability:
 * **Frontend:** HTML, CSS, JavaScript
 * **Backend:** Flask (Python)
 * **Database:** SQLite (for user authentication and note metadata storage)
-* **File Storage:** Local file system for uploaded notes (can be extended to cloud storage like AWS S3 or Google Cloud Storage in the future for scalability)
-* **Deployment:** Standard Python Web Server / Hosting (e.g., Render, Heroku, or a VPS for Flask backend; frontend assets could be served via services like Vercel).
+* **File Storage:** Local file system for uploaded notes 
+* **Deployment:** Standard Python Web Server / Hosting By Render 
 
 ---
 
