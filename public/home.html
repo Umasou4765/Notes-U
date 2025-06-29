@@ -148,8 +148,7 @@
             flex-grow: 1;
             padding: 30px;
             display: grid;
-            /* CHANGED: Increased sidebar width from 280px to 320px */
-            grid-template-columns: 320px 1fr; 
+            grid-template-columns: 320px 1fr; /* Slightly wider sidebar for longer subject names */
             gap: 30px;
             max-width: 1400px; /* Max width for content */
             margin: 30px auto; /* Center content */
@@ -225,6 +224,45 @@
             font-weight: 700;
             margin-bottom: 25px;
             color: var(--light-text);
+        }
+
+        /* Search Bar Styles */
+        .search-bar {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 10px 15px 10px 40px; /* Left padding for icon */
+            border: 1px solid var(--light-input-border);
+            border-radius: 6px;
+            background-color: var(--light-input-bg);
+            color: var(--light-text);
+            font-size: 1em;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+            box-sizing: border-box;
+        }
+
+        .search-bar input::placeholder {
+            color: var(--light-input-placeholder);
+        }
+
+        .search-bar input:focus {
+            outline: none;
+            border-color: var(--light-accent-color);
+            box-shadow: 0 0 0 1px var(--light-accent-color);
+        }
+
+        .search-bar .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--light-icon-color);
+            pointer-events: none; /* Make icon non-interactive */
+            width: 20px;
+            height: 20px;
         }
 
         .note-grid {
@@ -349,46 +387,53 @@
                 <li><a href="#" class="active" data-category="all">All Notes</a></li>
 
                 <li class="category-semester-separator">--- Year 1 Semester 1 ---</li>
-                <li><a href="#" data-category="amcs1013">AMCS1013 - Problem Solving and Programming</a></li>
-                <li><a href="#" data-category="amcs1113">AMCS1113 - Computer Architecture</a></li>
-                <li><a href="#" data-category="amit1303">AMIT1303 - Introduction to Interface Design</a></li>
-                <li><a href="#" data-category="amms1623">AMMS1623 - Calculus and Algebra</a></li>
-                <li><a href="#" data-category="ajel1713">AJEL1713 - English for Tertiary Studies</a></li>
-                <li><a href="#" data-category="mpu2302">MPU-2302 - Integrity and Anti-Corruption</a></li>
-                <li><a href="#" data-category="mpu2123">MPU-2123 - Penghayatan Etika dan Peradaban</a></li>
+                <li><a href="#" data-category="AMCS1013">AMCS1013 - Problem Solving and Programming</a></li>
+                <li><a href="#" data-category="AMCS1113">AMCS1113 - Computer Architecture</a></li>
+                <li><a href="#" data-category="AMIT1303">AMIT1303 - Introduction to Interface Design</a></li>
+                <li><a href="#" data-category="AMMS1623">AMMS1623 - Calculus and Algebra</a></li>
+                <li><a href="#" data-category="AJEL1713">AJEL1713 - English for Tertiary Studies</a></li>
+                <li><a href="#" data-category="MPU2302">MPU-2302 - Integrity and Anti-Corruption</a></li>
+                <li><a href="#" data-category="MPU2123">MPU-2123 - Penghayatan Etika dan Peradaban</a></li>
 
                 <li class="category-semester-separator">--- Year 1 Semester 2 ---</li>
-                <li><a href="#" data-category="amcs1043">AMCS1043 - Database Development and Applications</a></li>
-                <li><a href="#" data-category="amcs1034">AMCS1034 - Software Development Fundamentals</a></li>
-                <li><a href="#" data-category="amms2613">AMMS2613 - Probability and Statistics</a></li>
+                <li><a href="#" data-category="AMCS1043">AMCS1043 - Database Development and Applications</a></li>
+                <li><a href="#" data-category="AMCS1034">AMCS1034 - Software Development Fundamentals</a></li>
+                <li><a href="#" data-category="AMMS2613">AMMS2613 - Probability and Statistics</a></li>
 
                 <li class="category-semester-separator">--- Year 1 Semester 3 ---</li>
-                <li><a href="#" data-category="amit2034">AMIT2034 - Fundamentals of Computer Networks</a></li>
-                <li><a href="#" data-category="amcs2204">AMCS2204 - Object-Oriented Programming Techniques</a></li>
-                <li><a href="#" data-category="amcs2093">AMCS2093 - Operating Systems</a></li>
-                <li><a href="#" data-category="amis1013">AMIS1013 - Systems Analysis and Design</a></li>
-                <li><a href="#" data-category="amms2603">AMMS2603 - Discrete Mathematics</a></li>
-                <li><a href="#" data-category="ajel1723">AJEL1723 - Academic English</a></li>
+                <li><a href="#" data-category="AMIT2034">AMIT2034 - Fundamentals of Computer Networks</a></li>
+                <li><a href="#" data-category="AMCS2204">AMCS2204 - Object-Oriented Programming Techniques</a></li>
+                <li><a href="#" data-category="AMCS2093">AMCS2093 - Operating Systems</a></li>
+                <li><a href="#" data-category="AMIS1013">AMIS1013 - Systems Analysis and Design</a></li>
+                <li><a href="#" data-category="AMMS2603">AMMS2603 - Discrete Mathematics</a></li>
+                <li><a href="#" data-category="AJEL1723">AJEL1723 - Academic English</a></li>
 
                 <li class="category-semester-separator">--- Year 2 Semester 1 ---</li>
-                <li><a href="#" data-category="amcs2034">AMCS2034 - Introduction to Data Structures and Algorithms</a></li>
-                <li><a href="#" data-category="amcs2123">AMCS2123 - Systems and Programming Concepts</a></li>
-                <li><a href="#" data-category="amcs2104">AMCS2104 - Fundamentals of Artificial Intelligence</a></li>
-                <li><a href="#" data-category="amit3353">AMIT3353 - Mobile Application Development</a></li>
-                <li><a href="#" data-category="amis1012">AMIS1012 - Ethics in Computing</a></li>
+                <li><a href="#" data-category="AMCS2034">AMCS2034 - Introduction to Data Structures and Algorithms</a></li>
+                <li><a href="#" data-category="AMCS2123">AMCS2123 - Systems and Programming Concepts</a></li>
+                <li><a href="#" data-category="AMCS2104">AMCS2104 - Fundamentals of Artificial Intelligence</a></li>
+                <li><a href="#" data-category="AMIT3353">AMIT3353 - Mobile Application Development</a></li>
+                <li><a href="#" data-category="AMIS1012">AMIS1012 - Ethics in Computing</a></li>
                 <li class="category-semester-separator">--- Year 2 Semester 2 ---</li>
-                <li><a href="#" data-category="amcs2094">AMCS2094 - Mini Project</a></li>
-                <li><a href="#" data-category="amcs2103">AMCS2103 - Parallel and Distributed Computing</a></li>
-                <li><a href="#" data-category="amis1003">AMIS1003 - Introduction to Cybersecurity</a></li>
+                <li><a href="#" data-category="AMCS2094">AMCS2094 - Mini Project</a></li>
+                <li><a href="#" data-category="AMCS2103">AMCS2103 - Parallel and Distributed Computing</a></li>
+                <li><a href="#" data-category="AMIS1003">AMIS1003 - Introduction to Cybersecurity</a></li>
 
                 <li class="category-semester-separator">--- Year 2 Semester 3 ---</li>
-                <li><a href="#" data-category="amit320a">AMIT320A - Industrial Training</a></li>
+                <li><a href="#" data-category="AMIT320A">AMIT320A - Industrial Training</a></li>
 
                 </ul>
         </aside>
 
         <section class="content-area">
             <h2>Your Notes & Resources</h2>
+            <div class="search-bar">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="search-icon">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                </svg>
+                <input type="text" id="searchInput" placeholder="Search notes by title, description, or subject...">
+            </div>
+
             <div id="notes-container" class="note-grid">
                 <div class="note-card" data-category="placeholder-note">
                     <h3>No Notes Found</h3>
@@ -433,6 +478,8 @@
             const logoutButton = document.getElementById('logout-btn');
             const categoryLinks = document.querySelectorAll('.category-list a');
             const notesContainer = document.getElementById('notes-container');
+            const searchInput = document.getElementById('searchInput'); // Get the search input
+            let allNotesData = []; // Store all fetched notes data
 
             // Handle Logout
             logoutButton.addEventListener('click', async () => {
@@ -449,6 +496,112 @@
                 }
             });
 
+            // Function to fetch and display notes
+            async function fetchAndDisplayNotes() {
+                try {
+                    const response = await fetch('/api/notes'); // Assuming your backend Flask route is /api/notes
+                    if (response.ok) {
+                        allNotesData = await response.json();
+                        // Call applyFiltersAndSearch to initially render notes
+                        applyFiltersAndSearch(); 
+                    } else if (response.status === 401) {
+                        // Not authenticated, redirect to login
+                        window.location.href = '/auth.html?mode=login';
+                    } else {
+                        console.error('Failed to fetch notes:', response.status);
+                        // Show placeholder if notes can't be fetched
+                        notesContainer.innerHTML = `
+                            <div class="note-card" data-category="placeholder-note">
+                                <h3>Error Loading Notes</h3>
+                                <p>There was a problem loading your notes. Please try again later.</p>
+                                <div class="tags">
+                                    <span class="category-tag">Error</span>
+                                </div>
+                                <div class="note-actions">
+                                    <a href="#" onclick="window.location.reload();">Reload Page</a>
+                                </div>
+                            </div>
+                        `;
+                    }
+                } catch (error) {
+                    console.error('Network error fetching notes:', error);
+                    notesContainer.innerHTML = `
+                        <div class="note-card" data-category="placeholder-note">
+                            <h3>Network Error</h3>
+                            <p>Could not connect to the server to load notes. Check your internet connection.</p>
+                            <div class="tags">
+                                <span class="category-tag">Network</span>
+                            </div>
+                            <div class="note-actions">
+                                <a href="#" onclick="window.location.reload();">Reload Page</a>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+
+            function renderNotes(notesToDisplay) {
+                notesContainer.innerHTML = ''; // Clear existing notes
+                if (notesToDisplay.length === 0) {
+                    // Display the "No Notes Found" placeholder if no notes are available
+                    notesContainer.innerHTML = `
+                        <div class="note-card" data-category="placeholder-note">
+                            <h3>No Notes Found</h3>
+                            <p>It looks like there are no notes available for this category yet. Upload some notes to get started!</p>
+                            <div class="tags">
+                                <span class="category-tag">Information</span>
+                                <span class="category-tag">Get Started</span>
+                            </div>
+                            <div class="note-actions">
+                                <a href="upload.html">Upload Now</a>
+                            </div>
+                        </div>
+                    `;
+                    return;
+                }
+
+                notesToDisplay.forEach(note => {
+                    const noteCard = document.createElement('div');
+                    noteCard.classList.add('note-card');
+                    // Use subject_code for filtering categories
+                    noteCard.dataset.category = note.subject_code; 
+
+                    noteCard.innerHTML = `
+                        <h3>${note.title}</h3>
+                        <p>${note.description || 'No description provided.'}</p>
+                        <div class="tags">
+                            <span class="category-tag">${note.academic_year.replace('year', 'Year ')}</span>
+                            <span class="category-tag">${note.semester.replace('semester', 'Semester ')}</span>
+                            <span class="category-tag">${note.subject_code}</span>
+                            <span class="category-tag">${note.notes_type.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}</span>
+                        </div>
+                        <div class="note-actions">
+                            <a href="${note.file_url}" target="_blank">View / Download</a>
+                            </div>
+                    `;
+                    notesContainer.appendChild(noteCard);
+                });
+            }
+
+            // Function to apply both category filter and search filter
+            function applyFiltersAndSearch() {
+                const activeCategoryLink = document.querySelector('.category-list a.active');
+                const selectedCategory = activeCategoryLink ? activeCategoryLink.dataset.category : 'all';
+                const searchTerm = searchInput.value.toLowerCase();
+
+                let filteredNotes = allNotesData.filter(note => {
+                    const matchesCategory = (selectedCategory === 'all' || note.subject_code === selectedCategory);
+                    
+                    const matchesSearch = 
+                        note.title.toLowerCase().includes(searchTerm) ||
+                        (note.description && note.description.toLowerCase().includes(searchTerm)) ||
+                        note.subject_code.toLowerCase().includes(searchTerm);
+
+                    return matchesCategory && matchesSearch;
+                });
+                renderNotes(filteredNotes);
+            }
+
             // Handle Category Filtering
             categoryLinks.forEach(link => {
                 link.addEventListener('click', (event) => {
@@ -459,77 +612,33 @@
                     // Add 'active' class to the clicked link
                     link.classList.add('active');
 
-                    const selectedCategory = link.dataset.category;
-                    const allNoteCards = notesContainer.querySelectorAll('.note-card');
-                    let notesFound = false; // Flag to check if any notes are visible
-
-                    allNoteCards.forEach(card => {
-                        const cardCategory = card.dataset.category;
-                        // Skip the placeholder note when filtering
-                        if (card.dataset.category === 'placeholder-note') {
-                            card.style.display = 'none';
-                            return;
-                        }
-
-                        if (selectedCategory === 'all' || cardCategory === selectedCategory) {
-                            card.style.display = 'block'; // Show relevant notes
-                            notesFound = true;
-                        } else {
-                            card.style.display = 'none'; // Hide irrelevant notes
-                        }
-                    });
-
-                    // If no notes are found for the selected category, show the placeholder
-                    if (!notesFound && selectedCategory !== 'placeholder-note') {
-                         notesContainer.querySelector('[data-category="placeholder-note"]').style.display = 'block';
-                    }
-                     // If 'All Notes' is selected and there are no actual notes but the placeholder is there
-                     if (selectedCategory === 'all' && notesContainer.querySelectorAll('.note-card:not([data-category="placeholder-note"])').length === 0) {
-                        notesContainer.querySelector('[data-category="placeholder-note"]').style.display = 'block';
-                    }
+                    applyFiltersAndSearch(); // Apply filters and search
                 });
             });
 
-            // Initially hide the placeholder if there are other notes, or show it if not.
-            // This runs once on load.
-            function managePlaceholderVisibility() {
-                const allActualNotes = notesContainer.querySelectorAll('.note-card:not([data-category="placeholder-note"])');
-                const placeholderNote = notesContainer.querySelector('[data-category="placeholder-note"]');
+            // Handle Search Input
+            searchInput.addEventListener('input', applyFiltersAndSearch); // Re-filter on every input
 
-                if (allActualNotes.length === 0) {
-                    if (placeholderNote) placeholderNote.style.display = 'block';
-                } else {
-                    if (placeholderNote) placeholderNote.style.display = 'none';
-                }
-            }
-
-            // Call it on page load to set initial state
-            managePlaceholderVisibility();
-
-
+            // Initial fetch and display of notes when the page loads
+            fetchAndDisplayNotes();
+            
             // --- Basic User Info Fetch (Optional, for displaying welcome message or user email) ---
             async function fetchUserInfo() {
                 try {
                     const response = await fetch('/api/user');
                     if (response.ok) {
                         const user = await response.json();
-                        // You could update a welcome message in the header like:
-                        // const welcomeSpan = document.getElementById('welcome-message');
-                        // if (welcomeSpan) welcomeSpan.textContent = `Welcome, ${user.email.split('@')[0]}!`;
-                        console.log('Logged in user:', user.email); // For debugging
+                        console.log('Logged in user:', user.email); 
                     } else if (response.status === 401) {
-                        // User is not authenticated, redirect to login
                         window.location.href = '/auth.html?mode=login';
                     } else {
                         console.error('Failed to fetch user info:', response.status);
                     }
                 } catch (error) {
                     console.error('Network error fetching user info:', error);
-                    // Consider redirecting to login if network issues are persistent
-                    // window.location.href = '/auth.html?mode=login';
                 }
             }
-            fetchUserInfo(); // Call this function when the page loads
+            fetchUserInfo(); 
         });
 
         // Listen for changes in localStorage for 'theme' (e.g., if changed from another tab)
