@@ -213,7 +213,7 @@
             box-shadow: 0 2px 6px rgba(255,255,255,0.05);
         }
 
-        /* "Or" separator */
+        /* "Or" separator (Not used in this revised design, but keeping for reference if needed) */
         .separator {
             display: flex;
             align-items: center;
@@ -412,6 +412,79 @@
         window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
             if (!localStorage.getItem("theme")) { // Only apply if index.html hasn't manually set a preference
                 setTheme(event.matches);
+            }
+        });
+
+
+        // --- New JavaScript for form submissions to your Node.js backend ---
+
+        // Handle Login Form Submission
+        const loginFormElement = document.querySelector('#login-form form');
+        loginFormElement.addEventListener('submit', async (event) => {
+            event.preventDefault(); // Prevent default form submission
+
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-access-code').value;
+
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, password }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert(data.message); // Show success message
+                    // Redirect to home.html or the specified redirect URL from the server
+                    window.location.href = data.redirect || '/home.html';
+                } else {
+                    alert(`Login failed: ${data.error}`); // Show error message from server
+                }
+            } catch (error) {
+                console.error('Network or server error during login:', error);
+                alert('An unexpected error occurred. Please try again.');
+            }
+        });
+
+        // Handle Signup Form Submission
+        const signupFormElement = document.querySelector('#signup-form form');
+        signupFormElement.addEventListener('submit', async (event) => {
+            event.preventDefault(); // Prevent default form submission
+
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-access-code').value;
+            const confirmPassword = document.getElementById('signup-confirm-access-code').value;
+
+            if (password !== confirmPassword) {
+                alert("Access codes do not match!");
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/signup', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, password }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert(data.message); // Show success message
+                    // Redirect to login form after successful signup
+                    window.location.href = '/auth.html?mode=login';
+                } else {
+                    alert(`Signup failed: ${data.error}`); // Show error message from server
+                }
+            } catch (error) {
+                console.error('Network or server error during signup:', error);
+                alert('An unexpected error occurred. Please try again.');
             }
         });
     </script>
