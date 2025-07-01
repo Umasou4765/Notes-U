@@ -7,10 +7,10 @@ const bcrypt = require('bcryptjs'); // For password hashing (using bcryptjs for 
 const path = require("path"); // For working with file paths
 const { Pool } = require('pg'); // PostgreSQL client
 const multer = require('multer'); // For handling file uploads
-const fs = require('fs'); // <--- ADDED THIS LINE IN PREVIOUS FIX: Import the file system module
+const fs = require('fs'); // Import the file system module
 
 // 导入 connect-pg-simple
-const pgSession = require('connect-pg-simple')(session); // <--- ADDED THIS LINE IN PREVIOUS FIX
+const pgSession = require('connect-pg-simple')(session);
 
 const app = express();
 
@@ -22,27 +22,8 @@ app.use(express.json());
 // Parse URL-encoded bodies, typically for form submissions
 app.use(express.urlencoded({ extended: true }));
 
-// Session setup for managing user sessions
-// IMPORTANT PRODUCTION WARNING: MemoryStore is NOT suitable for production.
-// It will cause sessions to be lost on app restarts/redeploys and does not scale.
-// Consider using a persistent session store like connect-pg-simple (for PostgreSQL), Redis, etc.
-app.use(session({
-  store: new pgSession({ // <--- Using pgSession for storage
-    pool: pool,          // Connection pool
-    tableName: 'session' // Table name for session data (you'll need to create this table)
-  }),
-  secret: process.env.SESSION_SECRET || 'your_very_strong_and_long_secret_key', // **IMPORTANT: Change this to a truly random, long string**
-  resave: false, // Don't save session if unmodified
-  saveUninitialized: false, // Don't create session until something is stored
-  cookie: {
-    maxAge: 1000 * 60 * 60 * 24, // Session lasts for 1 day
-    secure: process.env.NODE_ENV === 'production', // Use secure cookies (HTTPS) in production
-    httpOnly: true, // Prevents client-side JavaScript from accessing cookies
-    sameSite: 'Lax' // Protection against CSRF attacks
-  }
-}));
-
 // --- PostgreSQL Database Connection Pool ---
+// Moved pool initialization BEFORE session setup
 const databaseUrl = process.env.DATABASE_URL;
 
 if (!databaseUrl) {
@@ -70,6 +51,27 @@ pool.connect((err, client, release) => {
         console.log('✅ Database connected successfully! Current DB time:', result.rows[0].now);
     });
 });
+
+
+// Session setup for managing user sessions
+// IMPORTANT PRODUCTION WARNING: MemoryStore is NOT suitable for production.
+// It will cause sessions to be lost on app restarts/redeploys and does not scale.
+// Consider using a persistent session store like connect-pg-simple (for PostgreSQL), Redis, etc.
+app.use(session({
+  store: new pgSession({ // Using pgSession for storage
+    pool: pool,          // Connection pool (now 'pool' is defined!)
+    tableName: 'session' // Table name for session data (you'll need to create this table)
+  }),
+  secret: process.env.SESSION_SECRET || 'your_very_strong_and_long_secret_key', // **IMPORTANT: Change this to a truly random, long string**
+  resave: false, // Don't save session if unmodified
+  saveUninitialized: false, // Don't create session until something is stored
+  cookie: {
+    maxAge: 1000 * 60 * 60 * 24, // Session lasts for 1 day
+    secure: process.env.NODE_ENV === 'production', // Use secure cookies (HTTPS) in production
+    httpOnly: true, // Prevents client-side JavaScript from accessing cookies
+    sameSite: 'Lax' // Protection against CSRF attacks
+  }
+}));
 
 // --- Database Table Initialization (Optional, for quick local setup) ---
 // In production, you typically run these SQL commands directly in your Supabase SQL Editor.
