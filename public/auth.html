@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="color-scheme" content="light dark">
-    <title>Auth - Notes-U</title>
+    <title>Auth - Note-U</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         /* CSS Variables for better theme management */
@@ -325,8 +325,8 @@
         <div id="login-form" class="auth-form">
             <form>
                 <div class="form-group">
-                    <label for="login-email">Email or Username</label>
-                    <input type="text" id="login-email" name="emailOrUsername" required placeholder="Enter your email or username">
+                    <label for="login-username">Username</label>
+                    <input type="text" id="login-username" name="username" required placeholder="Enter your username">
                 </div>
                 <div class="form-group">
                     <label for="login-access-code">Access Code</label>
@@ -358,6 +358,9 @@
     </div>
 
     <script>
+        // DIAGNOSTIC: Check if this script block is loading and executing at all.
+        console.log('Auth.html script loaded and starting execution.');
+
         // Function to set the theme based on the 'dark' class on body
         function setTheme(isDark) {
             if (isDark) {
@@ -369,6 +372,7 @@
 
         // Script to handle switching between login and signup forms
         window.addEventListener("DOMContentLoaded", () => {
+            console.log('DOM Content Loaded. Initializing forms.'); // DIAGNOSTIC LOG
             const urlParams = new URLSearchParams(window.location.search);
             const mode = urlParams.get('mode'); // 'login' or 'signup'
 
@@ -420,104 +424,96 @@
         });
 
 
-        // --- New JavaScript for form submissions to your Node.js backend ---
+        // --- JavaScript for form submissions to your Node.js backend ---
 
         // Handle Login Form Submission
         const loginFormElement = document.querySelector('#login-form form');
-        loginFormElement.addEventListener('submit', async (event) => {
-            event.preventDefault(); // Prevent default form submission
-            console.log('Login form submitted!'); // DIAGNOSTIC LOG
+        if (loginFormElement) { // Safety check to ensure element exists before adding listener
+            loginFormElement.addEventListener('submit', async (event) => {
+                event.preventDefault(); // Prevent default form submission
+                console.log('Login form submitted!'); // DIAGNOSTIC LOG
 
-            // For login, the input can be either email or username,
-            // so we take the value from the single field and let the backend decide.
-            const emailOrUsername = document.getElementById('login-email').value;
-            const password = document.getElementById('login-access-code').value;
+                // --- MODIFIED: Login now only uses username ---
+                const username = document.getElementById('login-username').value; // Get username from the field
+                const password = document.getElementById('login-access-code').value;
 
-            // Determine if input looks like an email or a username
-            let loginPayload = {};
-            if (emailOrUsername.includes('@')) {
-                loginPayload.email = emailOrUsername;
-            } else {
-                loginPayload.username = emailOrUsername;
-            }
-            loginPayload.password = password;
+                try {
+                    const response = await fetch('/api/login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ username, password }), // Send only username and password
+                    });
 
-
-            try {
-                const response = await fetch('/api/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(loginPayload), // Send dynamically constructed payload
-                });
-
-                // --- MODIFIED ERROR HANDLING FOR LOGIN ---
-                if (response.ok) {
-                    const data = await response.json();
-                    alert(data.message); // Show success message
-                    window.location.href = data.redirect || '/home.html';
-                } else {
-                    // If response was not OK, try to parse JSON error, or use statusText
-                    let errorMessage = `Login failed: ${response.statusText || 'Unknown error'}`;
-                    try {
-                        const errorData = await response.json();
-                        if (errorData && errorData.error) {
-                            errorMessage = `Login failed: ${errorData.error}`;
+                    // --- MODIFIED ERROR HANDLING FOR LOGIN ---
+                    if (response.ok) {
+                        const data = await response.json();
+                        alert(data.message); // Show success message
+                        window.location.href = data.redirect || '/home.html';
+                    } else {
+                        let errorMessage = `Login failed: ${response.statusText || 'Unknown error'}`;
+                        try {
+                            const errorData = await response.json();
+                            if (errorData && errorData.error) {
+                                errorMessage = `Login failed: ${errorData.error}`;
+                            }
+                        } catch (jsonError) {
+                            console.warn('Could not parse JSON error response during login:', jsonError);
                         }
-                    } catch (jsonError) {
-                        console.warn('Could not parse JSON error response during login:', jsonError);
-                        // Fallback to default message if JSON parsing fails, already set in errorMessage
+                        alert(errorMessage);
                     }
-                    alert(errorMessage); // Always show an alert
+                } catch (error) {
+                    console.error('Network or unexpected error during login:', error);
+                    alert('An unexpected error occurred. Please try again.');
                 }
-            } catch (error) {
-                console.error('Network or unexpected error during login:', error);
-                alert('An unexpected error occurred. Please try again.');
-            }
-        });
+            });
+        } else {
+            console.error('Login form element not found!'); // DIAGNOSTIC LOG
+        }
+
 
         // Handle Signup Form Submission
         const signupFormElement = document.querySelector('#signup-form form');
-        signupFormElement.addEventListener('submit', async (event) => {
-            event.preventDefault(); // Prevent default form submission
-            console.log('Signup form submitted!'); // DIAGNOSTIC LOG
+        if (signupFormElement) { // Safety check to ensure element exists before adding listener
+            signupFormElement.addEventListener('submit', async (event) => {
+                event.preventDefault(); // Prevent default form submission
+                console.log('Signup form submitted!'); // DIAGNOSTIC LOG
 
-            // Get username from the dedicated input field
-            const username = document.getElementById('signup-username').value;
-            // REMOVED: No longer getting email from the form
-            const password = document.getElementById('signup-access-code').value;
-            const confirmPassword = document.getElementById('signup-confirm-access-code').value;
+                const username = document.getElementById('signup-username').value;
+                const password = document.getElementById('signup-access-code').value;
+                const confirmPassword = document.getElementById('signup-confirm-access-code').value;
 
-            if (password !== confirmPassword) {
-                alert("Access codes do not match!");
-                return;
-            }
-
-            try {
-                const response = await fetch('/api/signup', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    // Send ONLY username and password
-                    body: JSON.stringify({ username, password }),
-                });
-
-                const data = await response.json();
-
-                if (response.ok) {
-                    alert(data.message); // Show success message
-                    // Redirect to login form after successful signup
-                    window.location.href = '/auth.html?mode=login';
-                } else {
-                    alert(`Signup failed: ${data.error}`); // Show error message from server
+                if (password !== confirmPassword) {
+                    alert("Access codes do not match!");
+                    return;
                 }
-            } catch (error) {
-                console.error('Network or server error during signup:', error);
-                alert('An unexpected error occurred. Please try again.');
-            }
-        });
+
+                try {
+                    const response = await fetch('/api/signup', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ username, password }),
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        alert(data.message);
+                        window.location.href = '/auth.html?mode=login';
+                    } else {
+                        alert(`Signup failed: ${data.error}`);
+                    }
+                } catch (error) {
+                    console.error('Network or server error during signup:', error);
+                    alert('An unexpected error occurred. Please try again.');
+                }
+            });
+        } else {
+            console.error('Signup form element not found!'); // DIAGNOSTIC LOG
+        }
     </script>
 </body>
 </html>
