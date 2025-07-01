@@ -155,7 +155,8 @@
         }
 
         .form-group input[type="email"],
-        .form-group input[type="password"] {
+        .form-group input[type="password"],
+        .form-group input[type="text"] { /* Added text input style */
             width: 100%;
             padding: 12px 15px;
             border: 1px solid var(--color-border-light);
@@ -168,20 +169,23 @@
         }
 
         .form-group input[type="email"]:focus,
-        .form-group input[type="password"]:focus {
+        .form-group input[type="password"]:focus,
+        .form-group input[type="text"]:focus { /* Added text input focus style */
             outline: none;
             border-color: var(--color-accent-blue);
             box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
         }
 
         body.dark .form-group input[type="email"],
-        body.dark .form-group input[type="password"] {
+        body.dark .form-group input[type="password"],
+        body.dark .form-group input[type="text"] { /* Added text input style for dark mode */
             background-color: var(--color-input-bg-dark);
             color: var(--color-text-primary-dark);
             border-color: var(--color-border-dark);
         }
         body.dark .form-group input[type="email"]:focus,
-        body.dark .form-group input[type="password"]:focus {
+        body.dark .form-group input[type="password"]:focus,
+        body.dark .form-group input[type="text"]:focus { /* Added text input focus style for dark mode */
             border-color: var(--color-link-dark);
             box-shadow: 0 0 0 3px rgba(100, 181, 246, 0.25);
         }
@@ -322,7 +326,7 @@
             <form>
                 <div class="form-group">
                     <label for="login-email">Email or Username</label>
-                    <input type="email" id="login-email" name="email" required placeholder="Enter your email or username">
+                    <input type="text" id="login-email" name="emailOrUsername" required placeholder="Enter your email or username">
                 </div>
                 <div class="form-group">
                     <label for="login-access-code">Access Code</label>
@@ -336,8 +340,12 @@
         <div id="signup-form" class="auth-form">
             <form>
                 <div class="form-group">
-                    <label for="signup-email">Email or Username</label>
-                    <input type="email" id="signup-email" name="email" required placeholder="Enter your email or username">
+                    <label for="signup-username">Username</label>
+                    <input type="text" id="signup-username" name="username" required placeholder="Choose a username">
+                </div>
+                <div class="form-group">
+                    <label for="signup-email">Email (Optional)</label>
+                    <input type="email" id="signup-email" name="email" placeholder="Enter your email (optional)">
                 </div>
                 <div class="form-group">
                     <label for="signup-access-code">Create Access Code</label>
@@ -423,8 +431,20 @@
         loginFormElement.addEventListener('submit', async (event) => {
             event.preventDefault(); // Prevent default form submission
 
-            const email = document.getElementById('login-email').value;
+            // For login, the input can be either email or username,
+            // so we take the value from the single field and let the backend decide.
+            const emailOrUsername = document.getElementById('login-email').value;
             const password = document.getElementById('login-access-code').value;
+
+            // Determine if input looks like an email or a username
+            let loginPayload = {};
+            if (emailOrUsername.includes('@')) {
+                loginPayload.email = emailOrUsername;
+            } else {
+                loginPayload.username = emailOrUsername;
+            }
+            loginPayload.password = password;
+
 
             try {
                 const response = await fetch('/api/login', {
@@ -432,7 +452,7 @@
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ email, password }),
+                    body: JSON.stringify(loginPayload), // Send dynamically constructed payload
                 });
 
                 const data = await response.json();
@@ -455,7 +475,9 @@
         signupFormElement.addEventListener('submit', async (event) => {
             event.preventDefault(); // Prevent default form submission
 
-            const email = document.getElementById('signup-email').value;
+            // NEW: Get username from the dedicated input field
+            const username = document.getElementById('signup-username').value;
+            const email = document.getElementById('signup-email').value; // Email is optional now, but we still get its value
             const password = document.getElementById('signup-access-code').value;
             const confirmPassword = document.getElementById('signup-confirm-access-code').value;
 
@@ -470,7 +492,8 @@
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ email, password }),
+                    // NEW: Send username along with email and password
+                    body: JSON.stringify({ username, email, password }),
                 });
 
                 const data = await response.json();
