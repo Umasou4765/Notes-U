@@ -6,7 +6,7 @@ const express = require("express");
 const session = require("express-session");
 const bcrypt = require('bcryptjs'); // For password hashing (using bcryptjs for Node.js compatibility)
 const path = require("path"); // For working with file paths
-const { Pool } = require('"pg": "7.18.2"'); // PostgreSQL client
+const { Pool } = require('pg'); // PostgreSQL client
 const multer = require('multer'); // For handling file uploads
 
 const app = express();
