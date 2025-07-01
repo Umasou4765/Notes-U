@@ -1,470 +1,457 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="color-scheme" content="light dark">
-    <title>Auth - Notes-U</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        /* CSS Variables for better theme management */
-        :root {
-            /* Light Theme Colors */
-            --color-bg-light: #f8f8f8;
-            --color-text-primary-light: #333;
-            --color-text-secondary-light: #666;
-            --color-border-light: rgba(55, 53, 47, 0.1);
-            --color-input-bg-light: white;
-            --color-input-hover-light: rgba(55, 53, 47, 0.03);
-            --color-input-border-hover-light: rgba(55, 53, 47, 0.2);
-            --color-separator-line-light: #ddd;
-            --color-link-light: #007bff;
-            --color-link-hover-light: #0056b3;
-            --color-card-bg-light: #fff;
-            --color-shadow-light: rgba(0,0,0,0.05);
+// server.js
+require("dotenv").config(); // Loads environment variables from a .env file
 
-            /* Dark Theme Colors */
-            --color-bg-dark: #121212;
-            --color-text-primary-dark: rgba(255, 255, 255, 0.9);
-            --color-text-secondary-dark: rgba(255, 255, 255, 0.6);
-            --color-border-dark: rgba(255, 255, 255, 0.1);
-            --color-input-bg-dark: #252525;
-            --color-input-hover-dark: #333;
-            --color-input-border-hover-dark: rgba(255, 255, 255, 0.2);
-            --color-separator-line-dark: #444;
-            --color-link-dark: #64b5f6;
-            --color-link-hover-dark: #90caf9;
-            --color-card-bg-dark: #1a1a1a;
-            --color-shadow-dark: rgba(255,255,255,0.02);
+const express = require("express");
+const session = require("express-session");
+const bcrypt = require('bcryptjs'); // For password hashing (using bcryptjs for Node.js compatibility)
+const path = require("path"); // For working with file paths
+const { Pool } = require('pg'); // PostgreSQL client
+const multer = require('multer'); // For handling file uploads
+const fs = require('fs'); // Import the file system module
 
-            /* Common Colors */
-            --color-accent-blue: #007bff;
-            --color-accent-blue-hover: #0056b3;
-            --color-icon-light: #333;
-            --color-icon-dark: white;
+// 导入 connect-pg-simple
+const pgSession = require('connect-pg-simple')(session);
+
+const app = express();
+
+// --- Middleware ---
+
+// Parse JSON bodies for API requests
+app.use(express.json());
+
+// Parse URL-encoded bodies, typically for form submissions
+app.use(express.urlencoded({ extended: true }));
+
+// --- PostgreSQL Database Connection Pool ---
+// Moved pool initialization BEFORE session setup
+const databaseUrl = process.env.DATABASE_URL;
+
+if (!databaseUrl) {
+    console.error('FATAL ERROR: DATABASE_URL environment variable is not set. Please set it in your .env file or Render settings.');
+    process.exit(1); // Exit if no database connection string
+}
+
+const pool = new Pool({
+    connectionString: databaseUrl,
+    ssl: {
+        rejectUnauthorized: false // Required for Supabase connections from Render
+    }
+});
+
+// Test database connection on startup
+pool.connect((err, client, release) => {
+    if (err) {
+        return console.error('Error acquiring client from pool', err.stack);
+    }
+    client.query('SELECT NOW()', (err, result) => {
+        release(); // Release the client back to the pool
+        if (err) {
+            return console.error('Error executing test query', err.stack);
         }
+        console.log('✅ Database connected successfully! Current DB time:', result.rows[0].now);
+    });
+});
 
-        /* Base styles */
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            background-color: var(--color-bg-light);
-            color: var(--color-text-primary-light);
-            flex-direction: column;
-            box-sizing: border-box;
-            overflow-x: hidden;
-            width: 100%;
-            transition: background-color 0.3s ease, color 0.3s ease;
-            padding: 20px;
-        }
 
-        /* Dark Mode application */
-        body.dark {
-            background-color: var(--color-bg-dark);
-            color: var(--color-text-primary-dark);
-        }
+// Session setup for managing user sessions
+// IMPORTANT PRODUCTION WARNING: MemoryStore is NOT suitable for production.
+// It will cause sessions to be lost on app restarts/redeploys and does not scale.
+// Consider using a persistent session store like connect-pg-simple (for PostgreSQL), Redis, etc.
+app.use(session({
+  store: new pgSession({ // Using pgSession for storage
+    pool: pool,          // Connection pool (now 'pool' is defined!)
+    tableName: 'session' // Table name for session data (you'll need to create this table)
+  }),
+  secret: process.env.SESSION_SECRET || 'your_very_strong_and_long_secret_key', // **IMPORTANT: Change this to a truly random, long string**
+  resave: false, // Don't save session if unmodified
+  saveUninitialized: false, // Don't create session until something is stored
+  cookie: {
+    maxAge: 1000 * 60 * 60 * 24, // Session lasts for 1 day
+    secure: process.env.NODE_ENV === 'production', // Use secure cookies (HTTPS) in production
+    httpOnly: true, // Prevents client-side JavaScript from accessing cookies
+    sameSite: 'Lax' // Protection against CSRF attacks
+  }
+}));
 
-        .container {
-            text-align: center;
-            padding: 32px;
-            max-width: 420px;
-            width: 100%;
-            box-sizing: border-box;
-            background-color: var(--color-card-bg-light);
-            border-radius: 12px;
-            box-shadow: 0 6px 20px var(--color-shadow-light);
-            transition: background-color 0.3s ease, box-shadow 0.3s ease;
-        }
+// --- Database Table Initialization (Optional, for quick local setup) ---
+// In production, you typically run these SQL commands directly in your Supabase SQL Editor.
+async function initDbTables() {
+    try {
+        const client = await pool.connect();
+        await client.query(`
+            CREATE TABLE IF NOT EXISTS users (
+                id SERIAL PRIMARY KEY,
+                username TEXT UNIQUE NOT NULL,
+                password_hash TEXT NOT NULL,
+                email TEXT UNIQUE -- Email is UNIQUE, but can be NULL if not provided
+            );
+        `);
+        await client.query(`
+            CREATE TABLE IF NOT EXISTS notes (
+                id SERIAL PRIMARY KEY,
+                user_id INTEGER NOT NULL,
+                title TEXT NOT NULL,
+                academic_year TEXT NOT NULL,
+                semester TEXT NOT NULL,
+                subject_code TEXT NOT NULL,
+                notes_type TEXT NOT NULL,
+                description TEXT,
+                file_path TEXT NOT NULL UNIQUE,
+                uploaded_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+            );
+        `);
+        // Create session table for connect-pg-simple
+        await client.query(`
+            CREATE TABLE IF NOT EXISTS "session" (
+                "sid" varchar NOT NULL COLLATE "default",
+                "sess" json NOT NULL,
+                "expire" timestamp(6) NOT NULL
+            ) WITH (OIDS=FALSE);
+            ALTER TABLE "session" ADD CONSTRAINT "session_pkey" PRIMARY KEY ("sid") NOT DEFERRABLE INITIALLY IMMEDIATE;
+            CREATE INDEX "IDX_session_expire" ON "session" ("expire");
+        `);
+        console.log('✅ Database tables (users, notes, session) checked/created.');
+        client.release();
+    } catch (err) {
+        console.error('Error initializing database tables:', err.stack);
+    }
+}
+// Call table initialization on app startup
+initDbTables();
 
-        body.dark .container {
-            background-color: var(--color-card-bg-dark);
-            box-shadow: 0 6px 20px var(--color-shadow-dark);
-        }
+// --- Authentication API Routes ---
 
-        .logo {
-            font-size: 2.8em;
-            font-weight: 700;
-            margin-bottom: 24px;
-            color: var(--color-text-primary-light);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 60px;
-            width: 60px;
-            border: 2px solid var(--color-text-primary-light);
-            border-radius: 8px;
-            box-sizing: border-box;
-            margin-left: auto;
-            margin-right: auto;
-            transition: border-color 0.3s ease, color 0.3s ease;
-        }
+/**
+ * @route POST /api/signup
+ * @description Handles user registration.
+ * @access Public
+ */
+app.post("/api/signup", async (req, res) => {
+  const { email, password, username } = req.body;
 
-        body.dark .logo {
-            color: var(--color-text-primary-dark);
-            border-color: var(--color-text-primary-dark);
-        }
+  // --- MODIFIED VALIDATION LOGIC HERE ---
+  // Based on DB schema: username is NOT NULL, email is UNIQUE (and can be NULL)
+  // So, username and password are required for signup. Email is optional.
+  if (!username || !password) {
+    return res.status(400).json({ error: "Username and password are required for signup." });
+  }
 
-        .logo span {
-            line-height: 1;
-        }
+  // Basic email format validation, ONLY if email is provided
+  if (email && !/\S+@\S+\.\S+/.test(email)) {
+    return res.status(400).json({ error: "Please enter a valid email address." });
+  }
 
-        h1 {
-            font-size: 2em;
-            font-weight: 700;
-            margin-bottom: 8px;
-            color: var(--color-text-primary-light);
-            line-height: 1.3;
-            transition: color 0.3s ease;
-        }
+  // Password strength check
+  if (password.length < 8) {
+    return res.status(400).json({ error: "Password must be at least 8 characters long." });
+  }
+  // --- END MODIFIED VALIDATION LOGIC ---
 
-        body.dark h1 {
-            color: var(--color-text-primary-dark);
-        }
+  try {
+    const hashedPassword = await bcrypt.hash(password, 10); // Hash the password
 
-        p {
-            font-size: 1em;
-            color: var(--color-text-secondary-light);
-            margin-bottom: 32px;
-            transition: color 0.3s ease;
-        }
+    // Insert user into PostgreSQL
+    // If email is not provided, it will be inserted as NULL
+    const result = await pool.query(
+      "INSERT INTO users (username, password_hash, email) VALUES ($1, $2, $3) RETURNING id, username, email",
+      [username, hashedPassword, email || null] // Use null if email is undefined/empty string
+    );
 
-        body.dark p {
-            color: var(--color-text-secondary-dark);
-        }
+    console.log(`[SIGNUP] New user created: ${username} (Email: ${email || 'N/A'})`);
+    res.status(201).json({ message: "Account created successfully! You can now log in.", user: result.rows[0] });
+  } catch (error) {
+    // Check for unique constraint violation (PostgreSQL error code 23505)
+    if (error.code === '23505') {
+      let errorMessage = "User with this username or email already exists.";
+      // You can add more specific checks here if needed, e.g., error.detail
+      if (error.detail && error.detail.includes('Key (username)')) {
+          errorMessage = "This username is already taken.";
+      } else if (error.detail && error.detail.includes('Key (email)')) {
+          errorMessage = "This email is already registered.";
+      }
+      return res.status(409).json({ error: errorMessage });
+    }
+    console.error("[SIGNUP ERROR]", error);
+    res.status(500).json({ error: "Server error during signup. Please try again later." });
+  }
+});
 
-        /* Form Styles */
-        .form-group {
-            margin-bottom: 20px;
-            text-align: left; /* Align labels and inputs to the left */
-        }
+/**
+ * @route POST /api/login
+ * @description Handles user login and session creation.
+ * @access Public
+ */
+app.post("/api/login", async (req, res) => {
+  const { email, password, username } = req.body; // Login can accept either email or username
 
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: var(--color-text-primary-light);
-            transition: color 0.3s ease;
-        }
+  if ((!email && !username) || !password) { // Requires either email OR username, AND password
+    return res.status(400).json({ error: "Email/Username and password are required for login." });
+  }
 
-        body.dark .form-group label {
-            color: var(--color-text-primary-dark);
-        }
+  try {
+    let user;
+    if (email) {
+        // Attempt to find user by email
+        const result = await pool.query("SELECT id, username, email, password_hash FROM users WHERE email = $1", [email]);
+        user = result.rows[0];
+    } else if (username) {
+        // Attempt to find user by username
+        const result = await pool.query("SELECT id, username, email, password_hash FROM users WHERE username = $1", [username]);
+        user = result.rows[0];
+    } else {
+        // This case should ideally be caught by the initial !email && !username check, but for robustness
+        return res.status(400).json({ error: "Email or username is required for login." });
+    }
 
-        .form-group input[type="email"],
-        .form-group input[type="password"],
-        .form-group input[type="text"] { /* Added text input style */
-            width: 100%;
-            padding: 12px 15px;
-            border: 1px solid var(--color-border-light);
-            border-radius: 8px;
-            font-size: 1em;
-            background-color: var(--color-input-bg-light);
-            color: var(--color-text-primary-light);
-            box-sizing: border-box; /* Include padding in width calculation */
-            transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
-        }
+    // --- MODIFIED LOGIN ERROR MESSAGES HERE ---
+    if (!user) {
+      // User not found
+      // Note: For enhanced security, a generic message like "Invalid username/email or password" is often preferred
+      // to avoid revealing whether an account exists. However, for improved UX as requested:
+      return res.status(401).json({ error: "Account not found." });
+    }
 
-        .form-group input[type="email"]:focus,
-        .form-group input[type="password"]:focus,
-        .form-group input[type="text"]:focus { /* Added text input focus style */
-            outline: none;
-            border-color: var(--color-accent-blue);
-            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
-        }
+    const passwordMatch = await bcrypt.compare(password, user.password_hash);
 
-        body.dark .form-group input[type="email"],
-        body.dark .form-group input[type="password"],
-        body.dark .form-group input[type="text"] { /* Added text input style for dark mode */
-            background-color: var(--color-input-bg-dark);
-            color: var(--color-text-primary-dark);
-            border-color: var(--color-border-dark);
-        }
-        body.dark .form-group input[type="email"]:focus,
-        body.dark .form-group input[type="password"]:focus,
-        body.dark .form-group input[type="text"]:focus { /* Added text input focus style for dark mode */
-            border-color: var(--color-link-dark);
-            box-shadow: 0 0 0 3px rgba(100, 181, 246, 0.25);
-        }
+    if (passwordMatch) {
+      req.session.userId = user.id; // Store user ID in session
+      req.session.userEmail = user.email; // Store user email in session (optional)
+      req.session.username = user.username; // Store username in session (optional)
 
-        .submit-button {
-            width: 100%;
-            padding: 14px 20px;
-            border: none;
-            border-radius: 8px;
-            background-color: var(--color-accent-blue);
-            color: #fff;
-            font-size: 1.05em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.2s ease, box-shadow 0.2s ease;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-        }
+      console.log(`[LOGIN] User successfully logged in: ${user.username || user.email}`);
+      res.status(200).json({ message: "Login successful!", redirect: "/home.html" });
+    } else {
+      // Password mismatch
+      // Note: Same security consideration as above. For improved UX:
+      res.status(401).json({ error: "Incorrect password." });
+    }
+    // --- END MODIFIED LOGIN ERROR MESSAGES ---
 
-        .submit-button:hover {
-            background-color: var(--color-accent-blue-hover);
-            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-        }
+  } catch (error) {
+    console.error("[LOGIN ERROR]", error);
+    res.status(500).json({ error: "Server error during login. Please try again later." });
+  }
+});
 
-        body.dark .submit-button {
-            background-color: var(--color-accent-blue);
-        }
-        body.dark .submit-button:hover {
-            background-color: var(--color-accent-blue-hover);
-            box-shadow: 0 2px 6px rgba(255,255,255,0.05);
-        }
+// --- Protected API Routes Middleware ---
 
-        /* "Or" separator (Not used in this revised design, but keeping for reference if needed) */
-        .separator {
-            display: flex;
-            align-items: center;
-            text-align: center;
-            margin: 24px 0;
-            color: var(--color-text-secondary-light);
-            font-size: 0.9em;
-        }
+/**
+ * @description Middleware to protect routes, ensuring only authenticated users can access them.
+ */
+const isAuthenticated = (req, res, next) => {
+  if (req.session && req.session.userId) {
+    next(); // User is authenticated, proceed
+  } else {
+    // User is not authenticated
+    if (req.accepts('html')) { // If client expects HTML (e.g., direct browser navigation)
+      res.redirect('/auth.html?mode=login');
+    } else { // If it's an API request (e.g., from fetch in frontend JS)
+      res.status(401).json({ error: "Unauthorized: Please log in." });
+    }
+  }
+};
 
-        body.dark .separator {
-            color: var(--color-text-secondary-dark);
-        }
+/**
+ * @route GET /api/user
+ * @description Returns current logged-in user information. Protected route.
+ * @access Private (requires authentication)
+ */
+app.get("/api/user", isAuthenticated, async (req, res) => {
+  try {
+    // Fetch fresh user data from DB to ensure it's up-to-date
+    const result = await pool.query("SELECT id, username, email FROM users WHERE id = $1", [req.session.userId]);
+    const user = result.rows[0];
 
-        .separator::before,
-        .separator::after {
-            content: '';
-            flex: 1;
-            border-bottom: 1px solid var(--color-separator-line-light);
-        }
+    if (user) {
+      res.json({ id: user.id, username: user.username, email: user.email });
+    } else {
+      // This should ideally not happen if isAuthenticated passed,
+      // but handles cases where user might have been deleted from DB
+      res.status(404).json({ error: "User data not found." });
+    }
+  } catch (error) {
+    console.error("[GET USER ERROR]", error);
+    res.status(500).json({ error: "Server error fetching user data." });
+  }
+});
 
-        body.dark .separator::before,
-        body.dark .separator::after {
-            border-bottom-color: var(--color-separator-line-dark);
-        }
+/**
+ * @route GET /api/logout
+ * @description Destroys user session and logs them out.
+ * @access Public
+ */
+app.get("/api/logout", (req, res) => {
+  req.session.destroy((err) => { // Destroy the session
+    if (err) {
+      console.error("[LOGOUT ERROR]", err);
+      return res.status(500).send("Error logging out.");
+    }
+    console.log("[LOGOUT] User session destroyed.");
+    res.redirect("/auth.html?mode=login");
+  });
+});
 
-        .separator:not(:empty)::before {
-            margin-right: .75em;
-        }
+// --- File Upload Configuration ---
+const UPLOAD_FOLDER = 'uploads';
+if (!fs.existsSync(UPLOAD_FOLDER)) { // Ensure 'uploads' directory exists
+    fs.mkdirSync(UPLOAD_FOLDER);
+}
 
-        .separator:not(:empty)::after {
-            margin-left: .75em;
-        }
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, UPLOAD_FOLDER);
+    },
+    filename: (req, file, cb) => {
+        // Create unique filenames to prevent overwrites
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+    }
+});
 
-        /* Link to other auth page */
-        .switch-link {
-            font-size: 0.95em;
-            color: var(--color-link-light);
-            text-decoration: none;
-            margin-top: 24px;
-            display: block;
-            transition: color 0.2s ease, text-decoration 0.2s ease;
-        }
-        .switch-link:hover {
-            text-decoration: underline;
-            color: var(--color-link-hover-light);
-        }
+const upload = multer({ storage: storage });
 
-        body.dark .switch-link {
-            color: var(--color-link-dark);
-        }
-        body.dark .switch-link:hover {
-            color: var(--color-link-hover-dark);
-        }
+const ALLOWED_EXTENSIONS = ['pdf', 'doc', 'docx', 'txt', 'ppt', 'pptx', 'odt', 'ods', 'odp', 'rtf'];
 
-        /* Form display control */
-        .auth-form {
-            display: none; /* Hidden by default */
-        }
-        .auth-form.active {
-            display: block; /* Visible when active */
-        }
+function allowedFile(filename) {
+    return ALLOWED_EXTENSIONS.includes(path.extname(filename).toLowerCase().substring(1));
+}
 
-        /* Desktop specific styles */
-        @media (min-width: 768px) {
-            .container {
-                max-width: 480px;
-                padding: 48px;
-                border-radius: 16px;
-                box-shadow: 0 8px 30px var(--color-shadow-light);
-            }
-            body.dark .container {
-                box-shadow: 0 8px 30px var(--color-shadow-dark);
-            }
+// --- Notes API Routes ---
 
-            .logo {
-                font-size: 3.5em;
-                height: 70px;
-                width: 70px;
-                margin-bottom: 32px;
-            }
+/**
+ * @route POST /api/upload_note
+ * @description Handles note file uploads and saves metadata to the database.
+ * @access Private (requires authentication)
+ */
+app.post('/api/upload_note', isAuthenticated, upload.single('file'), async (req, res) => {
+    // Multer places uploaded file info on req.file
+    if (!req.file) {
+        return res.status(400).json({ success: false, message: 'No file uploaded.' });
+    }
 
-            h1 {
-                font-size: 2.5em;
-            }
-
-            p {
-                font-size: 1.1em;
-            }
-
-            .submit-button {
-                padding: 16px 25px;
-                font-size: 1.15em;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="logo" aria-label="Note-U Logo">
-            <span>U</span>
-        </div>
-        <h1 id="auth-title"></h1>
-        <p id="auth-description"></p>
-
-        <div id="login-form" class="auth-form">
-            <form>
-                <div class="form-group">
-                    <label for="login-email">Email or Username</label>
-                    <input type="text" id="login-email" name="emailOrUsername" required placeholder="Enter your email or username">
-                </div>
-                <div class="form-group">
-                    <label for="login-access-code">Access Code</label>
-                    <input type="password" id="login-access-code" name="accessCode" required placeholder="Enter your access code">
-                </div>
-                <button type="submit" class="submit-button">Log In</button>
-            </form>
-            <a href="auth.html?mode=signup" class="switch-link">Don't have an account? Create one now</a>
-        </div>
-
-        <div id="signup-form" class="auth-form">
-            <form>
-                <div class="form-group">
-                    <label for="signup-username">Username</label>
-                    <input type="text" id="signup-username" name="username" required placeholder="Choose a username">
-                </div>
-                <div class="form-group">
-                    <label for="signup-access-code">Create Access Code</label>
-                    <input type="password" id="signup-access-code" name="accessCode" required placeholder="Create an access code">
-                </div>
-                <div class="form-group">
-                    <label for="signup-confirm-access-code">Confirm Access Code</label>
-                    <input type="password" id="signup-confirm-access-code" name="confirmAccessCode" required placeholder="Confirm your access code">
-                </div>
-                <button type="submit" class="submit-button">Sign Up</button>
-            </form>
-            <a href="auth.html?mode=login" class="switch-link">Already have an account? Log In instead</a>
-        </div>
-    </div>
-
-    <script>
-        // Function to set the theme based on the 'dark' class on body
-        function setTheme(isDark) {
-            if (isDark) {
-                document.body.classList.add("dark");
-            } else {
-                document.body.classList.remove("dark");
-            }
-        }
-
-        // Script to handle switching between login and signup forms
-        window.addEventListener("DOMContentLoaded", () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            const mode = urlParams.get('mode'); // 'login' or 'signup'
-
-            const loginForm = document.getElementById('login-form');
-            const signupForm = document.getElementById('signup-form');
-            const authTitle = document.getElementById('auth-title');
-            const authDescription = document.getElementById('auth-description');
-
-            if (mode === 'signup') {
-                signupForm.classList.add('active');
-                loginForm.classList.remove('active');
-                authTitle.textContent = 'Sign Up for Note-U';
-                authDescription.textContent = 'Create your account to access shared academic notes.';
-            } else {
-                // Default to login if mode is not 'signup' or not provided
-                loginForm.classList.add('active');
-                signupForm.classList.remove('active');
-                authTitle.textContent = 'Log In to Note-U';
-                authDescription.textContent = 'Access your shared academic notes with your account.';
-            }
-
-            // Theme setting logic (from your original files)
-            const storedTheme = localStorage.getItem("theme");
-            if (storedTheme === "dark") {
-                setTheme(true);
-            } else if (storedTheme === "light") {
-                setTheme(false);
-            } else {
-                if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                    setTheme(true);
-                } else {
-                    setTheme(false);
-                }
-            }
+    if (!allowedFile(req.file.originalname)) {
+        // If file type is not allowed, delete the uploaded file
+        fs.unlink(req.file.path, (err) => {
+            if (err) console.error("Error deleting disallowed file:", err);
         });
+        return res.status(400).json({ success: false, message: 'Invalid file type. Allowed: PDF, DOC, DOCX, TXT, PPT, PPTX, ODT, ODS, ODP, RTF.' });
+    }
 
-        // Listen for changes in localStorage for 'theme' (from index.html)
-        window.addEventListener('storage', (event) => {
-            if (event.key === 'theme') {
-                setTheme(event.newValue === 'dark');
-            }
+    const { academicYear, semester, subject, notesType, description, title } = req.body; // Adjusted to match frontend form names
+
+    if (!academicYear || !semester || !subject || !notesType || !title) {
+        // If metadata is missing, delete the uploaded file
+        fs.unlink(req.file.path, (err) => {
+            if (err) console.error("Error deleting file due to missing metadata:", err);
         });
+        return res.status(400).json({ success: false, message: 'Missing required note metadata.' });
+    }
 
-        // Listen for system theme changes (if no manual preference is set on index.html)
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
-            if (!localStorage.getItem("theme")) { // Only apply if index.html hasn't manually set a preference
-                setTheme(event.matches);
-            }
-        });
+    try {
+        const filePath = req.file.path; // Path where multer saved the file
+        const userId = req.session.userId; // Get user ID from session
 
+        const result = await pool.query(
+            `INSERT INTO notes (user_id, title, academic_year, semester, subject_code, notes_type, description, file_path)
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id`,
+            [userId, title, academicYear, semester, subject, notesType, description, filePath]
+        );
 
-        // --- New JavaScript for form submissions to your Node.js backend ---
+        res.status(201).json({ success: true, message: 'File uploaded and note saved successfully!', noteId: result.rows[0].id });
+    } catch (error) {
+        // If an error occurs after saving the file but before DB commit, delete the file
+        if (req.file && req.file.path) {
+            fs.unlink(req.file.path, (err) => {
+                if (err) console.error("Error deleting file after DB error:", err);
+            });
+        }
+        console.error("Error during file upload and note saving:", error);
+        res.status(500).json({ success: false, message: `Failed to upload note: ${error.message}` });
+    }
+});
 
-        // Handle Login Form Submission
-        const loginFormElement = document.querySelector('#login-form form');
-        loginFormElement.addEventListener('submit', async (event) => {
-            event.preventDefault(); // Prevent default form submission
+/**
+ * @route GET /api/notes
+ * @description Retrieves notes uploaded by the authenticated user.
+ * @access Private (requires authentication)
+ */
+app.get('/api/notes', isAuthenticated, async (req, res) => {
+    try {
+        const userId = req.session.userId;
+        const result = await pool.query(
+            "SELECT id, title, academic_year, semester, subject_code, notes_type, description, file_path, uploaded_at FROM notes WHERE user_id = $1 ORDER BY uploaded_at DESC",
+            [userId]
+        );
 
-            // For login, the input can be either email or username,
-            // so we take the value from the single field and let the backend decide.
-            const emailOrUsername = document.getElementById('login-email').value;
-            const password = document.getElementById('login-access-code').value;
+        const notesList = result.rows.map(note => ({
+            id: note.id,
+            title: note.title,
+            academic_year: note.academic_year,
+            semester: note.semester,
+            subject_code: note.subject_code,
+            notes_type: note.notes_type,
+            description: note.description,
+            file_url: `/uploads/${path.basename(note.file_path)}`,
+            uploaded_at: note.uploaded_at.toISOString()
+        }));
+        res.json(notesList);
+    } catch (error) {
+        console.error("Error fetching notes:", error);
+        res.status(500).json({ message: 'Failed to fetch notes.' });
+    }
+});
 
-            // Determine if input looks like an email or a username
-            let loginPayload = {};
-            if (emailOrUsername.includes('@')) {
-                loginPayload.email = emailOrUsername;
+/**
+ * @route GET /uploads/:filename
+ * @description Serves uploaded files (ephemeral storage warning applies).
+ * @access Private (requires authentication)
+ */
+app.get('/uploads/:filename', isAuthenticated, async (req, res) => {
+    const filename = req.params.filename;
+    const userId = req.session.userId;
+    const filePath = path.join(UPLOAD_FOLDER, filename);
+
+    try {
+        const result = await pool.query(
+            "SELECT user_id FROM notes WHERE file_path = $1 AND user_id = $2",
+            [filePath, userId]
+        );
+        const note = result.rows[0];
+
+        if (note) {
+            if (fs.existsSync(filePath)) {
+                res.sendFile(filePath);
             } else {
-                loginPayload.username = emailOrUsername;
+                console.warn(`File not found on disk: ${filePath}`);
+                res.status(404).json({ message: 'File not found on server.' });
             }
-            loginPayload.password = password;
+        } else {
+            res.status(404).json({ message: 'File not found or access denied.' });
+        }
+    } catch (error) {
+        console.error("Error serving file:", error);
+        res.status(500).json({ message: 'Failed to retrieve file.' });
+    }
+});
 
 
-            try {
-                const response = await fetch('/api/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(loginPayload), // Send dynamically constructed payload
-                });
+// --- Static File Serving ---
+app.use(express.static(path.join(__dirname, "public")));
 
-                const data = await response.json();
+// --- Universal Route Handling (Catch-all for SPA-like routing) ---
+app.get('*', (req, res) => {
+  if (req.session && req.session.userId) {
+    res.sendFile(path.join(__dirname, 'public', 'home.html'));
+  } else {
+    res.sendFile(path.join(__dirname, 'public', 'auth.html'));
+  }
+});
 
-                if (response.ok) {
-                    alert(data.message); // Show success message
-                    // Redirect to home.html or the specified redirect URL from the server
-                    window.location.href = data.redirect || '/home.html';
-                } else {
-                    alert(`Login failed: ${data.error}`); // Show error message from server
-                }
-            } catch (error) {
-                console.error('Network or server error during login:', error);
-                alert('An unexpected error occurred. Please try again.');
-            }
-        });
 
-        // Handle Signup Form Submission
-        const signupFormElement = document.querySelector('#signup-form form');
+// --- Server Start ---
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`✅ Server started at http://localhost:${PORT}`);
+  console.log(`Open your browser to http://localhost:${PORT} to begin.`);
+});
