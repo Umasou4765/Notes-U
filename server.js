@@ -1,6 +1,7 @@
 // server.js
 require("dotenv").config(); // Loads environment variables from a .env file
 
+const fs = require('fs');
 const express = require("express");
 const session = require("express-session");
 const bcrypt = require('bcryptjs'); // For password hashing (using bcryptjs for Node.js compatibility)
