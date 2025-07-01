@@ -24,7 +24,7 @@ if not DATABASE_URL:
     print("DATABASE_URL environment variable not set. Using a placeholder for local development.")
     # !!! IMPORTANT: Replace 'YOUR_SUPABASE_PASSWORD' and 'xuczjxnppgloquehmhcj'
     # !!! with your actual Supabase project's password and project reference ID.
-    DATABASE_URL = "postgresql://postgres:YOUR_SUPABASE_PASSWORD@db.xuczjxnppgloquehmhcj.supabase.co:5432/postgres"
+    DATABASE_URL = "postgresql://postgres:061107Lex!@db.xuczjxnppgloquehmhcj.supabase.co:5432/postgres"
 
 def get_db_connection():
     """Establishes a connection to the PostgreSQL database."""
