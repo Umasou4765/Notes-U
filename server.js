@@ -9,7 +9,7 @@ const { Pool } = require('pg'); // PostgreSQL client
 const multer = require('multer'); // For handling file uploads
 const fs = require('fs'); // Import the file system module
 
-// 导入 connect-pg-simple
+// connect-pg-simple
 const pgSession = require('connect-pg-simple')(session);
 
 const app = express();
@@ -54,9 +54,6 @@ pool.connect((err, client, release) => {
 
 
 // Session setup for managing user sessions
-// IMPORTANT PRODUCTION WARNING: MemoryStore is NOT suitable for production.
-// It will cause sessions to be lost on app restarts/redeploys and does not scale.
-// Consider using a persistent session store like connect-pg-simple (for PostgreSQL), Redis, etc.
 app.use(session({
   store: new pgSession({ // Using pgSession for storage
     pool: pool,          // Connection pool (now 'pool' is defined!)
@@ -128,51 +125,49 @@ initDbTables();
  * @access Public
  */
 app.post("/api/signup", async (req, res) => {
+  console.log('[SIGNUP] Received signup request. Body:', req.body); // Added log
+
   const { email, password, username } = req.body;
 
-  // --- MODIFIED VALIDATION LOGIC HERE ---
-  // Based on DB schema: username is NOT NULL, email is UNIQUE (and can be NULL)
-  // So, username and password are required for signup. Email is optional.
   if (!username || !password) {
+    console.warn('[SIGNUP] Missing username or password.'); // Added log
     return res.status(400).json({ error: "Username and password are required for signup." });
   }
 
-  // Basic email format validation, ONLY if email is provided
   if (email && !/\S+@\S+\.\S+/.test(email)) {
+    console.warn('[SIGNUP] Invalid email format:', email); // Added log
     return res.status(400).json({ error: "Please enter a valid email address." });
   }
 
-  // Password strength check
   if (password.length < 8) {
+    console.warn('[SIGNUP] Password too short.'); // Added log
     return res.status(400).json({ error: "Password must be at least 8 characters long." });
   }
-  // --- END MODIFIED VALIDATION LOGIC ---
 
   try {
-    const hashedPassword = await bcrypt.hash(password, 10); // Hash the password
+    console.log('[SIGNUP] Hashing password for username:', username); // Added log
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Insert user into PostgreSQL
-    // If email is not provided, it will be inserted as NULL
+    console.log('[SIGNUP] Attempting to insert new user:', username); // Added log
     const result = await pool.query(
       "INSERT INTO users (username, password_hash, email) VALUES ($1, $2, $3) RETURNING id, username, email",
-      [username, hashedPassword, email || null] // Use null if email is undefined/empty string
+      [username, hashedPassword, email || null]
     );
 
-    console.log(`[SIGNUP] New user created: ${username} (Email: ${email || 'N/A'})`);
+    console.log(`[SIGNUP] New user created successfully: ${username} (ID: ${result.rows[0].id})`); // Added log
     res.status(201).json({ message: "Account created successfully! You can now log in.", user: result.rows[0] });
   } catch (error) {
-    // Check for unique constraint violation (PostgreSQL error code 23505)
     if (error.code === '23505') {
       let errorMessage = "User with this username or email already exists.";
-      // You can add more specific checks here if needed, e.g., error.detail
       if (error.detail && error.detail.includes('Key (username)')) {
           errorMessage = "This username is already taken.";
       } else if (error.detail && error.detail.includes('Key (email)')) {
           errorMessage = "This email is already registered.";
       }
+      console.warn(`[SIGNUP] Conflict: ${errorMessage} (Error code: ${error.code})`); // Added log
       return res.status(409).json({ error: errorMessage });
     }
-    console.error("[SIGNUP ERROR]", error);
+    console.error("[SIGNUP ERROR] Server error:", error); // Detailed error log
     res.status(500).json({ error: "Server error during signup. Please try again later." });
   }
 });
@@ -183,35 +178,28 @@ app.post("/api/signup", async (req, res) => {
  * @access Public
  */
 app.post("/api/login", async (req, res) => {
-  const { email, password, username } = req.body; // Login can accept either email or username
+  console.log('[LOGIN] Received login request. Body:', req.body); // Added log
 
-  if ((!email && !username) || !password) { // Requires either email OR username, AND password
-    return res.status(400).json({ error: "Email/Username and password are required for login." });
+  // --- MODIFIED: Login now only accepts username ---
+  const { username, password } = req.body; // Only get username and password
+
+  if (!username || !password) {
+    console.warn('[LOGIN] Missing username or password.'); // Added log
+    return res.status(400).json({ error: "Username and password are required for login." });
   }
 
   try {
-    let user;
-    if (email) {
-        // Attempt to find user by email
-        const result = await pool.query("SELECT id, username, email, password_hash FROM users WHERE email = $1", [email]);
-        user = result.rows[0];
-    } else if (username) {
-        // Attempt to find user by username
-        const result = await pool.query("SELECT id, username, email, password_hash FROM users WHERE username = $1", [username]);
-        user = result.rows[0];
-    } else {
-        // This case should ideally be caught by the initial !email && !username check, but for robustness
-        return res.status(400).json({ error: "Email or username is required for login." });
-    }
+    console.log('[LOGIN] Searching for user:', username); // Added log
+    // Attempt to find user by username only
+    const result = await pool.query("SELECT id, username, email, password_hash FROM users WHERE username = $1", [username]);
+    const user = result.rows[0];
 
-    // --- MODIFIED LOGIN ERROR MESSAGES HERE ---
     if (!user) {
-      // User not found
-      // Note: For enhanced security, a generic message like "Invalid username/email or password" is often preferred
-      // to avoid revealing whether an account exists. However, for improved UX as requested:
+      console.warn(`[LOGIN] User not found for username: ${username}`); // Added log
       return res.status(401).json({ error: "Account not found." });
     }
 
+    console.log('[LOGIN] Comparing password for user:', user.username); // Added log
     const passwordMatch = await bcrypt.compare(password, user.password_hash);
 
     if (passwordMatch) {
@@ -219,17 +207,14 @@ app.post("/api/login", async (req, res) => {
       req.session.userEmail = user.email; // Store user email in session (optional)
       req.session.username = user.username; // Store username in session (optional)
 
-      console.log(`[LOGIN] User successfully logged in: ${user.username || user.email}`);
+      console.log(`[LOGIN] User successfully logged in: ${user.username}`); // Added log
       res.status(200).json({ message: "Login successful!", redirect: "/home.html" });
     } else {
-      // Password mismatch
-      // Note: Same security consideration as above. For improved UX:
+      console.warn('[LOGIN] Incorrect password for user:', user.username); // Added log
       res.status(401).json({ error: "Incorrect password." });
     }
-    // --- END MODIFIED LOGIN ERROR MESSAGES ---
-
   } catch (error) {
-    console.error("[LOGIN ERROR]", error);
+    console.error("[LOGIN ERROR] Server error:", error); // Detailed error log
     res.status(500).json({ error: "Server error during login. Please try again later." });
   }
 });
@@ -245,8 +230,10 @@ const isAuthenticated = (req, res, next) => {
   } else {
     // User is not authenticated
     if (req.accepts('html')) { // If client expects HTML (e.g., direct browser navigation)
+      console.warn('[AUTH] Redirecting unauthenticated HTML request to login page.'); // Added log
       res.redirect('/auth.html?mode=login');
     } else { // If it's an API request (e.g., from fetch in frontend JS)
+      console.warn('[AUTH] Responding with 401 for unauthenticated API request.'); // Added log
       res.status(401).json({ error: "Unauthorized: Please log in." });
     }
   }
@@ -258,20 +245,20 @@ const isAuthenticated = (req, res, next) => {
  * @access Private (requires authentication)
  */
 app.get("/api/user", isAuthenticated, async (req, res) => {
+  console.log(`[GET /api/user] Fetching user info for ID: ${req.session.userId}`); // Added log
   try {
-    // Fetch fresh user data from DB to ensure it's up-to-date
     const result = await pool.query("SELECT id, username, email FROM users WHERE id = $1", [req.session.userId]);
     const user = result.rows[0];
 
     if (user) {
+      console.log(`[GET /api/user] User info found: ${user.username}`); // Added log
       res.json({ id: user.id, username: user.username, email: user.email });
     } else {
-      // This should ideally not happen if isAuthenticated passed,
-      // but handles cases where user might have been deleted from DB
+      console.warn(`[GET /api/user] User data not found for ID: ${req.session.userId} (after authentication).`); // Added log
       res.status(404).json({ error: "User data not found." });
     }
   } catch (error) {
-    console.error("[GET USER ERROR]", error);
+    console.error("[GET USER ERROR] Server error:", error); // Detailed error log
     res.status(500).json({ error: "Server error fetching user data." });
   }
 });
@@ -282,12 +269,13 @@ app.get("/api/user", isAuthenticated, async (req, res) => {
  * @access Public
  */
 app.get("/api/logout", (req, res) => {
+  console.log('[LOGOUT] Attempting to destroy session.'); // Added log
   req.session.destroy((err) => { // Destroy the session
     if (err) {
-      console.error("[LOGOUT ERROR]", err);
+      console.error("[LOGOUT ERROR] Server error during session destroy:", err); // Detailed error log
       return res.status(500).send("Error logging out.");
     }
-    console.log("[LOGOUT] User session destroyed.");
+    console.log("[LOGOUT] User session destroyed. Redirecting to login."); // Added log
     res.redirect("/auth.html?mode=login");
   });
 });
@@ -295,6 +283,7 @@ app.get("/api/logout", (req, res) => {
 // --- File Upload Configuration ---
 const UPLOAD_FOLDER = 'uploads';
 if (!fs.existsSync(UPLOAD_FOLDER)) { // Ensure 'uploads' directory exists
+    console.log(`[INIT] Creating upload folder: ${UPLOAD_FOLDER}`); // Added log
     fs.mkdirSync(UPLOAD_FOLDER);
 }
 
@@ -303,7 +292,6 @@ const storage = multer.diskStorage({
         cb(null, UPLOAD_FOLDER);
     },
     filename: (req, file, cb) => {
-        // Create unique filenames to prevent overwrites
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
         cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
     }
@@ -325,48 +313,52 @@ function allowedFile(filename) {
  * @access Private (requires authentication)
  */
 app.post('/api/upload_note', isAuthenticated, upload.single('file'), async (req, res) => {
-    // Multer places uploaded file info on req.file
+    console.log('[UPLOAD] Received file upload request. User ID:', req.session.userId); // Added log
     if (!req.file) {
+        console.warn('[UPLOAD] No file uploaded.'); // Added log
         return res.status(400).json({ success: false, message: 'No file uploaded.' });
     }
 
     if (!allowedFile(req.file.originalname)) {
-        // If file type is not allowed, delete the uploaded file
+        console.warn('[UPLOAD] Invalid file type detected:', req.file.originalname); // Added log
         fs.unlink(req.file.path, (err) => {
-            if (err) console.error("Error deleting disallowed file:", err);
+            if (err) console.error("[UPLOAD ERROR] Error deleting disallowed file:", err);
         });
         return res.status(400).json({ success: false, message: 'Invalid file type. Allowed: PDF, DOC, DOCX, TXT, PPT, PPTX, ODT, ODS, ODP, RTF.' });
     }
 
-    const { academicYear, semester, subject, notesType, description, title } = req.body; // Adjusted to match frontend form names
+    const { academicYear, semester, subject, notesType, description, title } = req.body;
 
     if (!academicYear || !semester || !subject || !notesType || !title) {
-        // If metadata is missing, delete the uploaded file
+        console.warn('[UPLOAD] Missing required note metadata.'); // Added log
         fs.unlink(req.file.path, (err) => {
-            if (err) console.error("Error deleting file due to missing metadata:", err);
+            if (err) console.error("[UPLOAD ERROR] Error deleting file due to missing metadata:", err);
         });
         return res.status(400).json({ success: false, message: 'Missing required note metadata.' });
     }
 
     try {
-        const filePath = req.file.path; // Path where multer saved the file
-        const userId = req.session.userId; // Get user ID from session
+        const filePath = req.file.path;
+        const userId = req.session.userId;
 
+        console.log(`[UPLOAD] Saving note metadata for user ${userId}, file: ${filePath}`); // Added log
         const result = await pool.query(
             `INSERT INTO notes (user_id, title, academic_year, semester, subject_code, notes_type, description, file_path)
              VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id`,
             [userId, title, academicYear, semester, subject, notesType, description, filePath]
         );
 
+        console.log(`[UPLOAD] Note saved successfully with ID: ${result.rows[0].id}`); // Added log
         res.status(201).json({ success: true, message: 'File uploaded and note saved successfully!', noteId: result.rows[0].id });
     } catch (error) {
-        // If an error occurs after saving the file but before DB commit, delete the file
         if (req.file && req.file.path) {
+            console.error("[UPLOAD ERROR] Server error during note saving, attempting to delete uploaded file.", error); // Added log
             fs.unlink(req.file.path, (err) => {
-                if (err) console.error("Error deleting file after DB error:", err);
+                if (err) console.error("[UPLOAD ERROR] Error deleting file after DB error:", err);
             });
+        } else {
+            console.error("[UPLOAD ERROR] Server error during note saving:", error); // Added log
         }
-        console.error("Error during file upload and note saving:", error);
         res.status(500).json({ success: false, message: `Failed to upload note: ${error.message}` });
     }
 });
@@ -377,6 +369,7 @@ app.post('/api/upload_note', isAuthenticated, upload.single('file'), async (req,
  * @access Private (requires authentication)
  */
 app.get('/api/notes', isAuthenticated, async (req, res) => {
+    console.log('[GET /api/notes] Fetching notes for user ID:', req.session.userId); // Added log
     try {
         const userId = req.session.userId;
         const result = await pool.query(
@@ -395,9 +388,10 @@ app.get('/api/notes', isAuthenticated, async (req, res) => {
             file_url: `/uploads/${path.basename(note.file_path)}`,
             uploaded_at: note.uploaded_at.toISOString()
         }));
+        console.log(`[GET /api/notes] Found ${notesList.length} notes for user ID: ${userId}`); // Added log
         res.json(notesList);
     } catch (error) {
-        console.error("Error fetching notes:", error);
+        console.error("[GET NOTES ERROR] Server error:", error); // Detailed error log
         res.status(500).json({ message: 'Failed to fetch notes.' });
     }
 });
@@ -412,6 +406,7 @@ app.get('/uploads/:filename', isAuthenticated, async (req, res) => {
     const userId = req.session.userId;
     const filePath = path.join(UPLOAD_FOLDER, filename);
 
+    console.log(`[GET /uploads] Attempting to serve file ${filename} for user ID: ${userId}`); // Added log
     try {
         const result = await pool.query(
             "SELECT user_id FROM notes WHERE file_path = $1 AND user_id = $2",
@@ -421,16 +416,18 @@ app.get('/uploads/:filename', isAuthenticated, async (req, res) => {
 
         if (note) {
             if (fs.existsSync(filePath)) {
+                console.log(`[GET /uploads] Serving file: ${filePath}`); // Added log
                 res.sendFile(filePath);
             } else {
-                console.warn(`File not found on disk: ${filePath}`);
+                console.warn(`[GET /uploads] File not found on disk: ${filePath}`); // Added log
                 res.status(404).json({ message: 'File not found on server.' });
             }
         } else {
+            console.warn(`[GET /uploads] File not found in DB or access denied for ${filename}, user ID: ${userId}`); // Added log
             res.status(404).json({ message: 'File not found or access denied.' });
         }
     } catch (error) {
-        console.error("Error serving file:", error);
+        console.error("[GET UPLOADS ERROR] Server error:", error); // Detailed error log
         res.status(500).json({ message: 'Failed to retrieve file.' });
     }
 });
@@ -441,6 +438,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // --- Universal Route Handling (Catch-all for SPA-like routing) ---
 app.get('*', (req, res) => {
+  console.log(`[CATCH-ALL] Incoming request for ${req.path}. Session userId: ${req.session.userId}`); // Added log
   if (req.session && req.session.userId) {
     res.sendFile(path.join(__dirname, 'public', 'home.html'));
   } else {
