@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="color-scheme" content="light dark">
-    <title>Auth - Note-U</title>
+    <title>Auth - Notes-U</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         /* CSS Variables for better theme management */
@@ -405,7 +405,7 @@
             }
         });
 
-        // Listen for changes in localStorage for 'theme' (from index.html)
+        // Listen for changes in localStorage for 'theme' (e.g., if changed from another tab)
         window.addEventListener('storage', (event) => {
             if (event.key === 'theme') {
                 setTheme(event.newValue === 'dark');
@@ -426,6 +426,7 @@
         const loginFormElement = document.querySelector('#login-form form');
         loginFormElement.addEventListener('submit', async (event) => {
             event.preventDefault(); // Prevent default form submission
+            console.log('Login form submitted!'); // DIAGNOSTIC LOG
 
             // For login, the input can be either email or username,
             // so we take the value from the single field and let the backend decide.
@@ -480,6 +481,7 @@
         const signupFormElement = document.querySelector('#signup-form form');
         signupFormElement.addEventListener('submit', async (event) => {
             event.preventDefault(); // Prevent default form submission
+            console.log('Signup form submitted!'); // DIAGNOSTIC LOG
 
             // Get username from the dedicated input field
             const username = document.getElementById('signup-username').value;
