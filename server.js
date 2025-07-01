@@ -202,8 +202,12 @@ app.post("/api/login", async (req, res) => {
         return res.status(400).json({ error: "Email or username is required for login." });
     }
 
+    // --- MODIFIED LOGIN ERROR MESSAGES HERE ---
     if (!user) {
-      return res.status(401).json({ error: "Invalid username/email or password." }); // Generic message for security
+      // User not found
+      // Note: For enhanced security, a generic message like "Invalid username/email or password" is often preferred
+      // to avoid revealing whether an account exists. However, for improved UX as requested:
+      return res.status(401).json({ error: "Account not found." });
     }
 
     const passwordMatch = await bcrypt.compare(password, user.password_hash);
@@ -216,8 +220,12 @@ app.post("/api/login", async (req, res) => {
       console.log(`[LOGIN] User successfully logged in: ${user.username || user.email}`);
       res.status(200).json({ message: "Login successful!", redirect: "/home.html" });
     } else {
-      res.status(401).json({ error: "Invalid username/email or password." }); // Generic message for security
+      // Password mismatch
+      // Note: Same security consideration as above. For improved UX:
+      res.status(401).json({ error: "Incorrect password." });
     }
+    // --- END MODIFIED LOGIN ERROR MESSAGES ---
+
   } catch (error) {
     console.error("[LOGIN ERROR]", error);
     res.status(500).json({ error: "Server error during login. Please try again later." });
