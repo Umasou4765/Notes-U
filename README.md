@@ -39,18 +39,4 @@ While core functionalities are in place, Notes-U has exciting plans for future e
 
 Notes-U is built with a focus on simplicity, maintainability, and scalability:
 
-* **Frontend:** HTML, CSS, JavaScript
-* **Backend:** Flask (Python)
-* **Database:** SQLite (for user authentication and note metadata storage)
-* **File Storage:** Local file system for uploaded notes 
-* **Deployment:** Standard Python Web Server / Hosting By Render 
-
----
-
-## 🙌 Contribution
-
-Notes-U is a community-driven project, primarily built for and by students.
-
-If you're interested in improving the platform—whether it's fixing bugs, enhancing the UI/UX, adding new features, or uploading valuable academic notes—your contributions are highly welcome.
-
-Every small effort helps make Notes-U a more robust and helpful resource for the entire student community!
+* **Frontend:** HTML, avaScript
