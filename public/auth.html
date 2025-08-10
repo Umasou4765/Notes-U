@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Auth - Notes-U</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/base.css">
+  <link rel="stylesheet" href="/assets/css/components.css">
+  <style>
+    .auth-wrapper {
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+    }
+    .logo-box {
+      font-size:2.8em;
+      font-weight:700;
+      height:60px;width:60px;
+      display:flex;align-items:center;justify-content:center;
+      border:2px solid currentColor;
+      border-radius:8px;
+      margin:0 auto 24px;
+    }
+    form .field { margin-bottom:18px; }
+    .switch-link { display:block; margin-top:24px; font-size:0.95em; }
+  </style>
+</head>
+<body>
+  <div class="auth-wrapper">
+    <div class="container-card" style="max-width:420px;width:100%;">
+      <div class="logo-box">U</div>
+      <h1 id="auth-title"></h1>
+      <p id="auth-description" style="margin-top:0;"></p>
+
+      <form id="login-form" class="">
+        <div class="field">
+          <label>Username</label>
+          <input type="text" name="username" required autocomplete="username">
+        </div>
+        <div class="field">
+          <label>Password</label>
+          <input type="password" name="password" required autocomplete="current-password" minlength="8">
+        </div>
+        <button class="primary-btn" type="submit" style="width:100%;">Log In</button>
+        <a class="switch-link" href="auth.html?mode=signup">Don't have an account? Create one now</a>
+      </form>
+
+      <form id="signup-form" class="hidden">
+        <div class="field">
+          <label>Username</label>
+          <input type="text" name="username" required minlength="3">
+        </div>
+        <div class="field">
+          <label>Password</label>
+          <input type="password" name="password" required minlength="8" autocomplete="new-password">
+        </div>
+        <div class="field">
+          <label>Confirm Password</label>
+          <input type="password" name="confirm" required minlength="8" autocomplete="new-password">
+        </div>
+        <button class="primary-btn" type="submit" style="width:100%;">Sign Up</button>
+        <a class="switch-link" href="auth.html?mode=login">Already have an account? Log In instead</a>
+      </form>
+    </div>
+  </div>
+  <div id="toast-container"></div>
+  <script type="module" src="/assets/js/auth-page.js"></script>
+</body>
+</html>

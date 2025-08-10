@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Notes-U</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/base.css">
+  <link rel="stylesheet" href="/assets/css/components.css">
+  <style>
+    .landing-wrapper {
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      min-height:100vh;
+      padding:20px;
+    }
+    .logo-box {
+      font-size:2.8em;
+      font-weight:700;
+      height:60px;
+      width:60px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      border:2px solid currentColor;
+      border-radius:8px;
+      margin:0 auto 24px;
+    }
+    .button-group {
+      display:flex;
+      gap:12px;
+      flex-direction:column;
+    }
+    @media (min-width:768px) {
+      .button-group { flex-direction:row; }
+    }
+    .outline-btn {
+      background:transparent;
+      border:1px solid var(--color-border-light);
+      padding:12px 20px;
+      border-radius:8px;
+      font-weight:500;
+      cursor:pointer;
+      text-decoration:none;
+      text-align:center;
+      transition:background .25s,border-color .25s;
+    }
+    body.dark .outline-btn { border-color:var(--color-border-dark); }
+    .outline-btn:hover {
+      background:rgba(0,0,0,0.05);
+    }
+    body.dark .outline-btn:hover {
+      background:rgba(255,255,255,0.08);
+    }
+    .theme-toggle {
+      position:absolute;
+      top:16px;
+      right:16px;
+      background:transparent;
+      border:1px solid var(--color-border-light);
+      border-radius:50%;
+      width:44px;
+      height:44px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+    }
+    body.dark .theme-toggle {
+      border-color:var(--color-border-dark);
+    }
+  </style>
+</head>
+<body>
+  <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme">🌓</button>
+  <div class="landing-wrapper">
+    <div class="container-card" style="max-width:480px;width:100%;">
+      <div class="logo-box">U</div>
+      <h1 style="margin:0 0 12px;">Accessible notes.</h1>
+      <p style="margin:0 0 28px;">A simple platform for students to share and access academic notes.</p>
+      <div class="button-group">
+        <a class="primary-btn" href="auth.html?mode=login">Log In</a>
+        <a class="outline-btn" href="auth.html?mode=signup">Sign Up</a>
+      </div>
+    </div>
+  </div>
+  <div id="toast-container"></div>
+  <script type="module">
+    import { initTheme, toggleTheme } from './assets/js/theme.js';
+    initTheme();
+    document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+  </script>
+</body>
+</html>

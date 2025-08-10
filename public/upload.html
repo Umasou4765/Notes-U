@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Upload Notes - Notes-U</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/base.css">
+  <link rel="stylesheet" href="/assets/css/components.css">
+  <style>
+    .page-wrapper {
+      display:flex;
+      justify-content:center;
+      padding:40px 16px;
+    }
+    .upload-header { margin-bottom:32px; }
+    .file-upload-box {
+      border:2px dashed var(--color-border-light);
+      padding:32px;
+      border-radius:8px;
+      text-align:center;
+      cursor:pointer;
+      transition:background .25s, border-color .25s;
+    }
+    body.dark .file-upload-box {
+      border-color:var(--color-border-dark);
+    }
+    .file-upload-box.dragover {
+      background:rgba(0,0,0,0.05);
+    }
+    body.dark .file-upload-box.dragover {
+      background:rgba(255,255,255,0.08);
+    }
+    .flex { display:flex; gap:16px; }
+    .grid { display:grid; gap:18px; }
+    @media (min-width:680px) {
+      .grid-2 { grid-template-columns:1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+    <div class="container-card" style="max-width:700px;width:100%;">
+      <div class="upload-header">
+        <h1 style="margin:0 0 8px;">Upload Your Notes</h1>
+        <p style="margin:0;">Share your knowledge and help others learn.</p>
+      </div>
+      <form id="uploadForm" class="grid grid-2">
+        <div>
+          <label>Academic Year</label>
+          <select id="academicYearSelect" required>
+            <option value="">Select Year</option>
+            <option value="year1">Year 1</option>
+            <option value="year2">Year 2</option>
+          </select>
+        </div>
+        <div>
+          <label>Semester</label>
+          <select id="semesterSelect" required disabled>
+            <option value="">Select Semester</option>
+          </select>
+        </div>
+        <div>
+          <label>Subject</label>
+          <select id="subjectSelect" required disabled>
+            <option value="">Select Subject</option>
+          </select>
+        </div>
+        <div>
+          <label>Type of Notes</label>
+            <select id="notesType" required>
+              <option value="">Select Type</option>
+              <option value="lecture_notes">Lecture Notes</option>
+              <option value="tutorial_solutions">Tutorial Solutions</option>
+              <option value="past_year_papers">Past Year Papers</option>
+            </select>
+        </div>
+        <div style="grid-column:1 / -1;">
+          <label>Description (Optional)</label>
+          <textarea id="description" rows="3" placeholder="Brief description..."></textarea>
+        </div>
+        <div style="grid-column:1 / -1;">
+          <label>File</label>
+          <input id="fileUpload" type="file" hidden
+            accept=".pdf,.doc,.docx,.txt,.ppt,.pptx,.odt,.ods,.odp,.rtf">
+          <div id="fileUploadBox" class="file-upload-box" tabindex="0">
+            <p style="margin:0 0 4px;">Drag & drop or <span style="color:var(--color-accent);font-weight:600;">browse</span></p>
+            <p style="margin:0;font-size:.85em;opacity:.8;">Accepted: PDF, DOC(X), TXT, PPT(X), ODT/ODS/ODP, RTF (Max 25MB)</p>
+            <div id="fileInfo" style="display:none;margin-top:14px;">
+              <strong>Selected:</strong> <span id="fileName"></span>
+            </div>
+          </div>
+        </div>
+        <div style="grid-column:1 / -1;">
+          <button type="submit" class="primary-btn" style="width:100%;">Upload Notes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div id="toast-container"></div>
+  <script type="module" src="/assets/js/upload-page.js"></script>
+</body>
+</html>
