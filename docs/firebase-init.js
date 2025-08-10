@@ -90,7 +90,6 @@ export async function signupWithEmail(email, password, displayName){
   if(displayName){
     await updateProfile(cred.user, { displayName: displayName.trim() });
   }
-  // Basic user doc
   await setDoc(doc(db,"users", cred.user.uid), {
     email: email.toLowerCase(),
     displayName: cred.user.displayName || null,
@@ -153,6 +152,8 @@ export async function createNote({
     description: description || "",
     file_url: url,
     title: title.trim(),
+    file_size: file.size,          // NEW: size in bytes
+    file_ext: ext,                 // NEW: extension for quick display
     createdAt: Date.now()
   });
   return true;
