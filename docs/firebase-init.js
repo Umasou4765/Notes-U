@@ -18,6 +18,7 @@ import {
   onAuthStateChanged,
   updateProfile
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
 import {
   getFirestore,
   doc,
@@ -28,8 +29,14 @@ import {
   where,
   getDocs,
   addDoc,
-  orderBy
+  orderBy,
+  updateDoc,
+  deleteDoc,
+  limit,
+  startAfter,
+  onSnapshot
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
 import {
   getStorage,
   ref,
@@ -42,7 +49,7 @@ export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const storage = getStorage(app);
 
-/* ---------------- LEGACY USERNAME MAPPING (Deprecated) ---------------- */
+/* ---------- Legacy username helpers (unchanged) ---------- */
 const USERNAME_REGEX = /^[a-z0-9._-]{3,30}$/;
 function normalizeUsername(username){ return username.trim().toLowerCase(); }
 async function isUsernameTaken(username){
@@ -80,7 +87,7 @@ export async function loginWithUsername(username, password){
   return cred.user;
 }
 
-/* ---------------- Modern Email/Password Auth ---------------- */
+/* ---------- Modern email/password ---------- */
 export async function signupWithEmail(email, password, displayName){
   if(!email) throw new Error("Email required");
   if(password.length < 8) throw new Error("Password must be at least 8 characters");
@@ -95,22 +102,15 @@ export async function signupWithEmail(email, password, displayName){
   }, { merge:true });
   return cred.user;
 }
-
 export async function loginWithEmail(email, password){
   if(!email || !password) throw new Error("Missing credentials");
   const cred = await signInWithEmailAndPassword(auth, email, password);
   return cred.user;
 }
+export function onAuth(cb){ return onAuthStateChanged(auth, cb); }
+export function logout(){ return signOut(auth); }
 
-export function onAuth(cb){
-  return onAuthStateChanged(auth, cb);
-}
-
-export function logout(){
-  return signOut(auth);
-}
-
-/* ---------------- Notes Logic ---------------- */
+/* ---------- Notes Logic ---------- */
 const MAX_FILE_SIZE = 25 * 1024 * 1024;
 const ALLOWED_EXT = ['pdf','doc','docx','txt','ppt','pptx','odt','ods','odp','rtf'];
 
@@ -125,6 +125,7 @@ export async function createNote({
 }){
   const user = auth.currentUser;
   if(!user) throw new Error("Not authenticated");
+
   if(!academic_year) throw new Error("Academic year required");
   if(!semester) throw new Error("Semester required");
   if(!subject_code) throw new Error("Subject code required");
@@ -150,14 +151,103 @@ export async function createNote({
     description: description || "",
     file_url: url,
     title: title.trim(),
-    file_size: file.size,          
-    file_ext: ext,                
+    file_size: file.size,
+    file_ext: ext,
+    pinned: false,
     createdAt: Date.now()
   });
   return true;
 }
 
+/**
+ * Real-time subscription to all user notes.
+ * NOTE: If the dataset gets very large, consider pagination + limited real-time for newest.
+ */
+export function subscribeMyNotes(cb){
+  const user = auth.currentUser;
+  if(!user) throw new Error("Not authenticated");
+  const qBase = query(
+    collection(db,"notes"),
+    where("userId","==", user.uid),
+    orderBy("createdAt","desc")
+  );
+  return onSnapshot(qBase, snap=>{
+    cb(snap.docs.map(d=>({ id:d.id, ...d.data() })));
+  }, err=>{
+    console.error("Realtime notes error:", err);
+    cb(null, err);
+  });
+}
+
+/**
+ * Paged fetch for older notes (if you decide to limit initial subscription or append older).
+ * Returns {notes, lastDoc}
+ */
+export async function pagedFetchNotes({ afterDoc=null, pageSize=25 } = {}){
+  const user = auth.currentUser;
+  if(!user) throw new Error("Not authenticated");
+  let qBase = query(
+    collection(db,"notes"),
+    where("userId","==", user.uid),
+    orderBy("createdAt","desc"),
+    limit(pageSize)
+  );
+  if(afterDoc){
+    qBase = query(
+      collection(db,"notes"),
+      where("userId","==", user.uid),
+      orderBy("createdAt","desc"),
+      startAfter(afterDoc),
+      limit(pageSize)
+    );
+  }
+  const snap = await getDocs(qBase);
+  return {
+    notes: snap.docs.map(d=>({ id:d.id, ...d.data(), _doc:d })),
+    lastDoc: snap.docs.length ? snap.docs[snap.docs.length-1] : null
+  };
+}
+
+export async function updateNote(id, updates){
+  const user = auth.currentUser;
+  if(!user) throw new Error("Not authenticated");
+  const refDoc = doc(db,"notes", id);
+  const current = await getDoc(refDoc);
+  if(!current.exists()) throw new Error("Note not found");
+  if(current.data().userId !== user.uid) throw new Error("Not authorized");
+  const allowed = {};
+  if(typeof updates.title === 'string') allowed.title = updates.title.trim();
+  if(typeof updates.description === 'string') allowed.description = updates.description.trim();
+  if(typeof updates.notes_type === 'string') allowed.notes_type = updates.notes_type;
+  if(!Object.keys(allowed).length) return;
+  await updateDoc(refDoc, allowed);
+  return true;
+}
+
+export async function togglePinNote(id, pin){
+  const user = auth.currentUser;
+  if(!user) throw new Error("Not authenticated");
+  const refDoc = doc(db,"notes", id);
+  const current = await getDoc(refDoc);
+  if(!current.exists()) throw new Error("Note not found");
+  if(current.data().userId !== user.uid) throw new Error("Not authorized");
+  await updateDoc(refDoc, { pinned: !!pin });
+  return true;
+}
+
+export async function deleteNote(id){
+  const user = auth.currentUser;
+  if(!user) throw new Error("Not authenticated");
+  const refDoc = doc(db,"notes", id);
+  const current = await getDoc(refDoc);
+  if(!current.exists()) return true;
+  if(current.data().userId !== user.uid) throw new Error("Not authorized");
+  await deleteDoc(refDoc);
+  return true;
+}
+
 export async function fetchMyNotes(){
+  // Kept for compatibility (non-realtime use)
   const user = auth.currentUser;
   if(!user) throw new Error("Not authenticated");
   const q = query(
