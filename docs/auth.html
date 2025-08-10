@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Auth - Notes-U</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  body { font-family:Inter, system-ui, sans-serif; margin:0; background:#f2f3f5; display:flex; align-items:center; justify-content:center; min-height:100vh; }
+  .card { background:#fff; padding:40px 32px; border-radius:16px; width:100%; max-width:460px; box-shadow:0 8px 30px rgba(0,0,0,0.06); }
+  h1 { margin:0 0 6px; font-size:2rem; }
+  p.desc { margin:0 0 28px; color:#555; }
+  form { display:flex; flex-direction:column; gap:18px; }
+  label { font-size:.85rem; font-weight:600; letter-spacing:.5px; text-transform:uppercase; color:#444; }
+  input, select { width:100%; padding:12px 14px; font-size:1rem; border:1px solid #ccc; border-radius:8px; }
+  input:focus { outline:none; border-color:#007bff; box-shadow:0 0 0 2px rgba(0,123,255,.2); }
+  button { padding:14px 18px; background:#007bff; color:#fff; font-weight:600; font-size:1rem; border:none; border-radius:8px; cursor:pointer; }
+  button:hover { background:#005fcc; }
+  .switch { margin-top:12px; font-size:.9rem; text-align:center; }
+  .switch a { color:#007bff; text-decoration:none; }
+  .error { background:#ffe4e4; color:#a40000; padding:10px 14px; border-radius:8px; font-size:.85rem; display:none; }
+  .success { background:#e3f8e9; color:#0d6d2d; padding:10px 14px; border-radius:8px; font-size:.85rem; display:none; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1 id="form-title"></h1>
+    <p class="desc" id="form-desc"></p>
+    <div class="error" id="error-box"></div>
+    <div class="success" id="success-box"></div>
+    <form id="auth-form">
+      <div id="username-wrapper" style="display:none;">
+        <label for="username">Username</label>
+        <input id="username" required placeholder="Your username">
+      </div>
+      <div>
+        <label for="email">Email</label>
+        <input id="email" type="email" required placeholder="you@example.com">
+      </div>
+      <div>
+        <label for="password">Password</label>
+        <input id="password" type="password" required placeholder="Min 8 characters">
+      </div>
+      <button type="submit" id="submit-btn"></button>
+    </form>
+    <div class="switch" id="switch-text"></div>
+  </div>
+
+<script type="module">
+import { registerUser, loginUser, onAuth } from './firebase-init.js';
+
+const params = new URLSearchParams(window.location.search);
+const mode = params.get('mode') === 'signup' ? 'signup' : 'login';
+
+const title = document.getElementById('form-title');
+const desc = document.getElementById('form-desc');
+const usernameWrapper = document.getElementById('username-wrapper');
+const usernameInput = document.getElementById('username');
+const emailInput = document.getElementById('email');
+const pwdInput = document.getElementById('password');
+const submitBtn = document.getElementById('submit-btn');
+const switchText = document.getElementById('switch-text');
+const errorBox = document.getElementById('error-box');
+const successBox = document.getElementById('success-box');
+
+function setModeUI(m) {
+  if (m === 'signup') {
+    title.textContent = 'Create Account';
+    desc.textContent = 'Sign up to start saving your notes.';
+    usernameWrapper.style.display = 'block';
+    submitBtn.textContent = 'Sign Up';
+    switchText.innerHTML = 'Already have an account? <a href="auth.html?mode=login">Log In</a>';
+  } else {
+    title.textContent = 'Log In';
+    desc.textContent = 'Access your saved academic notes.';
+    usernameWrapper.style.display = 'none';
+    submitBtn.textContent = 'Log In';
+    switchText.innerHTML = 'Need an account? <a href="auth.html?mode=signup">Create one</a>';
+  }
+}
+setModeUI(mode);
+
+function showError(msg) {
+  errorBox.textContent = msg;
+  errorBox.style.display = 'block';
+  successBox.style.display = 'none';
+}
+function showSuccess(msg) {
+  successBox.textContent = msg;
+  successBox.style.display = 'block';
+  errorBox.style.display = 'none';
+}
+
+document.getElementById('auth-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  showError(''); errorBox.style.display = 'none';
+  submitBtn.disabled = true;
+  try {
+    if (mode === 'signup') {
+      if (pwdInput.value.length < 8) {
+        throw new Error('Password must be at least 8 characters.');
+      }
+      await registerUser({
+        email: emailInput.value.trim(),
+        password: pwdInput.value,
+        username: usernameInput.value.trim()
+      });
+      showSuccess('Account created! Redirecting ...');
+      setTimeout(() => location.href = 'home.html', 800);
+    } else {
+      await loginUser({
+        email: emailInput.value.trim(),
+        password: pwdInput.value
+      });
+      showSuccess('Login successful! Redirecting ...');
+      setTimeout(() => location.href = 'home.html', 600);
+    }
+  } catch (err) {
+    showError(err.message || 'Authentication failed.');
+  } finally {
+    submitBtn.disabled = false;
+  }
+});
+
+// If already logged in, redirect
+onAuth(user => {
+  if (user) {
+    window.location.href = 'home.html';
+  }
+});
+</script>
+</body>
+</html>

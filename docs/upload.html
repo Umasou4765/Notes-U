@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Upload Note - Notes-U</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  body { font-family:Inter, system-ui, sans-serif; margin:0; background:#f3f5f7; min-height:100vh; display:flex; flex-direction:column; }
+  header { background:#fff; padding:14px 24px; display:flex; align-items:center; justify-content:space-between; box-shadow:0 2px 4px rgba(0,0,0,0.05); }
+  a.logo { text-decoration:none; font-weight:700; color:#222; font-size:1.2rem; }
+  main { flex:1; display:flex; justify-content:center; padding:40px 20px; }
+  .card { background:#fff; padding:34px 30px; width:100%; max-width:620px; border-radius:18px; box-shadow:0 6px 20px rgba(0,0,0,0.06); }
+  h1 { margin:0 0 10px; font-size:1.8rem; }
+  p.desc { margin:0 0 30px; color:#555; }
+  form { display:grid; gap:20px; }
+  .row { display:flex; gap:18px; flex-wrap:wrap; }
+  .field { flex:1 1 200px; display:flex; flex-direction:column; gap:8px; }
+  label { font-size:.75rem; font-weight:600; letter-spacing:.5px; text-transform:uppercase; color:#555; }
+  input[type=text], select, textarea, input[type=file] {
+    padding:12px 14px; border:1px solid #ccc; border-radius:10px; font-size:.9rem; font-family:inherit;
+  }
+  textarea { min-height:100px; resize:vertical; }
+  input:focus, select:focus, textarea:focus { outline:none; border-color:#007bff; box-shadow:0 0 0 2px rgba(0,123,255,.2); }
+  button { padding:15px 18px; background:#007bff; color:#fff; font-weight:600; font-size:1rem; border:none; border-radius:10px; cursor:pointer; }
+  button:hover { background:#005fcc; }
+  .msg { font-size:.8rem; padding:10px 14px; border-radius:8px; display:none; }
+  .msg.error { background:#ffe5e5; color:#a40000; }
+  .msg.success { background:#e4f9eb; color:#0d6d2d; }
+  footer { text-align:center; font-size:.7rem; padding:30px 0 40px; color:#666; }
+</style>
+</head>
+<body>
+<header>
+  <a href="home.html" class="logo">Notes-U</a>
+  <div>
+    <a href="home.html" style="text-decoration:none; font-size:.85rem; color:#007bff; font-weight:600;">Back to Home</a>
+  </div>
+</header>
+<main>
+  <div class="card">
+    <h1>Upload a Note</h1>
+    <p class="desc">Add metadata so you can easily filter later.</p>
+    <div class="msg error" id="error-box"></div>
+    <div class="msg success" id="success-box"></div>
+    <form id="upload-form">
+      <div class="field">
+        <label for="title">Title</label>
+        <input id="title" required placeholder="e.g., Week 3 OOP Lecture Summary">
+      </div>
+      <div class="row">
+        <div class="field">
+          <label for="academicYear">Academic Year</label>
+            <select id="academicYear" required>
+              <option value="">Select</option>
+              <option value="year1">Year 1</option>
+              <option value="year2">Year 2</option>
+              <option value="year3">Year 3</option>
+            </select>
+        </div>
+        <div class="field">
+          <label for="semester">Semester</label>
+          <select id="semester" required>
+            <option value="">Select</option>
+            <option value="semester1">Semester 1</option>
+            <option value="semester2">Semester 2</option>
+            <option value="semester3">Semester 3</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label for="subjectCode">Subject Code</label>
+          <input id="subjectCode" required placeholder="e.g., AMCS2034">
+        </div>
+        <div class="field">
+          <label for="notesType">Notes Type</label>
+          <select id="notesType" required>
+            <option value="">Select</option>
+            <option value="lecture_notes">Lecture Notes</option>
+            <option value="assignment">Assignment</option>
+            <option value="summary">Summary</option>
+            <option value="reference">Reference</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label for="description">Description (optional)</label>
+        <textarea id="description" placeholder="Short summary or context..."></textarea>
+      </div>
+      <div class="field">
+        <label for="file">File (optional)</label>
+        <input type="file" id="file" accept=".pdf,.doc,.docx,.ppt,.pptx,.txt,.odt,.ods,.odp,.rtf">
+      </div>
+      <button type="submit" id="submit-btn">Upload Note</button>
+    </form>
+  </div>
+</main>
+<footer>&copy; 2025 Notes-U</footer>
+
+<script type="module">
+import { onAuth, createNote } from './firebase-init.js';
+
+const form = document.getElementById('upload-form');
+const errorBox = document.getElementById('error-box');
+const successBox = document.getElementById('success-box');
+const submitBtn = document.getElementById('submit-btn');
+
+onAuth(user => {
+  if (!user) window.location.href = 'auth.html?mode=login';
+});
+
+function showError(m){ errorBox.textContent=m; errorBox.style.display='block'; successBox.style.display='none'; }
+function showSuccess(m){ successBox.textContent=m; successBox.style.display='block'; errorBox.style.display='none'; }
+
+form.addEventListener('submit', async e => {
+  e.preventDefault();
+  submitBtn.disabled = true;
+  showError(''); errorBox.style.display='none'; successBox.style.display='none';
+
+  const title = document.getElementById('title').value.trim();
+  const academicYear = document.getElementById('academicYear').value;
+  const semester = document.getElementById('semester').value;
+  const subjectCode = document.getElementById('subjectCode').value.trim();
+  const notesType = document.getElementById('notesType').value;
+  const description = document.getElementById('description').value.trim();
+  const fileInput = document.getElementById('file');
+  const file = fileInput.files[0] || null;
+
+  if (!title || !academicYear || !semester || !subjectCode || !notesType) {
+    showError('Please fill all required fields.');
+    submitBtn.disabled = false;
+    return;
+  }
+
+  try {
+    await createNote({ title, academicYear, semester, subjectCode, notesType, description, file });
+    showSuccess('Note uploaded successfully!');
+    form.reset();
+  } catch (err) {
+    showError(err.message || 'Upload failed.');
+  } finally {
+    submitBtn.disabled = false;
+  }
+});
+</script>
+</body>
+</html>

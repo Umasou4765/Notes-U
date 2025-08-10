@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Upload - Notes-U</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="assets/css/variables.css" rel="stylesheet">
+  <link href="assets/css/base.css" rel="stylesheet">
+  <link href="assets/css/upload.css" rel="stylesheet">
+  <script src="assets/js/theme.js" defer></script>
+  <script src="assets/js/api.js" defer></script>
+  <script src="assets/js/upload.js" defer></script>
+</head>
+<body>
+  <header class="upload-header">
+    <a href="/" class="logo" aria-label="Note-U Home"><span>U</span></a>
+    <nav>
+      <a href="home.html" class="nav-link">Home</a>
+      <a href="auth.html?mode=login" id="logout-link" class="nav-link">Logout</a>
+    </nav>
+  </header>
+
+  <main class="upload-main">
+    <h1>Upload Note</h1>
+    <form id="upload-form" enctype="multipart/form-data">
+      <div class="field-group">
+        <label for="title">Title*</label>
+        <input id="title" name="title" required placeholder="e.g., Week 3 OOP Summary">
+      </div>
+      <div class="field-row">
+        <div class="field-group">
+          <label for="academicYear">Academic Year*</label>
+          <select id="academicYear" name="academicYear" required>
+            <option value="">Select</option>
+            <option value="year1">Year 1</option>
+            <option value="year2">Year 2</option>
+            <option value="year3">Year 3</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label for="semester">Semester*</label>
+          <select id="semester" name="semester" required>
+            <option value="">Select</option>
+            <option value="semester1">Semester 1</option>
+            <option value="semester2">Semester 2</option>
+            <option value="semester3">Semester 3</option>
+          </select>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-group">
+          <label for="subject">Subject Code*</label>
+          <input id="subject" name="subject" required placeholder="AMCS2034">
+        </div>
+        <div class="field-group">
+          <label for="notesType">Notes Type*</label>
+          <select id="notesType" name="notesType" required>
+            <option value="">Select</option>
+            <option value="lecture_notes">Lecture Notes</option>
+            <option value="assignment">Assignment</option>
+            <option value="summary">Summary</option>
+            <option value="reference">Reference</option>
+          </select>
+        </div>
+      </div>
+      <div class="field-group">
+        <label for="description">Description (optional)</label>
+        <textarea id="description" name="description" placeholder="Short description..."></textarea>
+      </div>
+      <div class="field-group">
+        <label for="file">File*</label>
+        <input id="file" name="file" type="file" required
+               accept=".pdf,.doc,.docx,.txt,.ppt,.pptx,.odt,.ods,.odp,.rtf">
+      </div>
+      <button type="submit" class="submit-button">Upload</button>
+    </form>
+    <div id="upload-status" class="upload-status" aria-live="polite"></div>
+  </main>
+
+  <footer>&copy; 2025 Note-U. All rights reserved.</footer>
+</body>
+</html>
