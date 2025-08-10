@@ -22,8 +22,9 @@
   --danger:#d23d3d;
   --warn:#e0a800;
   --success:#1f9d55;
-  --card-hover-bg:rgba(0,0,0,0.03);
-  --transition: .25s ease;
+  --card-hover-bg:rgba(0,0,0,0.035);
+  --transition:.25s ease;
+  --dialog-backdrop:rgba(0,0,0,0.35);
 }
 body.dark {
   --bg:#1a1a1a; --text:#f2f2f2; --label:#b0b0b0;
@@ -31,6 +32,7 @@ body.dark {
   --shadow:0 2px 4px rgba(0,0,0,0.6);
   --shadow-strong:0 4px 14px rgba(0,0,0,0.7);
   --card-hover-bg:rgba(255,255,255,0.06);
+  --dialog-backdrop:rgba(0,0,0,0.55);
 }
 * { box-sizing:border-box; }
 body {
@@ -52,9 +54,9 @@ header {
   width:46px; height:46px; border:2px solid currentColor; border-radius:12px;
 }
 .site-title { font-size:1.25rem; font-weight:700; letter-spacing:-.5px; }
-.header-actions { display:flex; gap:12px; }
+.header-actions { display:flex; gap:12px; align-items:center; }
 
-.icon-btn, .icon-btn:visited {
+.icon-btn, .icon-btn:visited, .clear-filters {
   --btn-bg:var(--accent);
   --btn-bg-hover:var(--accent-hover);
   background:var(--btn-bg);
@@ -63,12 +65,13 @@ header {
   border-radius:10px; display:inline-flex; gap:8px; align-items:center;
   text-decoration:none; letter-spacing:.4px;
   box-shadow:0 4px 14px -6px rgba(0,90,200,0.45), 0 2px 7px -4px rgba(0,70,160,0.4);
-  transition:background .25s, transform .4s, box-shadow .4s;
+  transition:background .25s, transform .35s, box-shadow .35s;
 }
+.clear-filters { gap:6px; }
 .icon-btn svg { width:18px; height:18px; stroke:currentColor; fill:none; stroke-width:2; }
-.icon-btn:hover { transform:translateY(-2px); box-shadow:0 8px 24px -10px rgba(0,70,170,0.55), 0 4px 14px -6px rgba(0,70,160,0.4); }
-.icon-btn:active { transform:translateY(0) scale(.95); }
-.icon-btn:focus-visible { outline:none; box-shadow:var(--focus-ring); }
+.icon-btn:hover, .clear-filters:hover { transform:translateY(-2px); box-shadow:0 8px 24px -10px rgba(0,70,170,0.55), 0 4px 14px -6px rgba(0,70,160,0.4); }
+.icon-btn:active, .clear-filters:active { transform:translateY(0) scale(.95); }
+.icon-btn:focus-visible, .clear-filters:focus-visible { outline:none; box-shadow:var(--focus-ring); }
 
 .icon-btn.logout {
   --btn-bg:transparent;
@@ -81,27 +84,26 @@ header {
 .icon-btn.logout:hover { background:var(--btn-bg-hover); box-shadow:none; }
 body.dark .icon-btn.logout:hover { --btn-bg-hover:rgba(255,255,255,0.12); }
 
-.view-toggle {
-  display:flex; gap:6px; align-items:center;
-}
+.view-toggle { display:flex; gap:6px; align-items:center; }
 .view-btn {
   background:transparent;
   border:1px solid var(--border);
-  padding:6px 10px;
+  padding:7px 12px;
   border-radius:8px;
   cursor:pointer;
   display:inline-flex;
   align-items:center;
   gap:4px;
-  font-size:.65rem;
+  font-size:.68rem;
   letter-spacing:.4px;
   font-weight:600;
   color:var(--label);
-  transition:background var(--transition),color var(--transition);
+  transition:background var(--transition),color var(--transition),border-color var(--transition);
 }
 .view-btn[aria-pressed="true"] {
   background:var(--card-hover-bg);
   color:var(--text);
+  border-color:var(--accent);
 }
 .view-btn:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
 
@@ -137,34 +139,28 @@ body.dark ul.category-list a[aria-current="true"] {
 }
 
 .filters-bar {
-  display:flex; flex-wrap:wrap; gap:12px; align-items:center; margin-bottom:14px;
+  display:flex; flex-wrap:wrap; gap:12px; align-items:center; margin-bottom:12px;
 }
 .filters-bar .search-wrap { position:relative; flex:1 1 260px; }
 .filters-bar input[type="search"] {
   width:100%; padding:10px 14px 10px 40px; font-size:.85rem;
   border:1px solid var(--border); border-radius:8px; background:transparent; color:inherit;
+  transition:border-color .25s;
 }
 .filters-bar input[type="search"]:focus { outline:2px solid var(--accent); outline-offset:2px; }
 .filters-bar svg.search-icon {
   position:absolute; left:12px; top:50%; transform:translateY(-50%); width:18px; height:18px; opacity:.55;
 }
 select.sort-select {
-  padding:9px 12px; font:inherit; font-size:.8rem;
+  padding:10px 12px; font:inherit; font-size:.8rem;
   border:1px solid var(--border); background:transparent; color:inherit;
-  border-radius:8px;
+  border-radius:8px; min-width:140px;
+  transition:border-color .25s;
 }
 select.sort-select:focus { outline:2px solid var(--accent); outline-offset:2px; }
-button.clear-filters {
-  padding:9px 14px; font-size:.7rem; font-weight:600;
-  background:transparent; border:1px solid var(--border); border-radius:8px;
-  cursor:pointer; letter-spacing:.5px;
-  transition:background .2s;
-}
-button.clear-filters:hover { background:var(--card-hover-bg); }
-body.dark button.clear-filters:hover { background:var(--card-hover-bg); }
 
 .results-summary {
-  font-size:.68rem; letter-spacing:.45px; margin:4px 0 14px;
+  font-size:.68rem; letter-spacing:.45px; margin:4px 0 16px;
   color:var(--label);
 }
 
@@ -174,7 +170,11 @@ body.dark button.clear-filters:hover { background:var(--card-hover-bg); }
   grid-template-columns:repeat(auto-fill,minmax(var(--col-min),1fr));
 }
 .note-list {
-  display:flex; flex-direction:column; gap:10px;
+  display:flex; flex-direction:column; gap:12px;
+}
+body.view-list .note-card { /* list style accent */
+  border-left:4px solid var(--accent);
+  padding-left:14px;
 }
 .note-card {
   background:transparent; border:1px solid var(--border); border-radius:12px;
@@ -191,7 +191,7 @@ body.dark button.clear-filters:hover { background:var(--card-hover-bg); }
 }
 .pin-btn {
   background:transparent; border:none; cursor:pointer;
-  font-size:1rem; line-height:1; padding:4px 6px;
+  font-size:1.05rem; line-height:1; padding:4px 6px;
   color:var(--label);
   border-radius:6px;
   transition:background .2s,color .2s;
@@ -203,20 +203,14 @@ body.dark button.clear-filters:hover { background:var(--card-hover-bg); }
   outline:none;
 }
 .pin-btn[aria-pressed="true"] { color:var(--accent); }
-.note-card p { margin:6px 0 10px; font-size:.72rem; line-height:1.35; color:var(--label); }
-.tags { display:flex; flex-wrap:wrap; gap:6px; margin:0 0 6px; }
-.tag {
-  display:inline-flex; align-items:center; justify-content:center;
-  font-size:.55rem; padding:5px 8px 4px; background:rgba(0,0,0,0.07);
-  border-radius:20px; letter-spacing:.4px; font-weight:600; color:var(--text);
-}
-body.dark .tag { background:rgba(255,255,255,0.14); }
+.note-card p { margin:6px 0 10px; font-size:.73rem; line-height:1.35; color:var(--label); }
+
 .meta-line {
-  font-size:.52rem; letter-spacing:.5px; opacity:.65; margin-top:auto;
+  font-size:.55rem; letter-spacing:.5px; opacity:.65; margin-top:auto;
   display:flex; justify-content:space-between; gap:8px; flex-wrap:wrap;
 }
 .note-actions {
-  display:flex; flex-wrap:wrap; gap:10px; margin-top:4px;
+  display:flex; flex-wrap:wrap; gap:10px; margin-top:2px;
 }
 .note-actions button,
 .note-actions a.action-link {
@@ -224,7 +218,7 @@ body.dark .tag { background:rgba(255,255,255,0.14); }
   background:transparent; border:1px solid var(--border);
   padding:6px 10px; border-radius:8px; cursor:pointer;
   color:var(--label); text-decoration:none; display:inline-flex; align-items:center; gap:4px;
-  transition:background .2s,color .2s;
+  transition:background .2s,color .2s,border-color .25s;
 }
 .note-actions button:hover,
 .note-actions a.action-link:hover {
@@ -234,16 +228,16 @@ body.dark .tag { background:rgba(255,255,255,0.14); }
 .note-actions button:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
 
 mark {
-  background: #ffeb88;
-  color: inherit;
+  background:#ffeb88;
+  color:inherit;
   padding:0 2px;
   border-radius:3px;
 }
 body.dark mark { background:#665500; }
 
 .section-heading {
-  font-size:.75rem; text-transform:uppercase; letter-spacing:.8px;
-  font-weight:700; margin:24px 0 10px;
+  font-size:.72rem; text-transform:uppercase; letter-spacing:.8px;
+  font-weight:700; margin:22px 0 8px;
   opacity:.75;
 }
 
@@ -259,13 +253,13 @@ body.dark mark { background:#665500; }
   content:"";
   position:absolute;
   inset:0;
-  background:linear-gradient(90deg, transparent, rgba(255,255,255,.35), transparent);
+  background:linear-gradient(90deg, transparent, rgba(255,255,255,.45), transparent);
   animation:shimmer 1.2s infinite;
   mix-blend-mode:overlay;
-  opacity:.6;
+  opacity:.65;
 }
 body.dark .skeleton::after {
-  background:linear-gradient(90deg, transparent, rgba(255,255,255,.15), transparent);
+  background:linear-gradient(90deg, transparent, rgba(255,255,255,.18), transparent);
 }
 @keyframes shimmer {
   0%{transform:translateX(-100%);}
@@ -283,14 +277,60 @@ footer {
 }
 @media (max-width:660px){
   .filters-bar { flex-direction:column; align-items:stretch; }
-  .filters-bar .search-wrap, select.sort-select, button.clear-filters { width:100%; }
+  .filters-bar .search-wrap, select.sort-select, .clear-filters { width:100%; }
   .view-toggle { justify-content:flex-start; }
   .note-actions button,
   .note-actions a.action-link { font-size:.6rem; }
 }
+
+/* Dialog styling (fix white in dark mode) */
+dialog {
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:20px 22px 18px;
+  background:var(--container);
+  color:var(--text);
+  box-shadow:0 18px 50px -12px rgba(0,0,0,.35);
+  max-width:480px;
+}
+dialog::backdrop {
+  background:var(--dialog-backdrop);
+  backdrop-filter:blur(2px);
+}
+dialog form input, dialog form textarea, dialog form select {
+  width:100%;
+  font:inherit;
+  background:transparent;
+  color:inherit;
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:8px 10px;
+  resize:vertical;
+}
+dialog form input:focus,
+dialog form textarea:focus,
+dialog form select:focus {
+  outline:2px solid var(--accent);
+  outline-offset:2px;
+}
+.dialog-buttons button {
+  cursor:pointer;
+}
+
+/* Visually hidden helper */
+.visually-hidden {
+  position:absolute;
+  left:-9999px;
+  top:auto;
+  width:1px;
+  height:1px;
+  overflow:hidden;
+  clip:rect(1px,1px,1px,1px);
+  white-space:nowrap;
+}
 </style>
 </head>
-<body>
+<body class="view-grid">
 <header role="banner">
   <div class="brand" aria-label="Notes-U">
     <div class="logo" aria-hidden="true">U</div>
@@ -366,25 +406,24 @@ footer {
         <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.6">
           <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.8-4.8m0 0A7.2 7.2 0 105.4 5.4a7.2 7.2 0 0010.8 10.8z"/>
         </svg>
-        <input id="searchInput" type="search" placeholder="Search title, description, or subject..." autocomplete="off" aria-label="Search notes">
+        <input id="searchInput" type="search" placeholder="Search title or description..." autocomplete="off" aria-label="Search notes">
       </div>
       <select id="sortSelect" class="sort-select" aria-label="Sort notes">
         <option value="newest">Newest</option>
         <option value="oldest">Oldest</option>
         <option value="title">Title A–Z</option>
-        <option value="subject">Subject Code</option>
-        <option value="type">Type</option>
       </select>
-      <button id="clearFiltersBtn" class="clear-filters" type="button" aria-label="Clear filters">Clear Filters</button>
+      <button id="clearFiltersBtn" class="clear-filters" type="button" aria-label="Clear filters">
+        <!-- simple icon -->
+        ✕ <span style="font-weight:600;">Clear</span>
+      </button>
     </div>
 
     <div id="resultsSummary" class="results-summary" aria-live="polite"></div>
 
-    <div id="notes-container" aria-live="polite">
-      <!-- Rendered content -->
-    </div>
+    <div id="notes-container" aria-live="polite"></div>
 
-    <div id="actionAnnouncer" class="visually-hidden" aria-live="polite" style="position:absolute;left:-9999px;top:auto;height:1px;width:1px;overflow:hidden;"></div>
+    <div id="actionAnnouncer" class="visually-hidden" aria-live="polite"></div>
   </section>
 </main>
 
@@ -392,30 +431,31 @@ footer {
 
 <!-- Edit Dialog -->
 <dialog id="editDialog">
-  <form method="dialog" id="editForm" style="min-width:280px;max-width:420px;">
+  <form method="dialog" id="editForm" novalidate>
     <h3 style="margin-top:0;font-size:1rem;">Edit Note</h3>
     <input type="hidden" id="editNoteId">
-    <div style="display:flex;flex-direction:column;gap:10px;">
-      <label style="font-size:.65rem;font-weight:600;letter-spacing:.5px;text-transform:uppercase;">
+    <div style="display:flex;flex-direction:column;gap:12px;margin-top:6px;">
+      <label style="font-size:.65rem;font-weight:600;letter-spacing:.5px;text-transform:uppercase;display:flex;flex-direction:column;gap:4px;">
         Title
-        <input id="editTitle" required style="width:100%;padding:8px 10px;margin-top:4px;">
+        <input id="editTitle" required>
       </label>
-      <label style="font-size:.65rem;font-weight:600;letter-spacing:.5px;text-transform:uppercase;">
+      <label style="font-size:.65rem;font-weight:600;letter-spacing:.5px;text-transform:uppercase;display:flex;flex-direction:column;gap:4px;">
         Description
-        <textarea id="editDescription" rows="4" style="width:100%;padding:8px 10px;margin-top:4px;resize:vertical;"></textarea>
+        <textarea id="editDescription" rows="4"></textarea>
       </label>
-      <label style="font-size:.65rem;font-weight:600;letter-spacing:.5px;text-transform:uppercase;">
+      <!-- Keep type selectable (even if hidden in cards) -->
+      <label style="font-size:.65rem;font-weight:600;letter-spacing:.5px;text-transform:uppercase;display:flex;flex-direction:column;gap:4px;">
         Type
-        <select id="editType" style="width:100%;padding:8px 10px;margin-top:4px;">
+        <select id="editType">
           <option value="lecture_notes">Lecture Notes</option>
           <option value="tutorial_solutions">Tutorial Solutions</option>
           <option value="past_year_papers">Past Year Papers</option>
         </select>
       </label>
     </div>
-    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:18px;">
-      <button type="submit" value="save" style="background:var(--accent);color:#fff;border:none;padding:8px 14px;border-radius:8px;font-size:.75rem;font-weight:600;">Save</button>
-      <button type="button" id="editCancelBtn" style="background:transparent;border:1px solid var(--border);padding:8px 14px;border-radius:8px;font-size:.75rem;font-weight:600;">Cancel</button>
+    <div class="dialog-buttons" style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px;">
+      <button type="submit" value="save" style="background:var(--accent);color:#fff;border:none;padding:8px 14px;border-radius:8px;font-size:.75rem;font-weight:600;cursor:pointer;">Save</button>
+      <button type="button" id="editCancelBtn" style="background:transparent;border:1px solid var(--border);padding:8px 14px;border-radius:8px;font-size:.75rem;font-weight:600;cursor:pointer;">Cancel</button>
     </div>
     <p id="editStatus" style="font-size:.6rem;letter-spacing:.4px;margin:8px 0 0;color:var(--label);min-height:1em;"></p>
   </form>
@@ -423,13 +463,13 @@ footer {
 
 <!-- Delete Confirm Dialog -->
 <dialog id="deleteDialog">
-  <form method="dialog" id="deleteForm" style="min-width:260px;max-width:380px;">
+  <form method="dialog" id="deleteForm" novalidate>
     <h3 style="margin-top:0;font-size:1rem;">Delete Note</h3>
     <input type="hidden" id="deleteNoteId">
     <p style="font-size:.8rem;line-height:1.4;">Are you sure you want to permanently delete this note?</p>
     <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:18px;">
-      <button type="submit" value="confirm" style="background:var(--danger);color:#fff;border:none;padding:8px 14px;border-radius:8px;font-size:.75rem;font-weight:600;">Delete</button>
-      <button type="button" id="deleteCancelBtn" style="background:transparent;border:1px solid var(--border);padding:8px 14px;border-radius:8px;font-size:.75rem;font-weight:600;">Cancel</button>
+      <button type="submit" value="confirm" style="background:var(--danger);color:#fff;border:none;padding:8px 14px;border-radius:8px;font-size:.75rem;font-weight:600;cursor:pointer;">Delete</button>
+      <button type="button" id="deleteCancelBtn" style="background:transparent;border:1px solid var(--border);padding:8px 14px;border-radius:8px;font-size:.75rem;font-weight:600;cursor:pointer;">Cancel</button>
     </div>
   </form>
 </dialog>
@@ -437,7 +477,7 @@ footer {
 <script type="module">
 import { onAuth, logout, fetchMyNotes, updateNote, deleteNote, togglePin } from './firebase-init.js';
 
-/* ========== THEME ========== */
+/* THEME INIT */
 (function initTheme(){
   const stored = localStorage.getItem('theme');
   function apply(t){
@@ -455,7 +495,7 @@ import { onAuth, logout, fetchMyNotes, updateNote, deleteNote, togglePin } from 
   });
 })();
 
-/* ========== ELEMENTS ========== */
+/* ELEMENTS */
 const logoutButton   = document.getElementById('logout-btn');
 const notesContainer = document.getElementById('notes-container');
 const searchInput    = document.getElementById('searchInput');
@@ -466,7 +506,6 @@ const resultsSummary = document.getElementById('resultsSummary');
 const gridViewBtn    = document.getElementById('gridViewBtn');
 const listViewBtn    = document.getElementById('listViewBtn');
 const actionAnnouncer= document.getElementById('actionAnnouncer');
-
 const editDialog     = document.getElementById('editDialog');
 const editForm       = document.getElementById('editForm');
 const editNoteId     = document.getElementById('editNoteId');
@@ -475,13 +514,12 @@ const editDescription= document.getElementById('editDescription');
 const editType       = document.getElementById('editType');
 const editStatus     = document.getElementById('editStatus');
 const editCancelBtn  = document.getElementById('editCancelBtn');
-
 const deleteDialog   = document.getElementById('deleteDialog');
 const deleteForm     = document.getElementById('deleteForm');
 const deleteNoteId   = document.getElementById('deleteNoteId');
 const deleteCancelBtn= document.getElementById('deleteCancelBtn');
 
-/* ========== STATE ========== */
+/* STATE */
 const state = {
   rawNotes: [],
   filtered: [],
@@ -491,7 +529,7 @@ const state = {
   view: localStorage.getItem('notes.view') || 'grid'
 };
 
-/* ========== UTILITIES ========== */
+/* UTILITIES */
 function escapeHtml(str=''){
   return str.replace(/[&<>"']/g, c=>({
     '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
@@ -511,16 +549,13 @@ function formatSize(bytes){
 function highlight(text, term){
   if(!term) return escapeHtml(text);
   const esc = escapeHtml(text);
-  try {
+  try{
     const re = new RegExp('('+term.replace(/[.*+?^${}()|[\\]\\\\]/g,'\\\\$&')+')','ig');
     return esc.replace(re,'<mark>$1</mark>');
-  } catch {
-    return esc;
-  }
+  }catch{ return esc; }
 }
 function announce(msg){
   actionAnnouncer.textContent = msg;
-  // Clear after a while to keep region small
   setTimeout(()=>{ if(actionAnnouncer.textContent===msg) actionAnnouncer.textContent=''; }, 4000);
 }
 function persist(){
@@ -530,9 +565,10 @@ function persist(){
   localStorage.setItem('notes.view', state.view);
 }
 
-/* ========== RENDERING ========== */
+/* SKELETON */
 function renderSkeleton(){
   const count = state.view==='list'?4:6;
+  notesContainer.innerHTML='';
   const wrapper = document.createElement('div');
   wrapper.className = state.view==='list' ? 'note-list' : 'note-grid';
   for(let i=0;i<count;i++){
@@ -540,94 +576,67 @@ function renderSkeleton(){
     s.className='skeleton';
     wrapper.appendChild(s);
   }
-  notesContainer.innerHTML='';
   notesContainer.appendChild(wrapper);
 }
 
+/* RENDER */
 function renderNotes(){
   notesContainer.innerHTML='';
-  const container = document.createElement('div');
-  container.className = state.view === 'list' ? 'note-list' : 'note-grid';
-
   const pinned = state.filtered.filter(n=> n.pinned);
   const unpinned= state.filtered.filter(n=> !n.pinned);
 
   if(pinned.length){
-    const pinnedHeading = document.createElement('div');
-    pinnedHeading.className='section-heading';
-    pinnedHeading.textContent = 'Pinned';
-    notesContainer.appendChild(pinnedHeading);
+    const h = document.createElement('div');
+    h.className='section-heading';
+    h.textContent='Pinned';
+    notesContainer.appendChild(h);
     notesContainer.appendChild(renderNoteGroup(pinned));
-  } else {
-    // If user has pins overall but filter hides them? We could show optional message. Keep minimal.
   }
-
   if(unpinned.length){
     if(pinned.length){
-      const othersHeading = document.createElement('div');
-      othersHeading.className='section-heading';
-      othersHeading.textContent = 'All Notes';
-      notesContainer.appendChild(othersHeading);
+      const h2 = document.createElement('div');
+      h2.className='section-heading';
+      h2.textContent='All Notes';
+      notesContainer.appendChild(h2);
     }
     notesContainer.appendChild(renderNoteGroup(unpinned));
   }
-
   if(!pinned.length && !unpinned.length){
-    notesContainer.innerHTML = `
+    notesContainer.innerHTML=`
       <div class="note-card">
-        <div class="note-header">
-          <h3>No Notes Found</h3>
-        </div>
-        <p>No notes match your current filters. Try clearing filters or upload a new one.</p>
-        <div class="tags">
-          <span class="tag">Empty</span>
-          <span class="tag">Info</span>
-        </div>
+        <div class="note-header"><h3>No Notes Found</h3></div>
+        <p>No notes match your filters. Try clearing filters or upload a new note.</p>
         <div class="note-actions">
           <a class="action-link" href="upload.html">Upload Now</a>
         </div>
         <div class="meta-line"><span>—</span><span>—</span></div>
       </div>`;
   }
-
   updateSummary();
 }
 
 function renderNoteGroup(list){
-  const wrapper = document.createElement('div');
-  wrapper.className = state.view==='list' ? 'note-list' : 'note-grid';
+  const wrap = document.createElement('div');
+  wrap.className = state.view==='list' ? 'note-list' : 'note-grid';
   for(const n of list){
     const title = n.title || '(Untitled)';
-    const prettyType = (n.notes_type||'')
-      .replace(/_/g,' ')
-      .replace(/\b\w/g,m=>m.toUpperCase()) || 'Note';
-    const extTag = n.file_ext ? `<span class="tag">${escapeHtml(n.file_ext.toUpperCase())}</span>` : '';
-    const dateStr = formatDate(n.createdAt);
-    const sizeStr = formatSize(n.file_size);
-    const pinnedPressed = n.pinned ? 'true':'false';
     const titleHTML = highlight(title, state.search);
     const descHTML  = highlight(n.description || 'No description provided.', state.search);
-
+    const dateStr = formatDate(n.createdAt);
+    const sizeStr = formatSize(n.file_size);
     const card = document.createElement('article');
     card.className='note-card';
     card.dataset.id = n.id;
     card.dataset.category = n.subject_code;
 
-    card.innerHTML = `
+    card.innerHTML=`
       <div class="note-header">
         <h3>${titleHTML}</h3>
-        <button class="pin-btn" data-action="pin" data-id="${n.id}" aria-pressed="${pinnedPressed}" aria-label="${n.pinned?'Unpin':'Pin'} note">
+        <button class="pin-btn" data-action="pin" data-id="${n.id}" aria-pressed="${n.pinned?'true':'false'}" aria-label="${n.pinned?'Unpin':'Pin'} note">
           ${n.pinned ? '★' : '☆'}
         </button>
       </div>
       <p>${descHTML}</p>
-      <div class="tags">
-        <span class="tag">${escapeHtml(n.academic_year?.replace('year','Year ')||'')}</span>
-        <span class="tag">${escapeHtml(n.semester?.replace('semester','Semester ')||'')}</span>
-        <span class="tag">${escapeHtml(n.subject_code||'')}</span>
-        <span class="tag">${escapeHtml(prettyType)}</span>
-        ${extTag}
-      </div>
       <div class="note-actions">
         <a class="action-link" href="${n.file_url}" target="_blank" rel="noopener noreferrer" data-action="open" data-id="${n.id}">Open</a>
         <button data-action="edit" data-id="${n.id}">Edit</button>
@@ -638,9 +647,9 @@ function renderNoteGroup(list){
         <span>${sizeStr}</span>
       </div>
     `;
-    wrapper.appendChild(card);
+    wrap.appendChild(card);
   }
-  return wrapper;
+  return wrap;
 }
 
 function updateSummary(){
@@ -652,44 +661,30 @@ function updateSummary(){
     `${shown} of ${total} notes · Category: ${catLabel} · Sort: ${state.sort} · View: ${state.view}${pinnedCount?` · Pinned: ${pinnedCount}`:''}${state.search ? ' · Search: '+state.search : ''}`;
 }
 
-/* ========== FILTER / SORT PIPELINE ========== */
+/* FILTER PIPELINE */
 function applyFilters(){
   let list = [...state.rawNotes];
-
   if(state.category !== 'all'){
-    list = list.filter(n => n.subject_code === state.category);
+    list = list.filter(n=> n.subject_code === state.category);
   }
   const term = state.search.toLowerCase();
   if(term){
-    list = list.filter(n => {
-      const hay = `${n.title||''} ${n.description||''} ${n.subject_code||''}`.toLowerCase();
+    list = list.filter(n=>{
+      const hay = `${n.title||''} ${n.description||''}`.toLowerCase();
       return hay.includes(term);
     });
   }
   switch(state.sort){
-    case 'oldest':
-      list.sort((a,b)=> (a.createdAt||0)-(b.createdAt||0));
-      break;
-    case 'title':
-      list.sort((a,b)=> (a.title||'').localeCompare(b.title||''));
-      break;
-    case 'subject':
-      list.sort((a,b)=> (a.subject_code||'').localeCompare(b.subject_code||''));
-      break;
-    case 'type':
-      list.sort((a,b)=> (a.notes_type||'').localeCompare(b.notes_type||''));
-      break;
+    case 'oldest': list.sort((a,b)=>(a.createdAt||0)-(b.createdAt||0)); break;
+    case 'title': list.sort((a,b)=>(a.title||'').localeCompare(b.title||'')); break;
     case 'newest':
-    default:
-      list.sort((a,b)=> (b.createdAt||0)-(a.createdAt||0));
+    default: list.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
   }
-  // Pinned always rendered first by splitting later; keep original sorted groups
   state.filtered = list;
   renderNotes();
 }
 
-/* ========== EVENT HANDLERS ========== */
-// Category
+/* CATEGORY EVENTS */
 categoryList.addEventListener('click', e=>{
   const a = e.target.closest('a[data-category]');
   if(!a) return;
@@ -700,8 +695,6 @@ categoryList.addEventListener('click', e=>{
   persist();
   applyFilters();
 });
-
-// Initialize category visual if persisted
 if(state.category !== 'all'){
   const el = categoryList.querySelector(`a[data-category="${state.category}"]`);
   if(el){
@@ -710,8 +703,8 @@ if(state.category !== 'all'){
   }
 }
 
-// Search (debounced)
-let searchTimer = null;
+/* SEARCH */
+let searchTimer=null;
 searchInput.value = state.search;
 searchInput.addEventListener('input', e=>{
   clearTimeout(searchTimer);
@@ -722,7 +715,7 @@ searchInput.addEventListener('input', e=>{
   }, 200);
 });
 
-// Sort
+/* SORT */
 sortSelect.value = state.sort;
 sortSelect.addEventListener('change', e=>{
   state.sort = e.target.value;
@@ -730,13 +723,13 @@ sortSelect.addEventListener('change', e=>{
   applyFilters();
 });
 
-// Clear filters
+/* CLEAR FILTERS */
 clearFiltersBtn.addEventListener('click', ()=>{
-  state.category = 'all';
-  state.search = '';
-  state.sort = 'newest';
-  searchInput.value = '';
-  sortSelect.value = 'newest';
+  state.category='all';
+  state.search='';
+  state.sort='newest';
+  searchInput.value='';
+  sortSelect.value='newest';
   categoryList.querySelectorAll('a[data-category]').forEach(a=>a.removeAttribute('aria-current'));
   const allLink = categoryList.querySelector('a[data-category="all"]');
   if(allLink) allLink.setAttribute('aria-current','true');
@@ -745,10 +738,12 @@ clearFiltersBtn.addEventListener('click', ()=>{
   announce('Filters cleared');
 });
 
-// View toggle
+/* VIEW TOGGLE */
 function updateViewButtons(){
   gridViewBtn.setAttribute('aria-pressed', state.view==='grid');
   listViewBtn.setAttribute('aria-pressed', state.view==='list');
+  document.body.classList.toggle('view-grid', state.view==='grid');
+  document.body.classList.toggle('view-list', state.view==='list');
 }
 gridViewBtn.addEventListener('click', ()=>{
   if(state.view==='grid') return;
@@ -760,20 +755,20 @@ listViewBtn.addEventListener('click', ()=>{
 });
 updateViewButtons();
 
-// Logout
+/* LOGOUT */
 logoutButton.addEventListener('click', async ()=>{
   try { await logout(); localStorage.setItem('recentLogout','1'); }
   finally { location.replace('auth.html?mode=login'); }
 });
 
-// BFCache guard
-window.addEventListener('pageshow', (e)=>{
+/* BFCache GUARD */
+window.addEventListener('pageshow', e=>{
   if(e.persisted && localStorage.getItem('recentLogout')==='1'){
     location.replace('auth.html?mode=login');
   }
 });
 
-/* Notes container delegation for actions */
+/* NOTE ACTIONS */
 notesContainer.addEventListener('click', async e=>{
   const btn = e.target.closest('[data-action]');
   if(!btn) return;
@@ -785,20 +780,17 @@ notesContainer.addEventListener('click', async e=>{
     const note = state.rawNotes.find(n=>n.id===id);
     if(!note) return;
     const newVal = !note.pinned;
-    btn.disabled = true;
+    btn.disabled=true;
     try {
-      await togglePin(id, newVal);
-      note.pinned = newVal;
+      await togglePin(id,newVal);
+      note.pinned=newVal;
       applyFilters();
-      announce(newVal ? 'Note pinned' : 'Note unpinned');
-      // restore focus
+      announce(newVal?'Note pinned':'Note unpinned');
       const refocus = notesContainer.querySelector(`button[data-action="pin"][data-id="${id}"]`);
       refocus?.focus();
     } catch(err){
-      announce('Failed to update pin');
-    } finally {
-      btn.disabled = false;
-    }
+      announce('Pin update failed');
+    } finally { btn.disabled=false; }
   }
   if(action === 'edit'){
     openEdit(id);
@@ -808,33 +800,30 @@ notesContainer.addEventListener('click', async e=>{
   }
 });
 
-/* ========== EDIT FLOW ========== */
+/* EDIT */
 function openEdit(id){
   const note = state.rawNotes.find(n=>n.id===id);
   if(!note) return;
-  editNoteId.value = id;
-  editTitle.value = note.title || '';
-  editDescription.value = note.description || '';
-  editType.value = note.notes_type || 'lecture_notes';
-  editStatus.textContent = '';
+  editNoteId.value=id;
+  editTitle.value=note.title||'';
+  editDescription.value=note.description||'';
+  editType.value=note.notes_type||'lecture_notes';
+  editStatus.textContent='';
   if(!editDialog.open) editDialog.showModal();
-  // Focus first input
-  setTimeout(()=> editTitle.focus(), 50);
+  setTimeout(()=>editTitle.focus(),50);
 }
 editCancelBtn.addEventListener('click', ()=> editDialog.close());
-
 editForm.addEventListener('submit', async e=>{
   e.preventDefault();
   const id = editNoteId.value;
   if(!id) return;
-  editStatus.textContent = 'Saving...';
+  editStatus.textContent='Saving...';
   try {
-    await updateNote(id, {
+    await updateNote(id,{
       title: editTitle.value.trim(),
       description: editDescription.value.trim(),
       notes_type: editType.value
     });
-    // Update local state quickly
     const note = state.rawNotes.find(n=>n.id===id);
     if(note){
       note.title = editTitle.value.trim();
@@ -843,16 +832,16 @@ editForm.addEventListener('submit', async e=>{
     }
     applyFilters();
     announce('Note updated');
-    editStatus.textContent = 'Saved';
-    setTimeout(()=>{ editDialog.close(); }, 400);
+    editStatus.textContent='Saved';
+    setTimeout(()=> editDialog.close(),400);
   } catch(err){
-    editStatus.textContent = err.message || 'Failed to save';
+    editStatus.textContent=err.message||'Save failed';
   }
 });
 
-/* ========== DELETE FLOW ========== */
+/* DELETE */
 function openDelete(id){
-  deleteNoteId.value = id;
+  deleteNoteId.value=id;
   if(!deleteDialog.open) deleteDialog.showModal();
 }
 deleteCancelBtn.addEventListener('click', ()=> deleteDialog.close());
@@ -862,8 +851,7 @@ deleteForm.addEventListener('submit', async e=>{
   if(!id) return;
   try {
     await deleteNote(id);
-    // remove local
-    state.rawNotes = state.rawNotes.filter(n=> n.id!==id);
+    state.rawNotes = state.rawNotes.filter(n=>n.id!==id);
     applyFilters();
     announce('Note deleted');
     deleteDialog.close();
@@ -873,24 +861,24 @@ deleteForm.addEventListener('submit', async e=>{
   }
 });
 
-/* ========== DATA LOADING ========== */
+/* DATA LOADING */
 async function loadNotes(){
   renderSkeleton();
   try {
     state.rawNotes = await fetchMyNotes();
     applyFilters();
   } catch(err){
-    notesContainer.innerHTML = `
+    notesContainer.innerHTML=`
       <div class="note-card">
         <div class="note-header"><h3>Error</h3></div>
-        <p>${escapeHtml(err.message || 'Failed to load notes')}</p>
+        <p>${escapeHtml(err.message||'Failed to load notes')}</p>
         <div class="note-actions">
           <button data-reload="1">Reload</button>
         </div>
         <div class="meta-line"><span>—</span><span>—</span></div>
       </div>`;
     notesContainer.querySelector('[data-reload]')?.addEventListener('click', ()=> loadNotes());
-    resultsSummary.textContent = 'Could not load notes.';
+    resultsSummary.textContent='Could not load notes.';
   }
 }
 
@@ -904,10 +892,10 @@ onAuth(user=>{
   if(localStorage.getItem('recentLogout')==='1'){
     localStorage.removeItem('recentLogout');
   }
-  // restore view category search in UI if needed
-  if(state.search) searchInput.value = state.search;
-  sortSelect.value = state.sort;
-  applyFilters(); // show empty layout quickly
+  if(state.search) searchInput.value=state.search;
+  sortSelect.value=state.sort;
+  updateViewButtons();
+  applyFilters(); 
   loadNotes();
 });
 </script>
