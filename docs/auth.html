@@ -685,13 +685,6 @@
         forgotBtn.querySelector('.btn-text').textContent = 'Send Reset Link';
       }
     });
-    // AUTO REDIRECT IF ALREADY LOGGED IN
-    onAuthStateChanged(auth, user=>{
-      if(user && !forgotPanel.classList.contains('active')){
-        setGlobalStatus('Already signed in. Redirecting...','ok');
-        setTimeout(()=> location.href='home.html', 480);
-      }
-    });
   </script>
 </body>
 </html>
