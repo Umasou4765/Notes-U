@@ -1,96 +1,359 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Notes-U</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="color-scheme" content="light dark">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/assets/css/base.css">
-  <link rel="stylesheet" href="/assets/css/components.css">
-  <style>
-    .landing-wrapper {
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      min-height:100vh;
-      padding:20px;
-    }
-    .logo-box {
-      font-size:2.8em;
-      font-weight:700;
-      height:60px;
-      width:60px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      border:2px solid currentColor;
-      border-radius:8px;
-      margin:0 auto 24px;
-    }
-    .button-group {
-      display:flex;
-      gap:12px;
-      flex-direction:column;
-    }
-    @media (min-width:768px) {
-      .button-group { flex-direction:row; }
-    }
-    .outline-btn {
-      background:transparent;
-      border:1px solid var(--color-border-light);
-      padding:12px 20px;
-      border-radius:8px;
-      font-weight:500;
-      cursor:pointer;
-      text-decoration:none;
-      text-align:center;
-      transition:background .25s,border-color .25s;
-    }
-    body.dark .outline-btn { border-color:var(--color-border-dark); }
-    .outline-btn:hover {
-      background:rgba(0,0,0,0.05);
-    }
-    body.dark .outline-btn:hover {
-      background:rgba(255,255,255,0.08);
-    }
-    .theme-toggle {
-      position:absolute;
-      top:16px;
-      right:16px;
-      background:transparent;
-      border:1px solid var(--color-border-light);
-      border-radius:50%;
-      width:44px;
-      height:44px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      cursor:pointer;
-    }
-    body.dark .theme-toggle {
-      border-color:var(--color-border-dark);
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light dark">
+    <title>Notes-U</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Page‑scoped styles (kept self‑contained, not mixed with other pages) -->
+    <style>
+        :root {
+            /* Light Theme Colors */
+            --color-bg-light: #f8f8f8;
+            --color-text-primary-light: #333;
+            --color-text-secondary-light: #666;
+            --color-border-light: rgba(55, 53, 47, 0.1);
+            --color-input-bg-light: #ffffff;
+            --color-input-hover-light: rgba(55, 53, 47, 0.03);
+            --color-input-border-hover-light: rgba(55, 53, 47, 0.2);
+            --color-separator-line-light: #ddd;
+            --color-link-light: #007bff;
+            --color-link-hover-light: #0056b3;
+            --color-card-bg-light: #fff;
+            --color-shadow-light: rgba(0,0,0,0.05);
+
+            /* Dark Theme Colors */
+            --color-bg-dark: #121212;
+            --color-text-primary-dark: rgba(255,255,255,0.9);
+            --color-text-secondary-dark: rgba(255,255,255,0.6);
+            --color-border-dark: rgba(255,255,255,0.1);
+            --color-input-bg-dark: #252525;
+            --color-input-hover-dark: #333;
+            --color-input-border-hover-dark: rgba(255,255,255,0.2);
+            --color-separator-line-dark: #444;
+            --color-link-dark: #64b5f6;
+            --color-link-hover-dark: #90caf9;
+            --color-card-bg-dark: #1a1a1a;
+            --color-shadow-dark: rgba(255,255,255,0.02);
+
+            /* Common Accent / Icons */
+            --color-accent-blue: #007bff;
+            --color-accent-blue-hover: #0056b3;
+            --color-icon-light: #333;
+            --color-icon-dark: #ffffff;
+        }
+
+        /* Base Layout */
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: var(--color-bg-light);
+            color: var(--color-text-primary-light);
+            flex-direction: column;
+            box-sizing: border-box;
+            overflow-x: hidden;
+            width: 100%;
+            padding: 20px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .container {
+            text-align: center;
+            padding: 32px;
+            max-width: 420px;
+            width: 100%;
+            box-sizing: border-box;
+            background-color: var(--color-card-bg-light);
+            border-radius: 12px;
+            box-shadow: 0 6px 20px var(--color-shadow-light);
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        /* Logo */
+        .logo {
+            font-size: 2.8em;
+            font-weight: 700;
+            margin-bottom: 24px;
+            color: var(--color-text-primary-light);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 60px;
+            width: 60px;
+            border: 2px solid var(--color-text-primary-light);
+            border-radius: 8px;
+            box-sizing: border-box;
+            margin-left: auto;
+            margin-right: auto;
+            transition: border-color 0.3s ease, color 0.3s ease;
+        }
+        .logo span { line-height: 1; }
+
+        h1 {
+            font-size: 2em;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--color-text-primary-light);
+            line-height: 1.3;
+            transition: color 0.3s ease;
+        }
+        p {
+            font-size: 1em;
+            color: var(--color-text-secondary-light);
+            margin-bottom: 32px;
+            transition: color 0.3s ease;
+        }
+
+        /* Buttons */
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
+            margin: 0 auto;
+        }
+        .button {
+            padding: 14px 20px;
+            border: 1px solid var(--color-border-light);
+            border-radius: 8px;
+            font-size: 1.05em;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+            text-align: center;
+            transition:
+                background-color 0.3s ease,
+                color 0.3s ease,
+                border-color 0.3s ease,
+                box-shadow 0.3s ease;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .button.login {
+            background-color: var(--color-accent-blue);
+            color: #fff;
+            border-color: var(--color-accent-blue);
+        }
+        .button.login:hover {
+            background-color: var(--color-accent-blue-hover);
+            border-color: var(--color-accent-blue-hover);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .button.register {
+            background-color: var(--color-input-bg-light);
+            color: var(--color-text-primary-light);
+            border: 1px solid var(--color-border-light);
+        }
+        .button.register:hover {
+            background-color: var(--color-input-hover-light);
+            border-color: var(--color-input-border-hover-light);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+
+        /* Theme Toggle Button */
+        .theme-toggle-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s ease;
+            z-index: 10;
+        }
+        .theme-toggle-btn:hover {
+            background-color: rgba(0,0,0,0.05);
+        }
+
+        .theme-toggle-btn svg {
+            width: 24px;
+            height: 24px;
+            fill: var(--color-icon-light);
+            transition: fill 0.3s ease;
+        }
+
+        /* Dark Mode Overrides */
+        body.dark {
+            background-color: var(--color-bg-dark);
+            color: var(--color-text-primary-dark);
+        }
+        body.dark .container {
+            background-color: var(--color-card-bg-dark);
+            box-shadow: 0 6px 20px var(--color-shadow-dark);
+        }
+        body.dark .logo {
+            color: var(--color-text-primary-dark);
+            border-color: var(--color-text-primary-dark);
+        }
+        body.dark h1 {
+            color: var(--color-text-primary-dark);
+        }
+        body.dark p {
+            color: var(--color-text-secondary-dark);
+        }
+        body.dark .button.register {
+            background-color: var(--color-input-bg-dark);
+            color: var(--color-text-primary-dark);
+            border-color: var(--color-border-dark);
+        }
+        body.dark .button.register:hover {
+            background-color: var(--color-input-hover-dark);
+            border-color: var(--color-input-border-hover-dark);
+            box-shadow: 0 2px 6px rgba(255,255,255,0.05);
+        }
+        body.dark .button.login {
+            background-color: var(--color-accent-blue);
+            border-color: var(--color-accent-blue);
+        }
+        body.dark .button.login:hover {
+            background-color: var(--color-accent-blue-hover);
+            border-color: var(--color-accent-blue-hover);
+            box-shadow: 0 2px 6px rgba(255,255,255,0.05);
+        }
+        body.dark .theme-toggle-btn:hover {
+            background-color: rgba(255,255,255,0.08);
+        }
+        body.dark .theme-toggle-btn svg {
+            fill: var(--color-icon-dark);
+        }
+
+        /* Icon state (CSS-driven) */
+        .theme-toggle-btn .sun-icon { display: none; }
+        .theme-toggle-btn .moon-icon { display: block; }
+        body.dark .theme-toggle-btn .sun-icon { display: block; }
+        body.dark .theme-toggle-btn .moon-icon { display: none; }
+
+        /* Desktop Enhancements */
+        @media (min-width: 768px) {
+            .container {
+                max-width: 480px;
+                padding: 48px;
+                border-radius: 16px;
+                box-shadow: 0 8px 30px var(--color-shadow-light);
+            }
+            body.dark .container {
+                box-shadow: 0 8px 30px var(--color-shadow-dark);
+            }
+            .logo {
+                font-size: 3.5em;
+                height: 70px;
+                width: 70px;
+                margin-bottom: 32px;
+            }
+            h1 {
+                font-size: 2.5em;
+                margin-bottom: 16px;
+            }
+            p {
+                font-size: 1.1em;
+                margin-bottom: 40px;
+            }
+            .button-group {
+                flex-direction: row;
+                justify-content: center;
+                gap: 20px;
+                width: auto;
+            }
+            .button {
+                padding: 16px 25px;
+                font-size: 1.15em;
+                width: auto;
+                flex-grow: 1;
+                max-width: 180px;
+            }
+        }
+    </style>
 </head>
 <body>
-  <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme">🌓</button>
-  <div class="landing-wrapper">
-    <div class="container-card" style="max-width:480px;width:100%;">
-      <div class="logo-box">U</div>
-      <h1 style="margin:0 0 12px;">Accessible notes.</h1>
-      <p style="margin:0 0 28px;">A simple platform for students to share and access academic notes.</p>
-      <div class="button-group">
-        <a class="primary-btn" href="auth.html?mode=login">Log In</a>
-        <a class="outline-btn" href="auth.html?mode=signup">Sign Up</a>
-      </div>
+    <!-- Theme Toggle -->
+    <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle theme">
+        <!-- Light-mode indicator (shown when dark is active) -->
+        <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1"  x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22"   x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12"  x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78"  x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64"  x2="19.78" y2="4.22"></line>
+        </svg>
+        <!-- Dark-mode indicator (shown when light is active) -->
+        <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+    </button>
+
+    <div class="container">
+        <div class="logo" aria-label="Note-U Logo">
+            <span>U</span>
+        </div>
+        <h1>Accessible notes.</h1>
+        <p>A simple platform for students to share and access academic notes.</p>
+        <div class="button-group">
+            <a href="auth.html?mode=login" class="button login">Log In</a>
+            <a href="auth.html?mode=signup" class="button register">Sign Up</a>
+        </div>
     </div>
-  </div>
-  <div id="toast-container"></div>
-  <script type="module">
-    import { initTheme, toggleTheme } from './assets/js/theme.js';
-    initTheme();
-    document.getElementById('themeToggle').addEventListener('click', toggleTheme);
-  </script>
+
+    <script>
+        const themeToggleButton = document.getElementById("theme-toggle");
+        const sunIcon = themeToggleButton.querySelector(".sun-icon");
+        const moonIcon = themeToggleButton.querySelector(".moon-icon");
+
+        function setTheme(isDark) {
+            document.body.classList.toggle("dark", isDark);
+            // (Icons already handled by CSS; direct style toggling optional)
+            if (isDark) {
+                sunIcon.style.display = "block";
+                moonIcon.style.display = "none";
+            } else {
+                sunIcon.style.display = "none";
+                moonIcon.style.display = "block";
+            }
+        }
+
+        function toggleTheme() {
+            const isDarkNow = !document.body.classList.contains("dark");
+            setTheme(isDarkNow);
+            localStorage.setItem("theme", isDarkNow ? "dark" : "light");
+        }
+
+        window.addEventListener("DOMContentLoaded", () => {
+            const storedTheme = localStorage.getItem("theme");
+            if (storedTheme === "dark") {
+                setTheme(true);
+            } else if (storedTheme === "light") {
+                setTheme(false);
+            } else {
+                // Fallback to system preference
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                setTheme(prefersDark);
+            }
+        });
+
+        themeToggleButton.addEventListener("click", toggleTheme);
+
+        // React to system theme only if user hasn't chosen explicitly
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+            if (!localStorage.getItem("theme")) {
+                setTheme(event.matches);
+            }
+        });
+    </script>
 </body>
 </html>
