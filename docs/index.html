@@ -1,165 +1,170 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Notes-U</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-  <meta name="color-scheme" content="light dark">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg-light:#f8f8f8; --text-light:#222; --text2-light:#666;
-      --bg-dark:#121212; --text-dark:#eee; --text2-dark:#aaa;
-      --card-light:#fff; --card-dark:#1d1d1d;
-      --border-light:rgba(0,0,0,0.12); --border-dark:rgba(255,255,255,0.12);
-      --accent:#0d6efd; --accent-hover:#0b5ed7;
-      --shadow:0 8px 30px rgba(0,0,0,0.08);
-      --shadow-dark:0 8px 30px rgba(0,0,0,0.3);
-    }
-    body {
-      font-family:'Inter',system-ui,Arial,sans-serif;
-      margin:0; min-height:100vh;
-      background:var(--bg-light); color:var(--text-light);
-      display:flex; align-items:center; justify-content:center;
-      transition:background .3s,color .3s;
-    }
-    body.dark { background:var(--bg-dark); color:var(--text-dark); }
-    .theme-toggle-btn {
-      position:fixed; top:24px; right:24px;
-      background:none; border:none; cursor:pointer; z-index:10;
-      width:44px; height:44px; border-radius:50%;
-      display:flex; align-items:center; justify-content:center;
-      transition:background .2s;
-      color: var(--text-light);
-    }
-    body.dark .theme-toggle-btn {
-      color: var(--text-dark);
-    }
-    .theme-toggle-btn:hover {
-      background:rgba(0,0,0,0.04);
-    }
-    body.dark .theme-toggle-btn:hover {
-      background:rgba(255,255,255,0.07);
-    }
-    .theme-toggle-btn svg {
-      width:28px; height:28px; display:block;
-      transition:opacity .2s;
-    }
-    .theme-toggle-btn .sun-icon { display:none; }
-    body.dark .theme-toggle-btn .sun-icon { display:block; }
-    body.dark .theme-toggle-btn .moon-icon { display:none; }
-    .container {
-      width:100%; max-width:440px; background:var(--card-light); padding:40px 34px;
-      border-radius:16px; box-shadow:var(--shadow); box-sizing:border-box;
-      margin:32px 0;
-      display:flex; flex-direction:column; align-items:center;
-      animation:fadein .4s;
-    }
-    body.dark .container {
-      background:var(--card-dark); box-shadow:var(--shadow-dark);
-    }
-    .logo {
-      font-size:2.6rem; font-weight:700; display:flex; align-items:center; justify-content:center;
-      width:72px; height:72px; margin:0 auto 20px; border:2px solid currentColor; border-radius:14px;
-      user-select:none;
-    }
-    h1 { font-size:2rem; margin:0 0 8px; font-weight:700; text-align:center; }
-    p.lead { margin:0 0 28px; font-size:1.06rem; color:var(--text2-light); text-align:center; }
-    body.dark p.lead { color:var(--text2-dark); }
-    .button-group {
-      display:flex; gap:14px; width:100%; justify-content:center; margin-top:18px;
-      flex-wrap:wrap;
-    }
-    .action-btn {
-      padding:14px 24px; border-radius:8px; font-size:1.08em; font-weight:600;
-      border:none; text-decoration:none; text-align:center; cursor:pointer;
-      transition:background .18s, color .18s, box-shadow .18s;
-      box-shadow:0 1px 3px rgba(0,0,0,0.05);
-      outline:none;
-      min-width:120px;
-      background:var(--accent); color:#fff;
-    }
-    .action-btn.secondary {
-      background:var(--card-light); color:var(--text-light); border:1px solid var(--border-light);
-    }
-    .action-btn.secondary:hover {
-      background:var(--bg-light); color:var(--accent);
-    }
-    .action-btn:hover:not(.secondary) {
-      background:var(--accent-hover);
-    }
-    body.dark .action-btn.secondary {
-      background:var(--card-dark); color:var(--text-dark); border:1px solid var(--border-dark);
-    }
-    body.dark .action-btn.secondary:hover {
-      background:var(--bg-dark); color:var(--accent);
-    }
-    @media (max-width:560px){
-      .container { margin:16px; padding:26px 12px; }
-      .logo { width:60px; height:60px; font-size:2.1rem; }
-    }
-    @keyframes fadein {
-      from { opacity:0; transform:translateY(32px);}
-      to { opacity:1; transform:none;}
-    }
-  </style>
+  <meta charset="UTF-8" />
+  <title>Notes-U</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <meta name="color-scheme" content="light dark">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-light:#f8f8f8; --text-light:#222; --text2-light:#666;
+      --bg-dark:#121212; --text-dark:#eee; --text2-dark:#aaa;
+      --card-light:#fff; --card-dark:#1d1d1d;
+      --border-light:rgba(0,0,0,0.12); --border-dark:rgba(255,255,255,0.12);
+      --accent:#0d6efd; --accent-hover:#0b5ed7;
+      --shadow:0 8px 30px rgba(0,0,0,0.08);
+      --shadow-dark:0 8px 30px rgba(0,0,0,0.3);
+    }
+    body {
+      font-family:'Inter',system-ui,Arial,sans-serif;
+      margin:0; min-height:100vh;
+      background:var(--bg-light); color:var(--text-light);
+      display:flex; align-items:center; justify-content:center;
+      transition:background .3s,color .3s;
+    }
+    body.dark { background:var(--bg-dark); color:var(--text-dark); }
+    .theme-toggle-btn {
+      position:fixed; top:24px; right:24px;
+      background:none; border:none; cursor:pointer; z-index:10;
+      width:44px; height:44px; border-radius:50%;
+      display:flex; align-items:center; justify-content:center;
+      transition:background .2s;
+    }
+    .theme-toggle-btn:hover {
+      background:rgba(0,0,0,0.04);
+    }
+    body.dark .theme-toggle-btn:hover {
+      background:rgba(255,255,255,0.07);
+    }
+    .theme-toggle-btn svg {
+      width:28px; height:28px; display:block;
+      transition:opacity .2s;
+    }
+    .theme-toggle-btn .sun-icon { display:none; }
+    body.dark .theme-toggle-btn .sun-icon { display:block; }
+    body.dark .theme-toggle-btn .moon-icon { display:none; }
+    .container {
+      width:100%; max-width:440px; background:var(--card-light); padding:40px 34px;
+      border-radius:16px; box-shadow:var(--shadow); box-sizing:border-box;
+      margin:32px 0;
+      display:flex; flex-direction:column; align-items:center;
+      animation:fadein .4s;
+    }
+    body.dark .container {
+      background:var(--card-dark); box-shadow:var(--shadow-dark);
+    }
+    .logo {
+      font-size:2.6rem; font-weight:700; display:flex; align-items:center; justify-content:center;
+      width:72px; height:72px; margin:0 auto 20px; border:2px solid currentColor; border-radius:14px;
+      user-select:none;
+    }
+    h1 { font-size:2rem; margin:0 0 8px; font-weight:700; text-align:center; }
+    p.lead { margin:0 0 28px; font-size:1.06rem; color:var(--text2-light); text-align:center; }
+    body.dark p.lead { color:var(--text2-dark); }
+    .button-group {
+      display:flex; gap:14px; width:100%; justify-content:center; margin-top:18px;
+      flex-wrap:wrap;
+    }
+    .action-btn {
+      padding:14px 24px; border-radius:8px; font-size:1.08em; font-weight:600;
+      border:none; text-decoration:none; text-align:center; cursor:pointer;
+      transition:background .18s, color .18s, box-shadow .18s;
+      box-shadow:0 1px 3px rgba(0,0,0,0.05);
+      outline:none;
+      min-width:120px;
+      background:var(--accent); color:#fff;
+    }
+    .action-btn.secondary {
+      background:var(--card-light); color:var(--text-light); border:1px solid var(--border-light);
+    }
+    .action-btn.secondary:hover {
+      background:var(--bg-light); color:var(--accent);
+    }
+    .action-btn:hover:not(.secondary) {
+      background:var(--accent-hover);
+    }
+    body.dark .action-btn.secondary {
+      background:var(--card-dark); color:var(--text-dark); border:1px solid var(--border-dark);
+    }
+    body.dark .action-btn.secondary:hover {
+      background:var(--bg-dark); color:var(--accent);
+    }
+    @media (max-width:560px){
+      .container { margin:16px; padding:26px 12px; }
+      .logo { width:60px; height:60px; font-size:2.1rem; }
+    }
+    @keyframes fadein {
+      from { opacity:0; transform:translateY(32px);}
+      to { opacity:1; transform:none;}
+    }
+  </style>
 </head>
 <body>
-  <button class="theme-toggle-btn" id="theme-toggle" aria-label="Toggle theme" title="Toggle light/dark theme">
-    <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M21 12.8A9 9 0 0112.8 3a7 7 0 100 18A9 9 0 0021 12.8z"/>
-    </svg>
-    <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-      <circle cx="12" cy="12" r="5"/>
-      <path d="M12 1v2m0 18v2m11-11h-2M3 12H1m16.95 7.07l-1.41-1.41M6.34 6.34L4.93 4.93m12.02 0l-1.41 1.41M6.34 17.66l-1.41 1.41"/>
-    </svg>
-  </button>
-  <div class="container" role="main">
-    <div class="logo" aria-label="Notes-U Logo">U</div>
-    <h1>Notes-U</h1>
-    <p class="lead">A collaborative platform for sharing and accessing academic notes.</p>
-    <div class="button-group">
-      <a class="action-btn" href="auth.html?mode=login">Log In</a>
-      <a class="action-btn secondary" href="auth.html?mode=signup">Sign Up</a>
-    </div>
-  </div>
-  <script type="module">
- 
-    function applyTheme(isDark){
-      document.body.classList.toggle('dark', !!isDark);
-      document.body.classList.toggle('light', !isDark);
-      localStorage.setItem('theme', isDark ? 'dark' : 'light');
-    }
-    function syncIcons(){
-    
-    }
-    function initTheme(){
-      const stored = localStorage.getItem('theme');
-      if(stored==='dark') applyTheme(true);
-      else if(stored==='light') applyTheme(false);
-      else applyTheme(window.matchMedia('(prefers-color-scheme: dark)').matches);
-      syncIcons();
-      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e=>{
-        if(!localStorage.getItem('theme')) {
-          applyTheme(e.matches);
-          syncIcons();
-        }
-      });
-      window.addEventListener('storage', e=>{
-        if(e.key==='theme' && e.newValue){
-          applyTheme(e.newValue==='dark');
-          syncIcons();
-        }
-      });
-    }
-    initTheme();
-    document.getElementById('theme-toggle').addEventListener('click', () => {
-      const isDark = !document.body.classList.contains('dark');
-      applyTheme(isDark);
-      syncIcons();
-    });
+  <button class="theme-toggle-btn" id="theme-toggle" aria-label="Toggle theme" title="Toggle light/dark theme">
+    <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 12.8A9 9 0 0112.8 3a7 7 0 100 18A9 9 0 0021 12.8z"/>
+    </svg>
+    <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="5"/>
+      <path d="M12 1v2m0 18v2m11-11h-2M3 12H1m16.95 7.07l-1.41-1.41M6.34 6.34L4.93 4.93m12.02 0l-1.41 1.41M6.34 17.66l-1.41 1.41"/>
+    </svg>
+  </button>
+  <div class="container" role="main">
+    <div class="logo" aria-label="Notes-U Logo">U</div>
+    <h1>Welcome to Notes-U</h1>
+    <p class="lead">A collaborative platform for sharing and accessing academic notes. Log in or create an account to get started!</p>
+    <div class="button-group">
+      <a class="action-btn" href="auth.html?mode=login">Log In</a>
+      <a class="action-btn secondary" href="auth.html?mode=signup">Sign Up</a>
+    </div>
+  </div>
+  <script type="module">
+    // Theme toggle logic
+    function applyTheme(isDark){
+      document.body.classList.toggle('dark', !!isDark);
+      document.body.classList.toggle('light', !isDark);
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    }
+    function syncIcons(){
+      // SVG display handled by CSS
+    }
+    function initTheme(){
+      const stored = localStorage.getItem('theme');
+      if(stored==='dark') applyTheme(true);
+      else if(stored==='light') applyTheme(false);
+      else applyTheme(window.matchMedia('(prefers-color-scheme: dark)').matches);
+      syncIcons();
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e=>{
+        if(!localStorage.getItem('theme')) {
+          applyTheme(e.matches);
+          syncIcons();
+        }
+      });
+      window.addEventListener('storage', e=>{
+        if(e.key==='theme' && e.newValue){
+          applyTheme(e.newValue==='dark');
+          syncIcons();
+        }
+      });
+    }
+    initTheme();
+    document.getElementById('theme-toggle').addEventListener('click', () => {
+      const isDark = !document.body.classList.contains('dark');
+      applyTheme(isDark);
+      syncIcons();
+    });
 
-
-  </script>
+    // If you want to auto-redirect if already logged in, you can add:
+    // import { onAuth } from './firebase-init.js';
+    // let redirected = false;
+    // onAuth(user => {
+    //   if(redirected) return;
+    //   redirected = true;
+    //   setTimeout(() => {
+    //     if(user) location.href = 'home.html';
+    //   }, 150);
+    // });
+  </script>
 </body>
 </html>
