@@ -702,12 +702,15 @@ body.dark .theme-toggle .sun {
         forgotBtn.querySelector('.btn-text').textContent = 'Send Reset Link';
       }
     });
-     onAuthStateChanged(auth, user=>{
-    if(user && localStorage.getItem('recentLogout')!=='1' && !forgotPanel.classList.contains('active')){
-      setGlobalStatus('Already signed in. Redirecting...','ok');
-      setTimeout(()=> location.href='home.html', 480);
-    }
-  });
+     onAuth(user=>{
+  if(!user){
+    location.replace('auth.html?mode=login');
+    return;
+  }
+  localStorage.removeItem('recentLogout');
+  lockHistory();          
+  loadNotes();
+});
   </script>
 </body>
 </html>
