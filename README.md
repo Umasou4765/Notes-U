@@ -1,4 +1,4 @@
-# Notes-U (Refactored)
+# Notes-U
 
 A modular, secure, student-focused note sharing platform.
 
