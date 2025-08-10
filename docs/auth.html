@@ -2,163 +2,148 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <title>Authenticate - Notes-U</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
   <meta name="color-scheme" content="light dark">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Auth - Notes-U</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg-light:#f8f8f8; --text-light:#333; --text2-light:#666;
-      --bg-dark:#121212; --text-dark:#eee; --text2-dark:#aaa;
-      --card-light:#fff; --card-dark:#1d1d1d;
-      --border-light:rgba(0,0,0,0.12); --border-dark:rgba(255,255,255,0.12);
-      --accent:#0d6efd; --accent-hover:#0b5ed7;
-      --error:#d33;
-    }
-    body {
-      font-family:'Inter',system-ui,Arial,sans-serif;
-      margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center;
-      background:var(--bg-light); color:var(--text-light); transition:background .3s,color .3s;
-    }
-    body.dark { background:var(--bg-dark); color:var(--text-dark); }
-    .container {
-      width:100%; max-width:440px; background:var(--card-light); padding:40px 34px;
-      border-radius:16px; box-shadow:0 8px 30px rgba(0,0,0,.08); box-sizing:border-box;
-    }
-    body.dark .container { background:var(--card-dark); box-shadow:0 8px 30px rgba(0,0,0,.4); }
-    .logo {
-      font-size:2.6rem; font-weight:700; display:flex; align-items:center; justify-content:center;
-      width:72px; height:72px; margin:0 auto 20px; border:2px solid currentColor; border-radius:14px;
-    }
-    h1 { font-size:1.8rem; margin:0 0 6px; }
-    p.lead { margin:0 0 28px; font-size:.95rem; color:var(--text2-light); }
-    body.dark p.lead { color:var(--text2-dark); }
-    label { display:block; font-weight:500; margin:0 0 6px; }
-    input {
-      width:100%; padding:12px 14px; font-size:1rem; border:1px solid var(--border-light);
-      border-radius:8px; background:#fff; box-sizing:border-box;
-    }
-    body.dark input { background:#222; border-color:var(--border-dark); color:var(--text-dark); }
-    input:focus { outline:2px solid var(--accent); outline-offset:2px; }
-    .submit-button {
-      width:100%; padding:14px 18px; margin-top:8px;
-      border:none; border-radius:8px; font-size:1rem; font-weight:600;
-      cursor:pointer; background:var(--accent); color:#fff; transition:background .2s;
-    }
-    .submit-button:hover { background:var(--accent-hover); }
-    .switch-link {
-      display:block; text-align:center; margin-top:20px; text-decoration:none;
-      font-size:.9rem; color:var(--accent);
-    }
-    .switch-link:hover { text-decoration:underline; }
-    .auth-form { display:none; }
-    .auth-form.active { display:block; }
-    .error-inline { color:var(--error); font-size:.8rem; margin-top:4px; display:none; }
-    @media (max-width:560px){
-      .container { margin:16px; padding:32px 26px; }
-    }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/app.css">
 </head>
-<body>
-  <div class="container" role="main">
+<body class="light">
+  <button class="theme-toggle-btn" id="theme-toggle" aria-label="Toggle theme">
+    <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke-width="1.8">
+      <path d="M21 12.8A9 9 0 0112.8 3a7 7 0 100 18A9 9 0 0021 12.8z"/>
+    </svg>
+    <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="5"/>
+      <path d="M12 1v2m0 18v2m11-11h-2M3 12H1m16.95 7.07l-1.41-1.41M6.34 6.34L4.93 4.93m12.02 0l-1.41 1.41M6.34 17.66l-1.41 1.41"/>
+    </svg>
+  </button>
+
+  <div class="app-container" role="main">
     <div class="logo" aria-label="Notes-U Logo">U</div>
-    <h1 id="auth-title"></h1>
-    <p class="lead" id="auth-description"></p>
+    <h1 class="page-title" id="auth-title">Welcome Back</h1>
+    <p class="lead" id="auth-description">Log in to access and manage your academic notes.</p>
 
-    <div id="login-form" class="auth-form" aria-labelledby="auth-title">
-      <form autocomplete="off" novalidate>
-        <label for="login-username">Username</label>
-        <input id="login-username" type="text" required placeholder="Enter your username" inputmode="text">
-        <span class="error-inline" id="login-user-err"></span>
-
-        <label for="login-access-code" style="margin-top:16px;">Access Code</label>
-        <input id="login-access-code" type="password" required placeholder="Enter your access code">
+    <!-- LOGIN FORM -->
+    <form id="login-form" class="auth-form fade-in" autocomplete="off" novalidate>
+      <div class="field">
+        <label for="login-email">Email</label>
+        <input id="login-email" type="email" placeholder="you@example.com" required inputmode="email">
+        <span class="error-inline" id="login-email-err"></span>
+      </div>
+      <div class="field">
+        <label for="login-password">Password</label>
+        <input id="login-password" type="password" placeholder="••••••••" required minlength="8">
         <span class="error-inline" id="login-pass-err"></span>
+      </div>
+      <div class="button-row" style="margin-top:10px;">
+        <button type="submit" class="btn" id="login-btn">Log In</button>
+      </div>
+      <a class="switch-link" href="auth.html?mode=signup" id="to-signup">Don't have an account? Create one</a>
+    </form>
 
-        <button type="submit" class="submit-button" id="login-btn">Log In</button>
-      </form>
-      <a href="auth.html?mode=signup" class="switch-link">Don't have an account? Create one now</a>
-    </div>
-
-    <div id="signup-form" class="auth-form" aria-labelledby="auth-title">
-      <form autocomplete="off" novalidate>
-        <label for="signup-username">Username</label>
-        <input id="signup-username" type="text" required placeholder="Choose a username (a-z, 0-9, . _ -)">
-        <span class="error-inline" id="signup-user-err"></span>
-
-        <label for="signup-access-code" style="margin-top:16px;">Create Access Code</label>
-        <input id="signup-access-code" type="password" required placeholder="Min 8 characters">
-        <span class="error-inline" id="signup-pass-err"></span>
-
-        <label for="signup-confirm-access-code" style="margin-top:16px;">Confirm Access Code</label>
-        <input id="signup-confirm-access-code" type="password" required placeholder="Re-enter access code">
-        <span class="error-inline" id="signup-confirm-err"></span>
-
-        <button type="submit" class="submit-button" id="signup-btn">Sign Up</button>
-      </form>
-      <a href="auth.html?mode=login" class="switch-link">Already have an account? Log In instead</a>
-    </div>
+    <!-- SIGNUP FORM -->
+    <form id="signup-form" class="auth-form hidden" autocomplete="off" novalidate>
+      <div class="field">
+        <label for="signup-display-name">Display Name (Optional)</label>
+        <input id="signup-display-name" type="text" placeholder="Your name">
+        <span class="error-inline" id="signup-name-err"></span>
+      </div>
+      <div class="field">
+        <label for="signup-email">Email</label>
+        <input id="signup-email" type="email" placeholder="you@example.com" required inputmode="email">
+        <span class="error-inline" id="signup-email-err"></span>
+      </div>
+      <div class="form-grid-two">
+        <div class="field">
+          <label for="signup-password">Password (min 8)</label>
+            <input id="signup-password" type="password" minlength="8" required placeholder="••••••••">
+            <span class="error-inline" id="signup-pass-err"></span>
+        </div>
+        <div class="field">
+          <label for="signup-password-confirm">Confirm</label>
+          <input id="signup-password-confirm" type="password" minlength="8" required placeholder="••••••••">
+          <span class="error-inline" id="signup-passconf-err"></span>
+        </div>
+      </div>
+      <div class="button-row" style="margin-top:6px;">
+        <button type="submit" class="btn" id="signup-btn">Sign Up</button>
+        <button type="button" class="btn secondary" id="cancel-signup">Cancel</button>
+      </div>
+      <a class="switch-link" href="auth.html?mode=login" id="to-login">Already have an account? Log in</a>
+    </form>
   </div>
 
   <script type="module">
-    import { signupWithUsername, loginWithUsername, onAuth } from './firebase-init.js';
+    import { signupWithEmail, loginWithEmail, onAuth } from './firebase-init.js';
 
-    // Theme (light: default unless user pref stored)
-    function setTheme(isDark){
-      document.body.classList.toggle('dark', !!isDark);
+    /* Theme */
+    function applyTheme(dark){
+      document.body.classList.toggle('dark',dark);
+      document.body.classList.toggle('light',!dark);
+      localStorage.setItem('theme',dark?'dark':'light');
     }
     (function initTheme(){
       const stored = localStorage.getItem('theme');
-      if(stored==='dark') setTheme(true);
-      else if(stored==='light') setTheme(false);
-      else setTheme(window.matchMedia('(prefers-color-scheme: dark)').matches);
+      if(stored==='dark') applyTheme(true);
+      else if(stored==='light') applyTheme(false);
+      else applyTheme(window.matchMedia('(prefers-color-scheme: dark)').matches);
       window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e=>{
-        if(!localStorage.getItem('theme')) setTheme(e.matches);
+        if(!localStorage.getItem('theme')) applyTheme(e.matches);
       });
     })();
+    const toggleBtn=document.getElementById('theme-toggle');
+    let spin=0;
+    toggleBtn.addEventListener('click', ()=>{
+      const goDark=!document.body.classList.contains('dark');
+      applyTheme(goDark);
+      spin+=360; toggleBtn.style.transform=`rotate(${spin}deg)`; setTimeout(()=>toggleBtn.style.transform='',650);
+    });
 
+    /* Mode switching */
     const params = new URLSearchParams(location.search);
-    const mode = params.get('mode') === 'signup' ? 'signup' : 'login';
-
+    let mode = params.get('mode')==='signup'?'signup':'login';
     const loginForm = document.getElementById('login-form');
     const signupForm = document.getElementById('signup-form');
     const authTitle = document.getElementById('auth-title');
-    const authDesc = document.getElementById('auth-description');
+    const authDescription = document.getElementById('auth-description');
 
-    function applyMode(m){
+    function setMode(m){
+      mode=m;
       if(m==='signup'){
-        signupForm.classList.add('active');
-        loginForm.classList.remove('active');
+        signupForm.classList.remove('hidden');
+        loginForm.classList.add('hidden');
         authTitle.textContent='Create Your Account';
-        authDesc.textContent='Sign up to start uploading and managing your notes.';
+        authDescription.textContent='Sign up to start uploading and sharing your notes.';
       } else {
-        loginForm.classList.add('active');
-        signupForm.classList.remove('active');
+        loginForm.classList.remove('hidden');
+        signupForm.classList.add('hidden');
         authTitle.textContent='Welcome Back';
-        authDesc.textContent='Log in to access and manage your academic notes.';
+        authDescription.textContent='Log in to access and manage your academic notes.';
       }
     }
-    applyMode(mode);
+    setMode(mode);
 
-    // Helpers
+    /* Helpers */
     function showErr(id,msg){
-      const el = document.getElementById(id);
-      if(el){ el.textContent = msg || ''; el.style.display = msg ? 'block':'none'; }
+      const el=document.getElementById(id);
+      if(!el) return;
+      el.textContent=msg||'';
+      el.style.display=msg?'block':'none';
     }
 
-    // Login
-    loginForm.querySelector('form').addEventListener('submit', async e=>{
+    /* LOGIN */
+    loginForm.addEventListener('submit', async e=>{
       e.preventDefault();
-      const u = document.getElementById('login-username').value.trim();
-      const p = document.getElementById('login-access-code').value;
-      showErr('login-user-err','');
-      showErr('login-pass-err','');
-      if(!u){ showErr('login-user-err','Username required'); return; }
-      if(!p){ showErr('login-pass-err','Access code required'); return; }
+      const email = document.getElementById('login-email').value.trim();
+      const pass = document.getElementById('login-password').value;
+      showErr('login-email-err',''); showErr('login-pass-err','');
+      if(!email){ showErr('login-email-err','Email required'); return; }
+      if(!pass){ showErr('login-pass-err','Password required'); return; }
       const btn = document.getElementById('login-btn');
       btn.disabled=true; btn.textContent='Logging in...';
       try {
-        await loginWithUsername(u,p);
+        await loginWithEmail(email, pass);
         location.href='home.html';
       } catch(err){
         alert(err.message || 'Login failed');
@@ -167,26 +152,24 @@
       }
     });
 
-    // Signup
-    signupForm.querySelector('form').addEventListener('submit', async e=>{
+    /* SIGNUP */
+    signupForm.addEventListener('submit', async e=>{
       e.preventDefault();
-      const u = document.getElementById('signup-username').value.trim();
-      const p = document.getElementById('signup-access-code').value;
-      const c = document.getElementById('signup-confirm-access-code').value;
-      showErr('signup-user-err','');
-      showErr('signup-pass-err','');
-      showErr('signup-confirm-err','');
-
-      if(!u){ showErr('signup-user-err','Username required'); return; }
-      if(p.length<8){ showErr('signup-pass-err','Minimum 8 characters'); return; }
-      if(p!==c){ showErr('signup-confirm-err','Codes do not match'); return; }
-
+      const name = document.getElementById('signup-display-name').value.trim();
+      const email = document.getElementById('signup-email').value.trim();
+      const pass = document.getElementById('signup-password').value;
+      const pass2 = document.getElementById('signup-password-confirm').value;
+      showErr('signup-email-err',''); showErr('signup-pass-err',''); showErr('signup-passconf-err','');
+      if(!email) { showErr('signup-email-err','Email required'); return; }
+      if(pass.length<8) { showErr('signup-pass-err','Minimum 8 characters'); return; }
+      if(pass!==pass2) { showErr('signup-passconf-err','Passwords do not match'); return; }
       const btn = document.getElementById('signup-btn');
       btn.disabled=true; btn.textContent='Creating...';
       try {
-        await signupWithUsername(u,p);
-        alert('Account created. Please log in.');
-        location.href='auth.html?mode=login';
+        await signupWithEmail(email, pass, name || undefined);
+        alert('Account created. You can now log in.');
+        setMode('login');
+        history.replaceState({},'', 'auth.html?mode=login');
       } catch(err){
         alert(err.message || 'Signup failed');
       } finally {
@@ -194,13 +177,17 @@
       }
     });
 
-    // If already logged in you may auto-redirect:
+    document.getElementById('cancel-signup').addEventListener('click', ()=>{
+      setMode('login');
+      history.replaceState({},'', 'auth.html?mode=login');
+    });
+
     onAuth(user=>{
       if(user && mode==='login'){
+        // Already logged in; optionally redirect
         // location.href='home.html';
       }
     });
-
   </script>
 </body>
 </html>
