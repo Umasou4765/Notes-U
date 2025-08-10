@@ -374,6 +374,23 @@
     .theme-toggle .sun { opacity:0; transform:rotate(-40deg) scale(.6);}
     body.dark .theme-toggle .sun { opacity:1; transform:rotate(0) scale(1);}
     body.dark .theme-toggle .moon { opacity:0; transform:rotate(55deg) scale(.55);}
+
+    .theme-toggle .moon {
+  stroke:#000;
+  fill:rgba(0,0,0,0.05);
+  filter:drop-shadow(0 2px 4px rgba(0,0,0,0.25));
+  transition:stroke .45s, fill .45s;
+}
+.theme-toggle .sun {
+  stroke:#ffcf33;
+  fill:rgba(255,200,0,0.10);
+  filter:drop-shadow(0 0 6px rgba(255,200,0,0.55));
+}
+body.dark .theme-toggle .sun {
+  stroke:#ffe8a6;
+  fill:rgba(255,220,120,0.15);
+}
+
     @media (max-width:640px){
       .auth-card {
         padding:32px 7vw 24px;
