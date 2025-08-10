@@ -2,70 +2,175 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Home - Notes-U</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <meta name="color-scheme" content="light dark">
-  <link rel="stylesheet" href="css/app.css">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-</head>
-<body class="light">
-  <button class="theme-toggle-btn" id="theme-toggle" aria-label="Toggle theme">
-    <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke-width="1.8">
-      <path d="M21 12.8A9 9 0 0112.8 3a7 7 0 100 18A9 9 0 0021 12.8z"/>
-    </svg>
-    <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-      <circle cx="12" cy="12" r="5"/>
-      <path d="M12 1v2m0 18v2m11-11h-2M3 12H1m16.95 7.07l-1.41-1.41M6.34 6.34L4.93 4.93m12.02 0l-1.41 1.41M6.34 17.66l-1.41 1.41"/>
-    </svg>
-  </button>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home - Notes-U</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:#f8f8f8; --text:#333; --label:#666;
+      --container:#fff; --border:rgba(0,0,0,0.14);
+      --accent:#0d6efd; --accent-hover:#0b5ed7;
+      --shadow:0 2px 4px rgba(0,0,0,0.08);
+      --shadow-strong:0 4px 14px rgba(0,0,0,0.12);
+    }
+    body.dark {
+      --bg:#1a1a1a; --text:#f2f2f2; --label:#b0b0b0;
+      --container:#222; --border:rgba(255,255,255,0.12);
+      --shadow:0 2px 4px rgba(0,0,0,0.6);
+      --shadow-strong:0 4px 14px rgba(0,0,0,0.7);
+    }
+    body {
+      font-family:'Inter',system-ui,Arial,sans-serif;
+      margin:0; background:var(--bg); color:var(--text);
+      display:flex; flex-direction:column; min-height:100vh;
+      transition:background .3s,color .3s;
+    }
+    header {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:14px 28px; background:var(--container);
+      box-shadow:var(--shadow); position:sticky; top:0; z-index:10;
+    }
+    .logo {
+      font-size:1.7rem; font-weight:700; text-decoration:none; color:inherit;
+      display:flex; align-items:center; justify-content:center;
+      width:46px; height:46px; border:2px solid currentColor; border-radius:10px;
+    }
+    .header-actions { display:flex; gap:12px; }
+    .header-actions a.button, .header-actions button {
+      padding:9px 15px; border:none; border-radius:6px;
+      cursor:pointer; font-size:.85rem; font-weight:500;
+      text-decoration:none; display:inline-flex; align-items:center;
+      background:var(--accent); color:#fff;
+    }
+    .header-actions a.button:hover { background:var(--accent-hover); }
+    .logout-button {
+      background:transparent; color:inherit; border:1px solid var(--border);
+    }
+    .logout-button:hover { background:rgba(0,0,0,0.05); }
+    body.dark .logout-button:hover { background:rgba(255,255,255,0.08); }
 
-  <header class="site-header">
-    <a href="index.html" class="header-logo" aria-label="Notes-U Home">U</a>
+    main {
+      flex-grow:1; display:grid; grid-template-columns:300px 1fr; gap:26px;
+      padding:28px; max-width:1400px; width:100%; margin:0 auto;
+      box-sizing:border-box;
+    }
+    aside.sidebar, .content-area {
+      background:var(--container); border-radius:10px; padding:22px;
+      box-shadow:var(--shadow); border:1px solid var(--border);
+      min-height:0;
+    }
+    .sidebar { overflow-y:auto; }
+    h2 { margin:0 0 18px; font-size:1.45rem; }
+    ul.category-list { list-style:none; margin:0; padding:0; }
+    ul.category-list li { margin-bottom:4px; }
+    ul.category-list a {
+      display:block; padding:8px 10px; text-decoration:none;
+      color:var(--label); border-radius:6px; font-size:.85rem;
+      transition:background .2s,color .2s;
+    }
+    ul.category-list a:hover, ul.category-list a.active {
+      background:rgba(0,0,0,0.07); color:var(--text);
+    }
+    body.dark ul.category-list a:hover,
+    body.dark ul.category-list a.active {
+      background:rgba(255,255,255,0.12);
+    }
+    .category-semester-separator {
+      font-size:.7rem; font-weight:600; letter-spacing:.8px;
+      text-transform:uppercase; margin:10px 0 6px; opacity:.6;
+      padding-left:4px;
+    }
+    .search-bar { position:relative; margin-bottom:18px; }
+    .search-bar input {
+      width:100%; padding:10px 14px 10px 38px; font-size:.9rem;
+      border:1px solid var(--border); border-radius:6px;
+      background:transparent; color:inherit; box-sizing:border-box;
+    }
+    .search-bar input:focus { outline:2px solid var(--accent); outline-offset:2px; }
+    .search-bar svg { position:absolute; left:12px; top:50%; transform:translateY(-50%); width:18px; height:18px; opacity:.6; }
+    .note-grid {
+      display:grid; gap:18px;
+      grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+    }
+    .note-card {
+      background:transparent; border:1px solid var(--border); border-radius:10px;
+      padding:16px 16px 14px; display:flex; flex-direction:column;
+      box-shadow:0 2px 6px rgba(0,0,0,0.04); transition:transform .18s, box-shadow .18s;
+    }
+    .note-card:hover {
+      transform:translateY(-3px); box-shadow:var(--shadow-strong);
+    }
+    .note-card h3 { margin:0 0 8px; font-size:1.05rem; line-height:1.3; }
+    .note-card p { margin:0 0 12px; font-size:.8rem; line-height:1.4; color:var(--label); }
+    .category-tag {
+      display:inline-block; font-size:.65rem; padding:5px 8px; background:rgba(0,0,0,0.07);
+      border-radius:20px; margin:0 6px 6px 0;
+    }
+    body.dark .category-tag { background:rgba(255,255,255,0.12); }
+    .note-actions a {
+      font-size:.75rem; color:var(--accent); text-decoration:none; font-weight:600;
+    }
+    .note-actions a:hover { text-decoration:underline; }
+    footer {
+      text-align:center; font-size:.75rem; padding:18px; opacity:.7;
+      border-top:1px solid var(--border); margin-top:auto;
+    }
+    @media (max-width:960px){
+      main { grid-template-columns:1fr; }
+      aside.sidebar { order:2; }
+      .content-area { order:1; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="index.html" class="logo" aria-label="Notes-U Home"><span>U</span></a>
     <div class="header-actions">
-      <a href="upload.html" class="btn" id="upload-note-btn" style="min-width:120px;">Upload</a>
-      <button class="btn secondary" id="logout-btn" style="min-width:120px;">Log Out</button>
+      <a href="upload.html" class="button" id="upload-note-btn">Upload Note</a>
+      <button class="logout-button" id="logout-btn" aria-label="Log out">Log Out</button>
     </div>
   </header>
 
-  <main class="main-layout">
+  <main>
     <aside class="sidebar">
-      <h2>Categories</h2>
-      <div class="sidebar-inner">
-        <ul class="category-list" id="categoryList">
-          <li><a href="#" class="active" data-category="all">All Notes</a></li>
-          <li class="category-semester-separator">Year 1 Sem 1</li>
-          <li><a href="#" data-category="AMCS1013">AMCS1013 - Problem Solving and Programming</a></li>
-          <li><a href="#" data-category="AMCS1113">AMCS1113 - Computer Architecture</a></li>
-          <li><a href="#" data-category="AMIT1303">AMIT1303 - Introduction to Interface Design</a></li>
-          <li><a href="#" data-category="AMMS1623">AMMS1623 - Calculus and Algebra</a></li>
-          <li><a href="#" data-category="AJEL1713">AJEL1713 - English for Tertiary Studies</a></li>
-          <li><a href="#" data-category="MPU2302">MPU-2302 - Integrity and Anti-Corruption</a></li>
-          <li><a href="#" data-category="MPU2123">MPU-2123 - Penghayatan Etika dan Peradaban</a></li>
-          <li class="category-semester-separator">Year 1 Sem 2</li>
-          <li><a href="#" data-category="AMCS1043">AMCS1043 - Database Development and Applications</a></li>
-          <li><a href="#" data-category="AMCS1034">AMCS1034 - Software Development Fundamentals</a></li>
-          <li><a href="#" data-category="AMMS2613">AMMS2613 - Probability and Statistics</a></li>
-          <li class="category-semester-separator">Year 1 Sem 3</li>
-          <li><a href="#" data-category="AMIT2034">AMIT2034 - Fundamentals of Computer Networks</a></li>
-          <li><a href="#" data-category="AMCS2204">AMCS2204 - Object-Oriented Programming Techniques</a></li>
-          <li><a href="#" data-category="AMCS2093">AMCS2093 - Operating Systems</a></li>
-          <li><a href="#" data-category="AMIS1013">AMIS1013 - Systems Analysis and Design</a></li>
-          <li><a href="#" data-category="AMMS2603">AMMS2603 - Discrete Mathematics</a></li>
-          <li><a href="#" data-category="AJEL1723">AJEL1723 - Academic English</a></li>
-          <li class="category-semester-separator">Year 2 Sem 1</li>
-          <li><a href="#" data-category="AMCS2034">AMCS2034 - Introduction to Data Structures and Algorithms</a></li>
-          <li><a href="#" data-category="AMCS2123">AMCS2123 - Systems and Programming Concepts</a></li>
-          <li><a href="#" data-category="AMCS2104">AMCS2104 - Fundamentals of Artificial Intelligence</a></li>
-          <li><a href="#" data-category="AMIT3353">AMIT3353 - Mobile Application Development</a></li>
-          <li><a href="#" data-category="AMIS1012">AMIS1012 - Ethics in Computing</a></li>
-          <li class="category-semester-separator">Year 2 Sem 2</li>
-          <li><a href="#" data-category="AMCS2094">AMCS2094 - Mini Project</a></li>
-          <li><a href="#" data-category="AMCS2103">AMCS2103 - Parallel and Distributed Computing</a></li>
-          <li><a href="#" data-category="AMIS1003">AMIS1003 - Introduction to Cybersecurity</a></li>
-          <li class="category-semester-separator">Year 2 Sem 3</li>
-          <li><a href="#" data-category="AMIT320A">AMIT320A - Industrial Training</a></li>
-        </ul>
-      </div>
+      <h2>Academic Categories</h2>
+      <ul class="category-list" id="categoryList">
+        <li><a href="#" class="active" data-category="all">All Notes</a></li>
+        <li class="category-semester-separator">Year 1 Semester 1</li>
+        <li><a href="#" data-category="AMCS1013">AMCS1013 - Problem Solving and Programming</a></li>
+        <li><a href="#" data-category="AMCS1113">AMCS1113 - Computer Architecture</a></li>
+        <li><a href="#" data-category="AMIT1303">AMIT1303 - Introduction to Interface Design</a></li>
+        <li><a href="#" data-category="AMMS1623">AMMS1623 - Calculus and Algebra</a></li>
+        <li><a href="#" data-category="AJEL1713">AJEL1713 - English for Tertiary Studies</a></li>
+        <li><a href="#" data-category="MPU2302">MPU-2302 - Integrity and Anti-Corruption</a></li>
+        <li><a href="#" data-category="MPU2123">MPU-2123 - Penghayatan Etika dan Peradaban</a></li>
+        <li class="category-semester-separator">Year 1 Semester 2</li>
+        <li><a href="#" data-category="AMCS1043">AMCS1043 - Database Development and Applications</a></li>
+        <li><a href="#" data-category="AMCS1034">AMCS1034 - Software Development Fundamentals</a></li>
+        <li><a href="#" data-category="AMMS2613">AMMS2613 - Probability and Statistics</a></li>
+        <li class="category-semester-separator">Year 1 Semester 3</li>
+        <li><a href="#" data-category="AMIT2034">AMIT2034 - Fundamentals of Computer Networks</a></li>
+        <li><a href="#" data-category="AMCS2204">AMCS2204 - Object-Oriented Programming Techniques</a></li>
+        <li><a href="#" data-category="AMCS2093">AMCS2093 - Operating Systems</a></li>
+        <li><a href="#" data-category="AMIS1013">AMIS1013 - Systems Analysis and Design</a></li>
+        <li><a href="#" data-category="AMMS2603">AMMS2603 - Discrete Mathematics</a></li>
+        <li><a href="#" data-category="AJEL1723">AJEL1723 - Academic English</a></li>
+        <li class="category-semester-separator">Year 2 Semester 1</li>
+        <li><a href="#" data-category="AMCS2034">AMCS2034 - Introduction to Data Structures and Algorithms</a></li>
+        <li><a href="#" data-category="AMCS2123">AMCS2123 - Systems and Programming Concepts</a></li>
+        <li><a href="#" data-category="AMCS2104">AMCS2104 - Fundamentals of Artificial Intelligence</a></li>
+        <li><a href="#" data-category="AMIT3353">AMIT3353 - Mobile Application Development</a></li>
+        <li><a href="#" data-category="AMIS1012">AMIS1012 - Ethics in Computing</a></li>
+        <li class="category-semester-separator">Year 2 Semester 2</li>
+        <li><a href="#" data-category="AMCS2094">AMCS2094 - Mini Project</a></li>
+        <li><a href="#" data-category="AMCS2103">AMCS2103 - Parallel and Distributed Computing</a></li>
+        <li><a href="#" data-category="AMIS1003">AMIS1003 - Introduction to Cybersecurity</a></li>
+        <li class="category-semester-separator">Year 2 Semester 3</li>
+        <li><a href="#" data-category="AMIT320A">AMIT320A - Industrial Training</a></li>
+      </ul>
     </aside>
 
     <section class="content-area">
@@ -74,113 +179,116 @@
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.6">
           <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.8-4.8m0 0A7.2 7.2 0 105.4 5.4a7.2 7.2 0 0010.8 10.8z"/>
         </svg>
-        <input id="searchInput" placeholder="Search by title, description, or subject...">
+        <input id="searchInput" placeholder="Search notes by title, description, or subject...">
       </div>
       <div id="notes-container" class="note-grid">
-        <!-- Placeholder will be replaced dynamically -->
         <div class="note-card" data-category="placeholder-note">
-          <h3>No Notes Yet</h3>
-          <p>Upload your first resource to get started.</p>
-          <div class="note-actions"><a href="upload.html">Upload Now</a></div>
+          <h3>No Notes Found</h3>
+            <p>It looks like there are no notes yet. Upload something to get started.</p>
+            <div class="tags">
+              <span class="category-tag">Info</span>
+              <span class="category-tag">Empty</span>
+            </div>
+            <div class="note-actions">
+              <a href="upload.html">Upload Now</a>
+            </div>
         </div>
       </div>
     </section>
   </main>
 
-  <footer class="site-footer">&copy; 2025 Notes-U. All rights reserved.</footer>
+  <footer>&copy; 2025 Notes-U. All rights reserved.</footer>
 
   <script type="module">
     import { onAuth, logout, fetchMyNotes } from './firebase-init.js';
 
-    /* Theme */
-    function applyTheme(dark){
-      document.body.classList.toggle('dark',dark);
-      document.body.classList.toggle('light',!dark);
-      localStorage.setItem('theme',dark?'dark':'light');
-    }
+    // Theme initialize (same approach as other pages)
     (function initTheme(){
-      const stored=localStorage.getItem('theme');
-      if(stored==='dark') applyTheme(true);
-      else if(stored==='light') applyTheme(false);
-      else applyTheme(window.matchMedia('(prefers-color-scheme: dark)').matches);
+      const stored = localStorage.getItem('theme');
+      function apply(t){
+        document.body.classList.remove('light','dark');
+        document.body.classList.add(t);
+        localStorage.setItem('theme', t);
+      }
+      if(stored) apply(stored);
+      else apply(window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
       window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e=>{
-        if(!localStorage.getItem('theme')) applyTheme(e.matches);
+        if(!localStorage.getItem('theme')) apply(e.matches?'dark':'light');
       });
       window.addEventListener('storage', e=>{
-        if(e.key==='theme' && e.newValue) applyTheme(e.newValue==='dark');
+        if(e.key==='theme' && e.newValue) apply(e.newValue);
       });
     })();
-    const toggleBtn=document.getElementById('theme-toggle');
-    let spin=0;
-    toggleBtn.addEventListener('click', ()=>{
-      const goDark=!document.body.classList.contains('dark');
-      applyTheme(goDark);
-      spin+=360; toggleBtn.style.transform=`rotate(${spin}deg)`; setTimeout(()=>toggleBtn.style.transform='',650);
-    });
 
-    const logoutBtn = document.getElementById('logout-btn');
-    logoutBtn.addEventListener('click', async ()=>{
-      try { await logout(); } finally { location.href='auth.html?mode=login'; }
-    });
-
-    const categoryList = document.getElementById('categoryList');
-    const searchInput = document.getElementById('searchInput');
+    const logoutButton = document.getElementById('logout-btn');
     const notesContainer = document.getElementById('notes-container');
+    const searchInput = document.getElementById('searchInput');
+    const categoryList = document.getElementById('categoryList');
+    let allNotesData = [];
+    let currentCategory = 'all';
+    let searchTerm = '';
 
-    let allNotes = [];
-    let currentCategory='all';
-    let currentSearch='';
+    logoutButton.addEventListener('click', async ()=>{
+      try {
+        await logout();
+      } finally {
+        location.href='auth.html?mode=login';
+      }
+    });
 
     function escapeHtml(str=''){
-      return str.replace(/[&<>"']/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+      return str.replace(/[&<>"']/g, c=>({
+        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+      }[c]));
     }
 
     function renderNotes(list){
-      notesContainer.innerHTML='';
+      notesContainer.innerHTML = '';
       if(!list.length){
-        notesContainer.innerHTML=`
-          <div class="note-card">
-            <h3>No Matches</h3>
-            <p>Try changing your filters or upload new material.</p>
-            <div class="note-actions"><a href="upload.html">Upload</a></div>
+        notesContainer.innerHTML = `
+          <div class="note-card" data-category="placeholder-note">
+            <h3>No Notes Found</h3>
+            <p>No notes match your filters. Try another category or clear your search.</p>
+            <div class="note-actions"><a href="upload.html">Upload Now</a></div>
           </div>`;
         return;
       }
-      for(const n of list){
-        const typePretty = (n.notes_type||'')
+      for(const note of list){
+        const prettyType = (note.notes_type||'')
           .replace(/_/g,' ')
           .replace(/\b\w/g,m=>m.toUpperCase());
         const card = document.createElement('div');
         card.className='note-card';
-        card.dataset.category = n.subject_code;
-        card.innerHTML=`
-          <h3>${escapeHtml(n.title)}</h3>
-          <p>${escapeHtml(n.description || 'No description provided.')}</p>
+        card.dataset.category = note.subject_code;
+        card.innerHTML = `
+          <h3>${escapeHtml(note.title)}</h3>
+          <p>${escapeHtml(note.description || 'No description provided.')}</p>
           <div>
-            <span class="category-tag">${escapeHtml(n.academic_year.replace('year','Year '))}</span>
-            <span class="category-tag">${escapeHtml(n.semester.replace('semester','Sem '))}</span>
-            <span class="category-tag">${escapeHtml(n.subject_code)}</span>
-            <span class="category-tag">${escapeHtml(typePretty)}</span>
+            <span class="category-tag">${escapeHtml(note.academic_year.replace('year','Year '))}</span>
+            <span class="category-tag">${escapeHtml(note.semester.replace('semester','Semester '))}</span>
+            <span class="category-tag">${escapeHtml(note.subject_code)}</span>
+            <span class="category-tag">${escapeHtml(prettyType)}</span>
           </div>
           <div class="note-actions" style="margin-top:6px;">
-            <a href="${n.file_url}" target="_blank" rel="noopener noreferrer">View / Download</a>
-          </div>`;
+            <a href="${note.file_url}" target="_blank" rel="noopener noreferrer">View / Download</a>
+          </div>
+        `;
         notesContainer.appendChild(card);
       }
     }
 
     function applyFilters(){
-      const filtered = allNotes.filter(n=>{
-        const catOk = currentCategory==='all' || n.subject_code===currentCategory;
-        const hay = (n.title + ' ' + (n.description||'') + ' ' + n.subject_code).toLowerCase();
-        const searchOk = !currentSearch || hay.includes(currentSearch);
-        return catOk && searchOk;
+      const filtered = allNotesData.filter(n=>{
+        const matchCat = currentCategory==='all' || n.subject_code===currentCategory;
+        const hay = (n.title+' '+(n.description||'')+' '+n.subject_code).toLowerCase();
+        const matchSearch = !searchTerm || hay.includes(searchTerm);
+        return matchCat && matchSearch;
       });
       renderNotes(filtered);
     }
 
     categoryList.addEventListener('click', e=>{
-      const a=e.target.closest('a[data-category]');
+      const a = e.target.closest('a[data-category]');
       if(!a) return;
       e.preventDefault();
       [...categoryList.querySelectorAll('a')].forEach(el=>el.classList.remove('active'));
@@ -190,7 +298,7 @@
     });
 
     searchInput.addEventListener('input', e=>{
-      currentSearch = e.target.value.toLowerCase().trim();
+      searchTerm = e.target.value.trim().toLowerCase();
       applyFilters();
     });
 
@@ -201,19 +309,18 @@
           <p>Fetching your notes...</p>
         </div>`;
       try {
-        allNotes = await fetchMyNotes();
+        allNotesData = await fetchMyNotes();
         applyFilters();
       } catch(err){
         notesContainer.innerHTML = `
           <div class="note-card">
             <h3>Error</h3>
-            <p>${escapeHtml(err.message||'Failed to load notes')}</p>
-            <div class="note-actions"><a href="#" id="reload">Reload</a></div>
+            <p>${escapeHtml(err.message || 'Failed to load notes')}</p>
+            <div class="note-actions"><a href="#" id="reloadLink">Reload</a></div>
           </div>`;
-        const rl = document.getElementById('reload');
-        rl?.addEventListener('click', re=>{
-          re.preventDefault();
-          loadNotes();
+        const reload = document.getElementById('reloadLink');
+        if(reload) reload.addEventListener('click', re=>{
+          re.preventDefault(); loadNotes();
         });
       }
     }
@@ -222,6 +329,7 @@
       if(!user) location.href='auth.html?mode=login';
       else loadNotes();
     });
+
   </script>
 </body>
 </html>
