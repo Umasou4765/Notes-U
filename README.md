@@ -1,42 +1,63 @@
-# Notes-U: A Collaborative Student Notes Platform
+# Notes-U (Refactored)
 
----
+A modular, secure, student-focused note sharing platform.
 
-## 📘 Project Overview
+## Features
+- Session-based authentication (Express + PostgreSQL)
+- File uploads with whitelist and size limits
+- Theming (light/dark) with shared JS module
+- Modular routes/services
+- Toast notifications and safe DOM rendering
+- Subjects list loaded from JSON (DRY across pages)
+- Consistent JSON responses `{ success, message, data | error }`
+- Security: helmet, rate limiting, sanitized filenames
 
-Notes-U is an intuitive web application designed for **students to share and access academic resources**. It provides a centralized, secure platform where users can upload, browse, and organize study materials by academic year, semester, and subject code, fostering a collaborative learning environment.
+## Stack
+- Node.js / Express
+- PostgreSQL
+- connect-pg-simple (session store)
+- Multer (file uploads)
 
----
+## Setup
 
-## ✨ Key Features
+```bash
+cp .env.example .env
+# Edit .env with DATABASE_URL & SESSION_SECRET
+npm install
+npm run migrate  # apply schema
+npm run dev      # start with nodemon
+```
 
-Notes-U has evolved beyond a UI prototype and now includes functional backend capabilities, allowing for a dynamic and interactive user experience:
+Visit: http://localhost:3000
 
-* **User Authentication:** Secure registration, login, and logout functionalities to manage user access.
-* **Secure File Uploads:** Students can upload various document types (PDF, DOCX, TXT, etc.) with metadata such as academic year, semester, subject, and notes type.
-* **Dynamic Notes Display:** Uploaded notes are dynamically fetched from the backend and displayed on the home page, organized by categories.
-* **Category-Based Organization:** Browse and filter notes effortlessly by academic year, semester, and specific subject codes.
-* **Integrated Search Bar:** Quickly find relevant notes by searching through titles, descriptions, and subject codes.
-* **Direct File Access:** Users can view or download shared resources directly from the platform.
-* **Responsive & Clean Interface:** A lightweight, modern layout that ensures a smooth experience across different devices.
+## Environment Variables
+| Variable | Description |
+|----------|-------------|
+| DATABASE_URL | Postgres connection string |
+| SESSION_SECRET | Long random string |
+| PORT | (optional) server port |
 
----
+## Folder Structure
+See root of repository (server/, public/, migrations/).
 
-## 🚀 Development Roadmap (Future Plans)
+## API Overview
+| Method | Path              | Auth | Description |
+|--------|-------------------|------|-------------|
+| POST   | /api/signup       | No   | Create account |
+| POST   | /api/login        | No   | Log in |
+| GET    | /api/logout       | Yes  | Log out |
+| GET    | /api/user         | Yes  | Current user |
+| GET    | /api/notes        | Yes  | List notes |
+| POST   | /api/notes/upload | Yes  | Upload note (multipart) |
+| GET    | /uploads/:file    | Yes  | Download owned file |
 
-While core functionalities are in place, Notes-U has exciting plans for future enhancements:
+## Future Improvements
+- Replace sessions with JWT for multi-client ecosystem
+- Add password reset
+- Add collaborative sharing or tagging
+- Full-text search (Postgres tsvector)
+- Move file storage to S3/Supabase storage and store only URLs
+- Introduce tests (Jest + Supertest)
 
-* **Advanced Search & Filtering:** Implement more sophisticated search capabilities, potentially including content-based search within documents.
-* **In-Browser Previews:** Allow users to preview files (e.g., PDFs) directly in the browser before downloading.
-* **Note Versioning:** Introduce functionality to manage different versions of notes for updates and revisions.
-* **Commenting and Rating System:** Enable users to leave comments or rate notes for collaborative feedback.
-* **User Profiles & Contributions Tracking:** Display user profiles and track their contributions to the platform.
-* **Notifications:** Implement notifications for new uploads in subscribed categories.
-
----
-
-## 🔧 Tech Stack
-
-Notes-U is built with a focus on simplicity, maintainability, and scalability:
-
-* **Frontend:** HTML, avaScript
+## License
+MIT (add a LICENSE file)
