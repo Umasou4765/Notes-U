@@ -1,26 +1,28 @@
 # Notes-U (Frontend Only + Firebase)
 
-This is a rebooted version hosted on **GitHub Pages** with:
-- Firebase Authentication
-- Firestore (notes metadata + user profiles)
-- Firebase Storage (optional note files)
+A simple university notes sharing platform (static frontend + Firebase).
+
+Features:
+- Firebase Authentication (username mapped to pseudo email)
+- Firestore (users + notes metadata)
+- Firebase Storage (file uploads)
+- Client-side filtering & search
 
 ## Setup
 
-1. Create Firebase project.
+1. Create a Firebase project.
 2. Enable:
    - Authentication (Email/Password)
    - Firestore
    - Storage
-3. Copy your web config into `docs/firebase-init.js`.
-4. Adjust security rules (below).
-5. Commit & push.  
-6. GitHub Settings -> Pages -> Deploy from `main` branch `/docs`.
+3. In Firebase Console → Project Settings → Your Apps → Web, copy the config and paste it into `docs/firebase-init.js`.
+4. Adjust security rules (see below).
+5. Deploy via GitHub Pages:
+   - Settings → Pages → Deploy from `main` branch `/docs`.
 
-## Firestore Rules (basic)
+## Firestore Rules (basic example — refine for production)
 
 ```
-// Firestore Rules (simplistic; refine for production)
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
@@ -31,8 +33,16 @@ service cloud.firestore {
       allow update, delete: if request.auth != null && request.auth.uid == userId;
     }
 
+    // Username mapping documents (public existence check avoided here).
+    match /usernames/{uname} {
+      allow read: if false; // Prevent enumeration of usernames.
+      allow create: if request.auth != null;
+      allow update, delete: if false; // Immutable mapping (optional).
+    }
+
     match /notes/{noteId} {
-      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+      allow create: if request.auth != null
+        && request.resource.data.userId == request.auth.uid;
       allow read, update, delete:
         if request.auth != null && resource.data.userId == request.auth.uid;
     }
@@ -40,7 +50,7 @@ service cloud.firestore {
 }
 ```
 
-## Storage Rules (basic)
+## Storage Rules (basic example)
 
 ```
 rules_version = '2';
@@ -55,4 +65,21 @@ service firebase.storage {
 
 ## Development
 
-You can run locally by serving the `docs/` folder with any static server (e.g., `npx serve docs`).
+Serve the `docs/` folder with any static server:
+
+```
+npx serve docs
+# or
+python -m http.server -d docs 8080
+```
+
+## Notes
+
+- Pseudo email format: `<username>@notes-u.fake` (no real email delivery).
+- Username validation: only `[a-z0-9._-]`, 3–30 chars (adjust in `firebase-init.js`).
+- Max upload size: 25MB (client-side enforced).
+- For production: add rate limiting, content moderation, robust validation, server timestamps, and indexing.
+
+## License
+
+MIT — see `LICENSE`.
