@@ -1,4 +1,5 @@
 // firebase-init.js 
+
 const firebaseConfig = {
   apiKey: "AIzaSyALfKHvKnsXLDDYASilyGwHA9ycVpbzmuc",
   authDomain: "notes-u.firebaseapp.com",
@@ -18,7 +19,6 @@ import {
   onAuthStateChanged,
   updateProfile
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
 import {
   getFirestore,
   doc,
@@ -31,12 +31,8 @@ import {
   addDoc,
   orderBy,
   updateDoc,
-  deleteDoc,
-  limit,
-  startAfter,
-  onSnapshot
+  deleteDoc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
 import {
   getStorage,
   ref,
@@ -49,7 +45,7 @@ export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const storage = getStorage(app);
 
-/* ---------- Legacy username helpers (unchanged) ---------- */
+/* ---------- Legacy Username (Deprecated) ---------- */
 const USERNAME_REGEX = /^[a-z0-9._-]{3,30}$/;
 function normalizeUsername(username){ return username.trim().toLowerCase(); }
 async function isUsernameTaken(username){
@@ -87,7 +83,7 @@ export async function loginWithUsername(username, password){
   return cred.user;
 }
 
-/* ---------- Modern email/password ---------- */
+/* ---------- Modern Email Auth ---------- */
 export async function signupWithEmail(email, password, displayName){
   if(!email) throw new Error("Email required");
   if(password.length < 8) throw new Error("Password must be at least 8 characters");
@@ -125,7 +121,6 @@ export async function createNote({
 }){
   const user = auth.currentUser;
   if(!user) throw new Error("Not authenticated");
-
   if(!academic_year) throw new Error("Academic year required");
   if(!semester) throw new Error("Semester required");
   if(!subject_code) throw new Error("Subject code required");
@@ -153,101 +148,13 @@ export async function createNote({
     title: title.trim(),
     file_size: file.size,
     file_ext: ext,
-    pinned: false,
+    pinned: false,       
     createdAt: Date.now()
   });
   return true;
 }
 
-/**
- * Real-time subscription to all user notes.
- * NOTE: If the dataset gets very large, consider pagination + limited real-time for newest.
- */
-export function subscribeMyNotes(cb){
-  const user = auth.currentUser;
-  if(!user) throw new Error("Not authenticated");
-  const qBase = query(
-    collection(db,"notes"),
-    where("userId","==", user.uid),
-    orderBy("createdAt","desc")
-  );
-  return onSnapshot(qBase, snap=>{
-    cb(snap.docs.map(d=>({ id:d.id, ...d.data() })));
-  }, err=>{
-    console.error("Realtime notes error:", err);
-    cb(null, err);
-  });
-}
-
-/**
- * Paged fetch for older notes (if you decide to limit initial subscription or append older).
- * Returns {notes, lastDoc}
- */
-export async function pagedFetchNotes({ afterDoc=null, pageSize=25 } = {}){
-  const user = auth.currentUser;
-  if(!user) throw new Error("Not authenticated");
-  let qBase = query(
-    collection(db,"notes"),
-    where("userId","==", user.uid),
-    orderBy("createdAt","desc"),
-    limit(pageSize)
-  );
-  if(afterDoc){
-    qBase = query(
-      collection(db,"notes"),
-      where("userId","==", user.uid),
-      orderBy("createdAt","desc"),
-      startAfter(afterDoc),
-      limit(pageSize)
-    );
-  }
-  const snap = await getDocs(qBase);
-  return {
-    notes: snap.docs.map(d=>({ id:d.id, ...d.data(), _doc:d })),
-    lastDoc: snap.docs.length ? snap.docs[snap.docs.length-1] : null
-  };
-}
-
-export async function updateNote(id, updates){
-  const user = auth.currentUser;
-  if(!user) throw new Error("Not authenticated");
-  const refDoc = doc(db,"notes", id);
-  const current = await getDoc(refDoc);
-  if(!current.exists()) throw new Error("Note not found");
-  if(current.data().userId !== user.uid) throw new Error("Not authorized");
-  const allowed = {};
-  if(typeof updates.title === 'string') allowed.title = updates.title.trim();
-  if(typeof updates.description === 'string') allowed.description = updates.description.trim();
-  if(typeof updates.notes_type === 'string') allowed.notes_type = updates.notes_type;
-  if(!Object.keys(allowed).length) return;
-  await updateDoc(refDoc, allowed);
-  return true;
-}
-
-export async function togglePinNote(id, pin){
-  const user = auth.currentUser;
-  if(!user) throw new Error("Not authenticated");
-  const refDoc = doc(db,"notes", id);
-  const current = await getDoc(refDoc);
-  if(!current.exists()) throw new Error("Note not found");
-  if(current.data().userId !== user.uid) throw new Error("Not authorized");
-  await updateDoc(refDoc, { pinned: !!pin });
-  return true;
-}
-
-export async function deleteNote(id){
-  const user = auth.currentUser;
-  if(!user) throw new Error("Not authenticated");
-  const refDoc = doc(db,"notes", id);
-  const current = await getDoc(refDoc);
-  if(!current.exists()) return true;
-  if(current.data().userId !== user.uid) throw new Error("Not authorized");
-  await deleteDoc(refDoc);
-  return true;
-}
-
 export async function fetchMyNotes(){
-  // Kept for compatibility (non-realtime use)
   const user = auth.currentUser;
   if(!user) throw new Error("Not authenticated");
   const q = query(
@@ -257,6 +164,33 @@ export async function fetchMyNotes(){
   );
   const snap = await getDocs(q);
   return snap.docs.map(d=>({ id:d.id, ...d.data() }));
+}
+
+export async function updateNote(id, updates){
+  const user = auth.currentUser;
+  if(!user) throw new Error("Not authenticated");
+  const refDoc = doc(db,"notes", id);
+  // Basic whitelist
+  const allowed = {};
+  if(typeof updates.title === 'string') allowed.title = updates.title.trim();
+  if(typeof updates.description === 'string') allowed.description = updates.description;
+  if(typeof updates.notes_type === 'string') allowed.notes_type = updates.notes_type;
+  await updateDoc(refDoc, allowed);
+  return true;
+}
+
+export async function deleteNote(id){
+  const user = auth.currentUser;
+  if(!user) throw new Error("Not authenticated");
+  await deleteDoc(doc(db,"notes", id));
+  return true;
+}
+
+export async function togglePin(id, value){
+  const user = auth.currentUser;
+  if(!user) throw new Error("Not authenticated");
+  await updateDoc(doc(db,"notes", id), { pinned: !!value });
+  return true;
 }
 
 /* Friendly error translator */
