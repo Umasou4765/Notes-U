@@ -5,6 +5,10 @@
   <meta name="color-scheme" content="light dark">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Home - Notes-U</title>
+
+  <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -35,14 +39,22 @@
       box-shadow:var(--shadow); position:sticky; top:0; z-index:10;
       border-bottom:1px solid var(--border);
     }
-    /* Logo is now static (not a link) */
+    .brand {
+      display:flex;
+      align-items:center;
+      gap:12px;
+      user-select:none;
+    }
     .logo {
       font-size:1.7rem; font-weight:700; color:inherit;
       display:flex; align-items:center; justify-content:center;
       width:46px; height:46px; border:2px solid currentColor; border-radius:12px;
-      user-select:none;
     }
-    .logo[tabindex="-1"] { outline:none; }
+    .site-title {
+      font-size:1.25rem;
+      font-weight:700;
+      letter-spacing:-.5px;
+    }
     .header-actions { display:flex; gap:12px; }
 
     .icon-btn, .icon-btn:visited {
@@ -72,18 +84,10 @@
       fill:none;
       flex-shrink:0;
     }
-    .icon-btn:hover {
-      transform:translateY(-2px);
-      box-shadow:0 8px 24px -10px rgba(0,70,170,0.55), 0 4px 14px -6px rgba(0,70,160,0.4);
-    }
-    .icon-btn:active {
-      transform:translateY(0) scale(.95);
-    }
-    .icon-btn:focus-visible {
-      outline:none;
-      box-shadow:var(--focus-ring);
-    }
-    /* Secondary / logout style */
+    .icon-btn:hover { transform:translateY(-2px); box-shadow:0 8px 24px -10px rgba(0,70,170,0.55), 0 4px 14px -6px rgba(0,70,160,0.4); }
+    .icon-btn:active { transform:translateY(0) scale(.95); }
+    .icon-btn:focus-visible { outline:none; box-shadow:var(--focus-ring); }
+
     .icon-btn.logout {
       --btn-bg:transparent;
       --btn-bg-hover:rgba(0,0,0,0.07);
@@ -92,16 +96,8 @@
       border:1px solid var(--border);
       box-shadow:none;
     }
-    .icon-btn.logout:hover {
-      background:var(--btn-bg-hover);
-      box-shadow:none;
-    }
-    body.dark .icon-btn.logout:hover {
-      --btn-bg-hover:rgba(255,255,255,0.12);
-    }
-    body.dark .icon-btn.logout {
-      background:transparent;
-    }
+    .icon-btn.logout:hover { background:var(--btn-bg-hover); box-shadow:none; }
+    body.dark .icon-btn.logout:hover { --btn-bg-hover:rgba(255,255,255,0.12); }
 
     main {
       flex-grow:1; display:grid; grid-template-columns:300px 1fr; gap:26px;
@@ -151,9 +147,7 @@
       padding:16px 16px 14px; display:flex; flex-direction:column;
       box-shadow:0 2px 6px rgba(0,0,0,0.04); transition:transform .18s, box-shadow .18s;
     }
-    .note-card:hover {
-      transform:translateY(-3px); box-shadow:var(--shadow-strong);
-    }
+    .note-card:hover { transform:translateY(-3px); box-shadow:var(--shadow-strong); }
     .note-card h3 { margin:0 0 8px; font-size:1.05rem; line-height:1.3; }
     .note-card p { margin:0 0 12px; font-size:.8rem; line-height:1.4; color:var(--label); }
     .category-tag {
@@ -178,8 +172,10 @@
 </head>
 <body>
   <header>
-    <!-- Logo now static (no navigation) -->
-    <div class="logo" aria-label="Notes-U Logo" tabindex="-1">U</div>
+    <div class="brand" aria-label="Notes-U">
+      <div class="logo" aria-hidden="true">U</div>
+      <span class="site-title">Notes-U</span>
+    </div>
     <div class="header-actions">
       <a href="upload.html" class="icon-btn" id="upload-note-btn" aria-label="Upload Note">
         <svg viewBox="0 0 24 24">
@@ -268,7 +264,7 @@
   <script type="module">
     import { onAuth, logout, fetchMyNotes } from './firebase-init.js';
 
-    // Theme (keep consistent with other pages)
+
     (function initTheme(){
       const stored = localStorage.getItem('theme');
       function apply(t){
@@ -295,17 +291,21 @@
     let currentCategory = 'all';
     let searchTerm = '';
 
-    // Stronger logout behavior: replace history so back won't reload home effectively
     logoutButton.addEventListener('click', async ()=>{
-      try { await logout(); } catch(_) {}
-      // Replace current entry and add popstate guard
-      location.replace('auth.html?mode=login');
+      try {
+        await logout();         
+        localStorage.setItem('recentLogout','1');
+      } finally {
+  
+        location.replace('auth.html?mode=login');
+      }
     });
 
-    // Extra popstate guard (in case of cached back navigation)
-    window.addEventListener('pageshow', e=>{
-      if(e.persisted){ // from bfcache
-        // onAuth below will redirect if no user
+ 
+    window.addEventListener('pageshow', (e)=>{
+      if(e.persisted && localStorage.getItem('recentLogout')==='1'){
+     
+        location.replace('auth.html?mode=login');
       }
     });
 
@@ -329,7 +329,7 @@
       for(const note of list){
         const prettyType = (note.notes_type||'')
           .replace(/_/g,' ')
-          .replace(/\b\w/g,m=>m.toUpperCase());
+            .replace(/\b\w/g,m=>m.toUpperCase());
         const card = document.createElement('div');
         card.className='note-card';
         card.dataset.category = note.subject_code;
@@ -400,8 +400,15 @@
 
     onAuth(user=>{
       if(!user){
-        location.replace('auth.html?mode=login');
+     
+        if(location.pathname.endsWith('home.html')){
+          location.replace('auth.html?mode=login');
+        }
         return;
+      }
+  
+      if(localStorage.getItem('recentLogout')==='1'){
+        localStorage.removeItem('recentLogout');
       }
       loadNotes();
     });
