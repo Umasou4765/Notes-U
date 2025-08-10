@@ -1,6 +1,4 @@
-// firebase-init.js (Updated)
-// Adds email/password auth while keeping legacy username-based helpers (deprecated).
-
+// firebase-init.js 
 const firebaseConfig = {
   apiKey: "AIzaSyALfKHvKnsXLDDYASilyGwHA9ycVpbzmuc",
   authDomain: "notes-u.firebaseapp.com",
@@ -152,8 +150,8 @@ export async function createNote({
     description: description || "",
     file_url: url,
     title: title.trim(),
-    file_size: file.size,          // NEW: size in bytes
-    file_ext: ext,                 // NEW: extension for quick display
+    file_size: file.size,          
+    file_ext: ext,                
     createdAt: Date.now()
   });
   return true;
