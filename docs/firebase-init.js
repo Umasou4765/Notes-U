@@ -1,18 +1,13 @@
-// Replace the config object with your Firebase project's config
-// (Found in Firebase Console -> Project settings -> Your apps -> SDK setup)
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyALfKHvKnsXLDDYASilyGwHA9ycVpbzmuc",
+  authDomain: "notes-u.firebaseapp.com",
+  projectId: "notes-u",
+  storageBucket: "notes-u.firebasestorage.app", 
+  messagingSenderId: "694892183955",
+  appId: "1:694892183955:web:6922cb6de148a155642866",
+  measurementId: "G-RXBBXBRBHT"
 };
 
-/*
-  IMPORTANT: To prevent exposing powerful admin capabilities, NEVER paste
-  service account keys here. This is only client SDK config (safe to expose).
-*/
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
@@ -42,12 +37,21 @@ import {
   getDownloadURL
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
+
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
+
+
 export const app = initializeApp(firebaseConfig);
+try {
+  getAnalytics(app); 
+} catch (e) {
+  console.warn("[Analytics] Not initialized:", e.message);
+}
+
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const storage = getStorage(app);
 
-// Helper to ensure unique usernames (simple client-side check)
 export async function isUsernameTaken(username) {
   const usersRef = collection(db, "users");
   const q = query(usersRef, where("usernameLower", "==", username.toLowerCase()));
@@ -55,43 +59,80 @@ export async function isUsernameTaken(username) {
   return !snap.empty;
 }
 
-// Signup
+
 export async function registerUser({ email, password, username }) {
-  const usernameClean = username.trim();
-  if (!usernameClean) throw new Error("Username required.");
-  if (await isUsernameTaken(usernameClean)) {
+  const uname = (username || "").trim();
+  if (!uname) throw new Error("Username required.");
+  if (await isUsernameTaken(uname)) {
     throw new Error("Username already taken.");
   }
+  if (password.length < 8) {
+    throw new Error("Password must be at least 8 characters.");
+  }
+
   const cred = await createUserWithEmailAndPassword(auth, email, password);
-  await updateProfile(cred.user, { displayName: usernameClean });
+ 
+  await updateProfile(cred.user, { displayName: uname });
+
+ 
   await setDoc(doc(db, "users", cred.user.uid), {
-    username: usernameClean,
-    usernameLower: usernameClean.toLowerCase(),
-    email: email,
+    username: uname,
+    usernameLower: uname.toLowerCase(),
+    email,
     createdAt: Date.now()
   });
+
   return cred.user;
 }
 
-// Login
+
 export async function loginUser({ email, password }) {
   const cred = await signInWithEmailAndPassword(auth, email, password);
   return cred.user;
 }
 
-// Create note
+
+export async function getCurrentUserProfile() {
+  const user = auth.currentUser;
+  if (!user) return null;
+  const profileRef = doc(db, "users", user.uid);
+  const profileSnap = await getDoc(profileRef);
+  const profileData = profileSnap.exists() ? profileSnap.data() : {};
+  return {
+    uid: user.uid,
+    email: user.email,
+    displayName: user.displayName,
+    ...profileData
+  };
+}
+
 export async function createNote({ title, academicYear, semester, subjectCode, notesType, description, file }) {
   const user = auth.currentUser;
   if (!user) throw new Error("Not authenticated.");
+
+  if (!title || !academicYear || !semester || !subjectCode || !notesType) {
+    throw new Error("Missing required note fields.");
+  }
+
   let fileUrl = null;
+
   if (file) {
+   
+    const allowed = ['pdf','doc','docx','txt','ppt','pptx','odt','ods','odp','rtf'];
+    const ext = file.name.split('.').pop().toLowerCase();
+    if (!allowed.includes(ext)) {
+      throw new Error("Invalid file type.");
+    }
+
     const fileRef = ref(storage, `notes/${user.uid}/${Date.now()}-${file.name}`);
-    const metadata = { customMetadata: { userId: user.uid } };
+  
+    const metadata = { customMetadata: { userId: user.uid, originalName: file.name } };
     await uploadBytes(fileRef, file, metadata);
     fileUrl = await getDownloadURL(fileRef);
   }
+
   const notesRef = collection(db, "notes");
-  const noteDoc = await addDoc(notesRef, {
+  const docRef = await addDoc(notesRef, {
     userId: user.uid,
     title,
     academicYear,
@@ -102,10 +143,10 @@ export async function createNote({ title, academicYear, semester, subjectCode, n
     fileUrl,
     createdAt: Date.now()
   });
-  return noteDoc.id;
+
+  return docRef.id;
 }
 
-// Fetch user notes
 export async function fetchNotes() {
   const user = auth.currentUser;
   if (!user) throw new Error("Not authenticated.");
@@ -115,12 +156,11 @@ export async function fetchNotes() {
   return snap.docs.map(d => ({ id: d.id, ...d.data() }));
 }
 
-// Auth state listener helper
-export function onAuth(cb) {
-  return onAuthStateChanged(auth, cb);
+
+export function onAuth(callback) {
+  return onAuthStateChanged(auth, callback);
 }
 
-// Logout
 export function logout() {
   return signOut(auth);
 }
