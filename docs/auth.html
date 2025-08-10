@@ -701,11 +701,13 @@ body.dark .theme-toggle .sun {
         forgotBtn.disabled = false;
         forgotBtn.querySelector('.btn-text').textContent = 'Send Reset Link';
       }
-       onAuthStateChanged(auth, user=>{
+    });
+     onAuthStateChanged(auth, user=>{
     if(user && localStorage.getItem('recentLogout')!=='1' && !forgotPanel.classList.contains('active')){
       setGlobalStatus('Already signed in. Redirecting...','ok');
       setTimeout(()=> location.href='home.html', 480);
-    });
+    }
+  });
   </script>
 </body>
 </html>
