@@ -56,8 +56,5 @@ See root of repository (server/, public/, migrations/).
 - Add password reset
 - Add collaborative sharing or tagging
 - Full-text search (Postgres tsvector)
-- Move file storage to S3/Supabase storage and store only URLs
+- Move file storage to S3
 - Introduce tests (Jest + Supertest)
-
-## License
-MIT (add a LICENSE file)
