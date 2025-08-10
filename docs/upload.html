@@ -1,326 +1,348 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="color-scheme" content="light dark">
-    <title>Upload Notes - Notes-U</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    <style>
-        /* (UI unchanged) */
-        :root {--light-bg:#f8f8f8;--light-text:#333;--light-label:#666;--light-input-bg:#fff;--light-input-border:rgba(55,53,47,0.16);--light-input-placeholder:rgba(55,53,47,0.4);--light-file-area-bg:#fff;--light-file-area-border:rgba(55,53,47,0.16);--light-file-area-hover-bg:rgba(55,53,47,0.03);--light-file-area-dragover-bg:rgba(55,53,47,0.08);--light-icon-color:rgba(55,53,47,0.3);--light-file-text:rgba(55,53,47,0.6);--light-sm-text:rgba(55,53,47,0.4);--light-file-name:#333;--light-error-color:#dc3545;--light-toggle-icon:#333;--light-container-bg:#fff;--light-container-shadow:0 4px 12px rgba(0,0,0,0.05);--light-accent-color:#007bff;--light-accent-hover:#0056b3;}
-        body.dark {--light-bg:#121212;--light-text:#fff;--light-label:rgba(255,255,255,0.9);--light-input-bg:#252525;--light-input-border:rgba(255,255,255,0.1);--light-input-placeholder:rgba(255,255,255,0.4);--light-file-area-bg:#252525;--light-file-area-border:rgba(255,255,255,0.1);--light-file-area-hover-bg:#333;--light-file-area-dragover-bg:#333;--light-icon-color:rgba(255,255,255,0.3);--light-file-text:rgba(255,255,255,0.6);--light-sm-text:rgba(255,255,255,0.4);--light-file-name:#fff;--light-error-color:#ff6b6b;--light-toggle-icon:#fff;--light-container-bg:#1a1a1a;--light-container-shadow:0 4px 12px rgba(255,255,255,0.02);--light-accent-color:#64b5f6;--light-accent-hover:#90caf9;}
-        body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;display:flex;justify-content:center;align-items:flex-start;min-height:100vh;margin:0;background-color:var(--light-bg);color:var(--light-text);flex-direction:column;box-sizing:border-box;overflow-x:hidden;width:100%;transition:background-color .3s,color .3s;padding-top:40px;padding-bottom:20px;}
-        .container{max-width:90%;width:auto;margin:0 auto;padding:20px;box-sizing:border-box;}
-        .notion-input-group{margin-bottom:24px;}
-        .notion-label{display:block;font-size:.875em;font-weight:500;color:var(--light-label);margin-bottom:8px;transition:color .3s;}
-        .notion-input,.notion-select,.notion-textarea{display:block;width:100%;padding:10px 12px;border:1px solid var(--light-input-border);border-radius:4px;background-color:var(--light-input-bg);color:var(--light-text);font-size:1em;line-height:1.5;transition:border-color .2s,box-shadow .2s,background-color .2s,color .2s;box-sizing:border-box;appearance:none;}
-        .notion-textarea{resize:none;}
-        .notion-input::placeholder,.notion-textarea::placeholder{color:var(--light-input-placeholder);}
-        .notion-input:focus,.notion-select:focus,.notion-textarea:focus{outline:none;border-color:var(--light-accent-color);box-shadow:0 0 0 1px var(--light-accent-color);}
-        .notion-select{background-image:none;padding-right:2.5rem;}
-        body.dark .notion-select{background-image:none;}
-        .error-message{color:var(--light-error-color);font-size:.875em;margin-top:8px;display:none;}
-        .header{margin-bottom:48px;}
-        .header h1{font-size:2.25em;font-weight:600;color:var(--light-text);margin-bottom:8px;transition:color .3s;}
-        .header p{font-size:1em;color:var(--light-label);transition:color .3s;}
-        .file-upload-box{border:2px dashed var(--light-file-area-border);border-radius:4px;padding:32px;text-align:center;cursor:pointer;transition:all .2s;background-color:var(--light-file-area-bg);min-height:150px;display:flex;flex-direction:column;justify-content:center;align-items:center;}
-        .file-upload-box:hover{background-color:var(--light-file-area-hover-bg);}
-        .file-upload-box.dragover{background-color:var(--light-file-area-dragover-bg);border-color:var(--light-accent-color);}
-        .file-upload-box svg{color:var(--light-icon-color);margin-bottom:16px;width:48px;height:48px;}
-        .file-upload-box p{color:var(--light-file-text);margin-bottom:8px;margin-top:0;}
-        .file-upload-box .text-sm{font-size:.875em;color:var(--light-sm-text);}
-        .file-upload-box #fileInfo svg{color:#28a745;}
-        .file-upload-box #fileName{color:var(--light-file-name);font-weight:500;}
-        .submit-btn{width:100%;background-color:var(--light-accent-color);color:#fff;padding:12px 24px;border-radius:4px;font-weight:500;transition:background-color .2s;cursor:pointer;border:none;text-align:center;}
-        .submit-btn:hover{background-color:var(--light-accent-hover);}
-        .submit-btn:disabled{opacity:.5;cursor:not-allowed;background-color:var(--light-accent-color);}
-        @media(min-width:768px){body{padding-top:80px;align-items:center;}.container{max-width:680px;padding:40px 60px;box-shadow:var(--light-container-shadow);border-radius:8px;background-color:var(--light-container-bg);} .header h1{font-size:2.5em;}}
-    </style>
+  <meta charset="UTF-8">
+  <meta name="color-scheme" content="light dark">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upload Notes - Notes-U</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:#f8f8f8; --text:#333; --label:#555; --accent:#0d6efd;
+      --accent-hover:#0b5ed7; --border:rgba(0,0,0,0.15);
+      --error:#d33; --container:#fff; --shadow:0 4px 14px rgba(0,0,0,0.08);
+      --file-bg:#fcfcfc; --file-border:#d0d0d0; --file-hover:#f1f6ff;
+    }
+    body.dark {
+      --bg:#121212; --text:#eee; --label:#aaa; --container:#1e1e1e;
+      --border:rgba(255,255,255,0.12); --shadow:0 4px 18px rgba(0,0,0,0.55);
+      --file-bg:#1a1a1a; --file-border:#333; --file-hover:#1f2b3d;
+    }
+    body {
+      font-family:'Inter',system-ui,Arial,sans-serif; background:var(--bg); color:var(--text);
+      margin:0; min-height:100vh; display:flex; justify-content:center; align-items:flex-start; padding:50px 16px;
+      transition:background .3s,color .3s;
+    }
+    .container {
+      width:100%; max-width:700px; background:var(--container); padding:42px 48px;
+      border-radius:16px; box-shadow:var(--shadow); border:1px solid var(--border); box-sizing:border-box;
+    }
+    h1 { margin:0 0 10px; font-size:2rem; }
+    p.sub { margin:0 0 28px; color:var(--label); }
+    .group { margin-bottom:24px; }
+    label.n-label {
+      display:block; font-size:.8rem; font-weight:600; letter-spacing:.5px; text-transform:uppercase;
+      margin-bottom:6px; color:var(--label);
+    }
+    select, input[type="text"], textarea {
+      width:100%; padding:11px 13px; font-size:.95rem; border:1px solid var(--border);
+      border-radius:8px; background:transparent; color:inherit; resize:vertical;
+      min-height:46px; box-sizing:border-box;
+    }
+    select:focus, input:focus, textarea:focus { outline:2px solid var(--accent); outline-offset:2px; }
+    textarea { resize:vertical; min-height:110px; line-height:1.4; }
+
+    .file-drop {
+      border:2px dashed var(--file-border); background:var(--file-bg);
+      padding:34px 20px; text-align:center; border-radius:14px;
+      cursor:pointer; transition:background .2s, border-color .2s;
+      position:relative;
+    }
+    .file-drop.dragover { background:var(--file-hover); border-color:var(--accent); }
+    .file-drop p { margin:0 0 6px; font-size:.9rem; }
+    .file-drop small { display:block; opacity:.7; font-size:.65rem; }
+    .file-ok { display:none; margin-top:14px; font-size:.8rem; color:var(--accent); font-weight:600; word-break:break-all;}
+    .error-message { color:var(--error); font-size:.7rem; margin-top:6px; display:none; }
+    .actions { margin-top:34px; }
+    button.submit-btn {
+      width:100%; padding:14px 20px; border:none; border-radius:10px;
+      background:var(--accent); color:#fff; font-size:1rem; font-weight:600;
+      cursor:pointer; transition:background .2s;
+    }
+    button.submit-btn:hover:not(:disabled) { background:var(--accent-hover); }
+    button.submit-btn:disabled { opacity:.6; cursor:not-allowed; }
+
+    @media (max-width:680px) {
+      .container { padding:34px 26px; }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <header class="header">
-            <h1>Upload Your Notes</h1>
-            <p>Share your knowledge and help other students by uploading your study materials.</p>
-        </header>
+  <div class="container">
+    <h1>Upload Your Notes</h1>
+    <p class="sub">Share knowledge by uploading study materials for your courses.</p>
 
-        <form id="uploadForm">
-            <div class="notion-input-group">
-                <label for="academicYearSelect" class="notion-label">Academic Year</label>
-                <select id="academicYearSelect" class="notion-select" required>
-                    <option value="">Select Year</option>
-                    <option value="year1">Year 1</option>
-                    <option value="year2">Year 2</option>
-                </select>
-                <p id="academicYearSelectError" class="error-message">Please select an academic year.</p>
-            </div>
+    <form id="uploadForm" novalidate>
+      <div class="group">
+        <label for="academicYearSelect" class="n-label">Academic Year</label>
+        <select id="academicYearSelect" required>
+          <option value="">Select Year</option>
+          <option value="year1">Year 1</option>
+          <option value="year2">Year 2</option>
+        </select>
+        <p id="academicYearSelectError" class="error-message"></p>
+      </div>
 
-            <div class="notion-input-group">
-                <label for="semesterSelect" class="notion-label">Semester</label>
-                <select id="semesterSelect" class="notion-select" required disabled>
-                    <option value="">Select Semester</option>
-                </select>
-                <p id="semesterSelectError" class="error-message">Please select a semester.</p>
-            </div>
+      <div class="group">
+        <label for="semesterSelect" class="n-label">Semester</label>
+        <select id="semesterSelect" required disabled>
+          <option value="">Select Semester</option>
+        </select>
+        <p id="semesterSelectError" class="error-message"></p>
+      </div>
 
-            <div class="notion-input-group">
-                <label for="subjectSelect" class="notion-label">Subject</label>
-                <select id="subjectSelect" class="notion-select" required disabled>
-                    <option value="">Select Subject</option>
-                </select>
-                <p id="subjectSelectError" class="error-message">Please select a subject.</p>
-            </div>
+      <div class="group">
+        <label for="subjectSelect" class="n-label">Subject</label>
+        <select id="subjectSelect" required disabled>
+          <option value="">Select Subject</option>
+        </select>
+        <p id="subjectSelectError" class="error-message"></p>
+      </div>
 
-            <div class="notion-input-group">
-                <label for="notesType" class="notion-label">Type of Notes</label>
-                <select id="notesType" class="notion-select" required>
-                    <option value="">Select a type</option>
-                    <option value="lecture_notes">Lecture Notes</option>
-                    <option value="tutorial_solutions">Tutorial Solutions</option>
-                    <option value="past_year_papers">Past Year Papers</option>
-                </select>
-                <p id="notesTypeError" class="error-message">Please select a type of notes.</p>
-            </div>
+      <div class="group">
+        <label for="notesType" class="n-label">Type of Notes</label>
+        <select id="notesType" required>
+          <option value="">Select a type</option>
+          <option value="lecture_notes">Lecture Notes</option>
+          <option value="tutorial_solutions">Tutorial Solutions</option>
+          <option value="past_year_papers">Past Year Papers</option>
+        </select>
+        <p id="notesTypeError" class="error-message"></p>
+      </div>
 
-            <div class="notion-input-group">
-                <label for="description" class="notion-label">Description (Optional)</label>
-                <textarea id="description" class="notion-textarea" rows="4" placeholder="Briefly describe the content of your notes..."></textarea>
-            </div>
+      <div class="group">
+        <label for="description" class="n-label">Description (Optional)</label>
+        <textarea id="description" placeholder="Brief description..."></textarea>
+      </div>
 
-            <div class="notion-input-group">
-                <label class="notion-label">Upload File</label>
-                <input type="file" id="fileUpload" accept=".pdf,.doc,.docx,.txt,.ppt,.pptx,.odt,.ods,.odp,.rtf" hidden>
-                <div id="fileUploadBox" class="file-upload-box" role="button" tabindex="0">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3-3 3M6.75 19.5A4.5 4.5 0 015.34 10.725a5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
-                    </svg>
-                    <p>Drag and drop your file here, or <span id="browseText" style="color: var(--light-accent-color); font-weight: 500;">click to browse</span></p>
-                    <p class="text-sm">Accepted: PDF, DOC, DOCX, TXT, PPT, PPTX, ODT, ODS, ODP, RTF (Max 25MB)</p>
-                    <div id="fileInfo" style="margin-top:16px;display:none;align-items:center;justify-content:center;gap:8px;">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" style="width:20px;height:20px;">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.125-1.09L9 11.423l-1.604-1.604a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.06 0l3-3z" clip-rule="evenodd" />
-                        </svg>
-                        <span id="fileName"></span>
-                    </div>
-                </div>
-                <p id="fileUploadError" class="error-message">Please upload a valid document file.</p>
-            </div>
+      <div class="group">
+        <label class="n-label">Upload File</label>
+        <input type="file" id="fileUpload" accept=".pdf,.doc,.docx,.txt,.ppt,.pptx,.odt,.ods,.odp,.rtf" hidden>
+        <div id="fileDrop" class="file-drop" tabindex="0" role="button" aria-label="Upload file area">
+          <p><strong>Drag & Drop</strong> or click to select a file</p>
+          <small>Accepted: PDF, DOC, DOCX, TXT, PPT, PPTX, ODT, ODS, ODP, RTF (Max 25MB)</small>
+          <div id="fileOk" class="file-ok"></div>
+        </div>
+        <p id="fileUploadError" class="error-message"></p>
+      </div>
 
-            <button type="submit" class="submit-btn">Upload Notes</button>
-        </form>
-    </div>
+      <div class="actions">
+        <button type="submit" class="submit-btn">Upload Notes</button>
+      </div>
+    </form>
+  </div>
 
-    <script type="module">
-        import { onAuth, createNote } from './firebase-init.js';
+  <script type="module">
+    import { onAuth, createNote } from './firebase-init.js';
 
-        function setTheme(theme){
-            document.body.classList.remove('light','dark');
-            document.body.classList.add(theme);
-            localStorage.setItem('theme',theme);
+    // Theme
+    (function initTheme(){
+      const stored = localStorage.getItem('theme');
+      function apply(t){
+        document.body.classList.remove('light','dark');
+        document.body.classList.add(t);
+        localStorage.setItem('theme', t);
+      }
+      if(stored) apply(stored); else apply(window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e=>{
+        if(!localStorage.getItem('theme')) apply(e.matches?'dark':'light');
+      });
+    })();
+
+    // Auth gate
+    onAuth(user=>{
+      if(!user) location.href='auth.html?mode=login';
+    });
+
+    const subjectsData = {
+      year1:{
+        semester1:[
+          {code:'AMCS1013',name:'Problem Solving and Programming'},
+          {code:'AMCS1113',name:'Computer Architecture'},
+          {code:'AMIT1303',name:'Introduction to Interface Design'},
+          {code:'AMMS1623',name:'Calculus and Algebra'},
+          {code:'AJEL1713',name:'English for Tertiary Studies'},
+          {code:'MPU2302',name:'Integrity and Anti-Corruption'},
+          {code:'MPU2123',name:'Penghayatan Etika dan Peradaban'}
+        ],
+        semester2:[
+          {code:'AMCS1043',name:'Database Development and Applications'},
+            {code:'AMCS1034',name:'Software Development Fundamentals'},
+            {code:'AMMS2613',name:'Probability and Statistics'}
+        ],
+        semester3:[
+          {code:'AMIT2034',name:'Fundamentals of Computer Networks'},
+          {code:'AMCS2204',name:'Object-Oriented Programming Techniques'},
+          {code:'AMCS2093',name:'Operating Systems'},
+          {code:'AMIS1013',name:'Systems Analysis and Design'},
+          {code:'AMMS2603',name:'Discrete Mathematics'},
+          {code:'AJEL1723',name:'Academic English'}
+        ]
+      },
+      year2:{
+        semester1:[
+          {code:'AMCS2034',name:'Introduction to Data Structures and Algorithms'},
+          {code:'AMCS2123',name:'Systems and Programming Concepts'},
+          {code:'AMCS2104',name:'Fundamentals of Artificial Intelligence'},
+          {code:'AMIT3353',name:'Mobile Application Development'},
+          {code:'AMIS1012',name:'Ethics in Computing'}
+        ],
+        semester2:[
+          {code:'AMCS2094',name:'Mini Project'},
+          {code:'AMCS2103',name:'Parallel and Distributed Computing'},
+          {code:'AMIS1003',name:'Introduction to Cybersecurity'}
+        ],
+        semester3:[
+          {code:'AMIT320A',name:'Industrial Training'}
+        ]
+      }
+    };
+
+    // Elements
+    const form = document.getElementById('uploadForm');
+    const academicYearSelect = document.getElementById('academicYearSelect');
+    const semesterSelect = document.getElementById('semesterSelect');
+    const subjectSelect = document.getElementById('subjectSelect');
+    const notesTypeSelect = document.getElementById('notesType');
+    const descriptionInput = document.getElementById('description');
+    const fileUpload = document.getElementById('fileUpload');
+    const fileDrop = document.getElementById('fileDrop');
+    const fileOk = document.getElementById('fileOk');
+    const submitBtn = form.querySelector('.submit-btn');
+
+    const requiredFields = [
+      { id:'academicYearSelect', msg:'Please select an academic year.' },
+      { id:'semesterSelect', msg:'Please select a semester.' },
+      { id:'subjectSelect', msg:'Please select a subject.' },
+      { id:'notesType', msg:'Please select a type of notes.' },
+      { id:'fileUpload', msg:'Please upload a valid document file.' }
+    ];
+
+    function showError(id,msg){
+      const el = document.getElementById(id+'Error');
+      if(el){ el.textContent=msg; el.style.display = msg ? 'block':'none'; }
+    }
+    function hideError(id){ showError(id,''); }
+
+    function validate(){
+      let ok = true;
+      requiredFields.forEach(f=>{
+        if(f.id==='fileUpload'){
+          if(fileUpload.files.length===0){ showError(f.id,f.msg); ok=false; } else hideError(f.id);
+        } else {
+          const v = document.getElementById(f.id).value;
+          if(!v){ showError(f.id,f.msg); ok=false; } else hideError(f.id);
         }
-        const storedTheme = localStorage.getItem('theme');
-        if(storedTheme) setTheme(storedTheme); else setTheme(window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',e=>{
-            if(!localStorage.getItem('theme')) setTheme(e.matches?'dark':'light');
+      });
+      submitBtn.disabled = !ok;
+      return ok;
+    }
+
+    function populateSemesters(){
+      semesterSelect.innerHTML='<option value="">Select Semester</option>';
+      subjectSelect.innerHTML='<option value="">Select Subject</option>';
+      semesterSelect.disabled=true; subjectSelect.disabled=true;
+      const y = academicYearSelect.value;
+      if(y && subjectsData[y]){
+        Object.keys(subjectsData[y]).forEach(sem=>{
+          const o=document.createElement('option');
+          o.value=sem; o.textContent=sem.replace('semester','Semester ');
+          semesterSelect.appendChild(o);
         });
-
-        const subjectsData = {
-            year1:{
-                semester1:[
-                    {code:'AMCS1013',name:'Problem Solving and Programming'},
-                    {code:'AMCS1113',name:'Computer Architecture'},
-                    {code:'AMIT1303',name:'Introduction to Interface Design'},
-                    {code:'AMMS1623',name:'Calculus and Algebra'},
-                    {code:'AJEL1713',name:'English for Tertiary Studies'},
-                    {code:'MPU2302',name:'Integrity and Anti-Corruption'},
-                    {code:'MPU2123',name:'Penghayatan Etika dan Peradaban'}
-                ],
-                semester2:[
-                    {code:'AMCS1043',name:'Database Development and Applications'},
-                    {code:'AMCS1034',name:'Software Development Fundamentals'},
-                    {code:'AMMS2613',name:'Probability and Statistics'}
-                ],
-                semester3:[
-                    {code:'AMIT2034',name:'Fundamentals of Computer Networks'},
-                    {code:'AMCS2204',name:'Object-Oriented Programming Techniques'},
-                    {code:'AMCS2093',name:'Operating Systems'},
-                    {code:'AMIS1013',name:'Systems Analysis and Design'},
-                    {code:'AMMS2603',name:'Discrete Mathematics'},
-                    {code:'AJEL1723',name:'Academic English'}
-                ]
-            },
-            year2:{
-                semester1:[
-                    {code:'AMCS2034',name:'Introduction to Data Structures and Algorithms'},
-                    {code:'AMCS2123',name:'Systems and Programming Concepts'},
-                    {code:'AMCS2104',name:'Fundamentals of Artificial Intelligence'},
-                    {code:'AMIT3353',name:'Mobile Application Development'},
-                    {code:'AMIS1012',name:'Ethics in Computing'}
-                ],
-                semester2:[
-                    {code:'AMCS2094',name:'Mini Project'},
-                    {code:'AMCS2103',name:'Parallel and Distributed Computing'},
-                    {code:'AMIS1003',name:'Introduction to Cybersecurity'}
-                ],
-                semester3:[
-                    {code:'AMIT320A',name:'Industrial Training'}
-                ]
-            }
-        };
-
-        const form = document.getElementById('uploadForm');
-        const academicYearSelect = document.getElementById('academicYearSelect');
-        const semesterSelect = document.getElementById('semesterSelect');
-        const subjectSelect = document.getElementById('subjectSelect');
-        const notesTypeSelect = document.getElementById('notesType');
-        const descriptionInput = document.getElementById('description');
-        const fileUpload = document.getElementById('fileUpload');
-        const fileUploadBox = document.getElementById('fileUploadBox');
-        const browseText = document.getElementById('browseText');
-        const fileInfo = document.getElementById('fileInfo');
-        const fileNameSpan = document.getElementById('fileName');
-        const submitBtn = form.querySelector('.submit-btn');
-
-        const requiredFields = [
-            { id:'academicYearSelect', msg:'Please select an academic year.' },
-            { id:'semesterSelect', msg:'Please select a semester.' },
-            { id:'subjectSelect', msg:'Please select a subject.' },
-            { id:'notesType', msg:'Please select a type of notes.' },
-            { id:'fileUpload', msg:'Please upload a valid document file.' }
-        ];
-
-        function showError(id,msg){
-            const el = document.getElementById(id+'Error');
-            if(el){ el.textContent=msg; el.style.display='block'; }
-        }
-        function hideError(id){
-            const el = document.getElementById(id+'Error');
-            if(el){ el.style.display='none'; }
-        }
-        function validate(){
-            let ok = true;
-            requiredFields.forEach(f=>{
-                if(f.id==='fileUpload'){
-                    if(fileUpload.files.length===0){ showError(f.id,f.msg); ok=false; } else hideError(f.id);
-                } else {
-                    const v = document.getElementById(f.id).value;
-                    if(!v){ showError(f.id,f.msg); ok=false; } else hideError(f.id);
-                }
-            });
-            submitBtn.disabled = !ok;
-            return ok;
-        }
-
-        function populateSemesters(){
-            semesterSelect.innerHTML='<option value="">Select Semester</option>';
-            subjectSelect.innerHTML='<option value="">Select Subject</option>';
-            semesterSelect.disabled=true; subjectSelect.disabled=true;
-            const y = academicYearSelect.value;
-            if(y && subjectsData[y]){
-                Object.keys(subjectsData[y]).forEach(sem=>{
-                    const o=document.createElement('option');
-                    o.value=sem; o.textContent=sem.replace('semester','Semester ');
-                    semesterSelect.appendChild(o);
-                });
-                semesterSelect.disabled=false;
-            }
-            validate();
-        }
-        function populateSubjects(){
-            subjectSelect.innerHTML='<option value="">Select Subject</option>';
-            subjectSelect.disabled=true;
-            const y=academicYearSelect.value;
-            const s=semesterSelect.value;
-            if(y && s && subjectsData[y] && subjectsData[y][s]){
-                subjectsData[y][s].forEach(sub=>{
-                    const o=document.createElement('option');
-                    o.value=sub.code;
-                    o.textContent=sub.code+' - '+sub.name;
-                    subjectSelect.appendChild(o);
-                });
-                subjectSelect.disabled=false;
-            }
-            validate();
-        }
-
-        function updateFileUI(file){
-            if(file){
-                fileNameSpan.textContent=file.name;
-                fileInfo.style.display='flex';
-            } else {
-                fileNameSpan.textContent='';
-                fileInfo.style.display='none';
-            }
-            validate();
-        }
-
-        function handleFileBrowse(){ fileUpload.click(); }
-        function handleFileChange(){ updateFileUI(fileUpload.files[0]||null); }
-        function handleDragOver(e){ e.preventDefault(); fileUploadBox.classList.add('dragover'); }
-        function handleDragLeave(){ fileUploadBox.classList.remove('dragover'); }
-        function handleDrop(e){
-            e.preventDefault();
-            fileUploadBox.classList.remove('dragover');
-            if(e.dataTransfer.files.length){
-                fileUpload.files = e.dataTransfer.files;
-                updateFileUI(fileUpload.files[0]);
-            }
-        }
-
-        browseText.addEventListener('click', handleFileBrowse);
-        fileUploadBox.addEventListener('click', handleFileBrowse);
-        fileUpload.addEventListener('change', handleFileChange);
-        fileUploadBox.addEventListener('dragover', handleDragOver);
-        fileUploadBox.addEventListener('dragleave', handleDragLeave);
-        fileUploadBox.addEventListener('drop', handleDrop);
-        fileUploadBox.addEventListener('keydown',e=>{
-            if(e.key==='Enter'||e.key===' ') { e.preventDefault(); handleFileBrowse(); }
+        semesterSelect.disabled=false;
+      }
+      validate();
+    }
+    function populateSubjects(){
+      subjectSelect.innerHTML='<option value="">Select Subject</option>';
+      subjectSelect.disabled=true;
+      const y = academicYearSelect.value;
+      const s = semesterSelect.value;
+      if(y && s && subjectsData[y] && subjectsData[y][s]){
+        subjectsData[y][s].forEach(sub=>{
+          const o=document.createElement('option');
+          o.value=sub.code;
+          o.textContent=sub.code+' - '+sub.name;
+          subjectSelect.appendChild(o);
         });
+        subjectSelect.disabled=false;
+      }
+      validate();
+    }
 
-        academicYearSelect.addEventListener('change', populateSemesters);
-        semesterSelect.addEventListener('change', populateSubjects);
-        notesTypeSelect.addEventListener('change', validate);
-        descriptionInput.addEventListener('input', ()=>{ /* optional */ });
+    function updateFileUI(file){
+      if(file){
+        fileOk.style.display='block';
+        fileOk.textContent = file.name + ' (' + (file.size/1024/1024).toFixed(2) + ' MB)';
+      } else {
+        fileOk.style.display='none';
+        fileOk.textContent='';
+      }
+      validate();
+    }
 
-        onAuth(user=>{
-            if(!user) location.href='auth.html?mode=login';
+    // Drag & drop
+    fileDrop.addEventListener('click', ()=> fileUpload.click());
+    fileDrop.addEventListener('keydown', e=>{
+      if(e.key==='Enter' || e.key===' ') { e.preventDefault(); fileUpload.click(); }
+    });
+    fileUpload.addEventListener('change', ()=> updateFileUI(fileUpload.files[0]||null));
+    fileDrop.addEventListener('dragover', e=>{
+      e.preventDefault(); fileDrop.classList.add('dragover');
+    });
+    fileDrop.addEventListener('dragleave', ()=> fileDrop.classList.remove('dragover'));
+    fileDrop.addEventListener('drop', e=>{
+      e.preventDefault(); fileDrop.classList.remove('dragover');
+      if(e.dataTransfer.files.length){
+        fileUpload.files = e.dataTransfer.files;
+        updateFileUI(fileUpload.files[0]);
+      }
+    });
+
+    academicYearSelect.addEventListener('change', populateSemesters);
+    semesterSelect.addEventListener('change', populateSubjects);
+    notesTypeSelect.addEventListener('change', validate);
+    descriptionInput.addEventListener('input', ()=>{ /* optional */ });
+
+    document.addEventListener('DOMContentLoaded', ()=>{
+      populateSemesters();
+      populateSubjects();
+      validate();
+    });
+
+    form.addEventListener('submit', async e=>{
+      e.preventDefault();
+      if(!validate()) { alert('Please fix errors'); return; }
+      if(!fileUpload.files.length){ alert('Select a file'); return; }
+      const file = fileUpload.files[0];
+      // Additional size check (mirrors firebase-init)
+      if(file.size > 25*1024*1024){
+        showError('fileUpload','File exceeds 25MB limit.');
+        return;
+      }
+      submitBtn.disabled=true;
+      submitBtn.textContent='Uploading...';
+      const title = file.name.replace(/\.[^.]+$/, '') || file.name;
+      try {
+        await createNote({
+          academic_year: academicYearSelect.value,
+          semester: semesterSelect.value,
+          subject_code: subjectSelect.value,
+          notes_type: notesTypeSelect.value,
+          description: descriptionInput.value.trim(),
+          file,
+          title
         });
-
-        document.addEventListener('DOMContentLoaded', ()=>{
-            populateSemesters();
-            populateSubjects();
-            validate();
-        });
-
-        form.addEventListener('submit', async e=>{
-            e.preventDefault();
-            if(!validate()) { alert('Please fix errors'); return; }
-            if(!fileUpload.files.length){ alert('Select a file'); return; }
-            submitBtn.disabled=true;
-            submitBtn.textContent='Uploading...';
-            const file = fileUpload.files[0];
-            const title = file.name.split('.').slice(0,-1).join('.') || file.name;
-            try {
-                await createNote({
-                    academic_year: academicYearSelect.value,
-                    semester: semesterSelect.value,
-                    subject_code: subjectSelect.value,
-                    notes_type: notesTypeSelect.value,
-                    description: descriptionInput.value.trim(),
-                    file,
-                    title
-                });
-                alert('Upload successful');
-                location.href='home.html';
-            } catch(err){
-                alert(err.message||'Upload failed');
-                submitBtn.disabled=false;
-                submitBtn.textContent='Upload Notes';
-            }
-        });
-    </script>
+        alert('Upload successful');
+        location.href='home.html';
+      } catch(err){
+        alert(err.message || 'Upload failed');
+        submitBtn.disabled=false;
+        submitBtn.textContent='Upload Notes';
+      }
+    });
+  </script>
 </body>
 </html>
