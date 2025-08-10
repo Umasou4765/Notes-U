@@ -1,0 +1,29 @@
+:root {
+  --color-bg-light: #f8f8f8;
+  --color-text-primary-light: #333;
+  --color-text-secondary-light: #666;
+  --color-border-light: rgba(55,53,47,0.1);
+  --color-input-bg-light: #fff;
+  --color-input-hover-light: rgba(55,53,47,0.03);
+  --color-input-border-hover-light: rgba(55,53,47,0.2);
+  --color-separator-line-light: #ddd;
+  --color-link-light: #007bff;
+  --color-link-hover-light: #0056b3;
+  --color-card-bg-light: #fff;
+  --color-shadow-light: rgba(0,0,0,0.05);
+  --color-accent-blue: #007bff;
+  --color-accent-blue-hover: #0056b3;
+  --color-icon-light: #333;
+  --color-bg-dark: #121212;
+  --color-text-primary-dark: rgba(255,255,255,0.9);
+  --color-text-secondary-dark: rgba(255,255,255,0.6);
+  --color-border-dark: rgba(255,255,255,0.1);
+  --color-input-bg-dark: #252525;
+  --color-input-hover-dark: #333;
+  --color-input-border-hover-dark: rgba(255,255,255,0.2);
+  --color-separator-line-dark: #444;
+  --color-link-dark: #64b5f6;
+  --color-link-hover-dark: #90caf9;
+  --color-card-bg-dark: #1a1a1a;
+  --color-shadow-dark: rgba(255,255,255,0.02);
+}
