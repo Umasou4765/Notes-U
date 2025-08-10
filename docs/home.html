@@ -15,6 +15,7 @@
       --accent:#0d6efd; --accent-hover:#0b5ed7;
       --shadow:0 2px 4px rgba(0,0,0,0.08);
       --shadow-strong:0 4px 14px rgba(0,0,0,0.12);
+      --focus-ring:0 0 0 3px rgba(13,110,253,.35);
     }
     body.dark {
       --bg:#1a1a1a; --text:#f2f2f2; --label:#b0b0b0;
@@ -32,25 +33,75 @@
       display:flex; align-items:center; justify-content:space-between;
       padding:14px 28px; background:var(--container);
       box-shadow:var(--shadow); position:sticky; top:0; z-index:10;
+      border-bottom:1px solid var(--border);
     }
+    /* Logo is now static (not a link) */
     .logo {
-      font-size:1.7rem; font-weight:700; text-decoration:none; color:inherit;
+      font-size:1.7rem; font-weight:700; color:inherit;
       display:flex; align-items:center; justify-content:center;
-      width:46px; height:46px; border:2px solid currentColor; border-radius:10px;
+      width:46px; height:46px; border:2px solid currentColor; border-radius:12px;
+      user-select:none;
     }
+    .logo[tabindex="-1"] { outline:none; }
     .header-actions { display:flex; gap:12px; }
-    .header-actions a.button, .header-actions button {
-      padding:9px 15px; border:none; border-radius:6px;
-      cursor:pointer; font-size:.85rem; font-weight:500;
-      text-decoration:none; display:inline-flex; align-items:center;
-      background:var(--accent); color:#fff;
+
+    .icon-btn, .icon-btn:visited {
+      --btn-bg:var(--accent);
+      --btn-bg-hover:var(--accent-hover);
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:10px 16px 10px 14px;
+      border:none;
+      border-radius:10px;
+      background:linear-gradient(135deg,var(--btn-bg),var(--btn-bg-hover) 115%);
+      color:#fff;
+      font-size:.85rem;
+      font-weight:600;
+      text-decoration:none;
+      cursor:pointer;
+      line-height:1.1;
+      box-shadow:0 4px 14px -6px rgba(0,60,140,0.45), 0 2px 8px -4px rgba(0,60,140,0.30);
+      transition:background .35s, transform .35s, box-shadow .4s;
+      position:relative;
     }
-    .header-actions a.button:hover { background:var(--accent-hover); }
-    .logout-button {
-      background:transparent; color:inherit; border:1px solid var(--border);
+    .icon-btn svg {
+      width:18px; height:18px;
+      stroke:currentColor;
+      stroke-width:1.8;
+      fill:none;
+      flex-shrink:0;
     }
-    .logout-button:hover { background:rgba(0,0,0,0.05); }
-    body.dark .logout-button:hover { background:rgba(255,255,255,0.08); }
+    .icon-btn:hover {
+      transform:translateY(-2px);
+      box-shadow:0 8px 24px -10px rgba(0,70,170,0.55), 0 4px 14px -6px rgba(0,70,160,0.4);
+    }
+    .icon-btn:active {
+      transform:translateY(0) scale(.95);
+    }
+    .icon-btn:focus-visible {
+      outline:none;
+      box-shadow:var(--focus-ring);
+    }
+    /* Secondary / logout style */
+    .icon-btn.logout {
+      --btn-bg:transparent;
+      --btn-bg-hover:rgba(0,0,0,0.07);
+      color:var(--text);
+      background:var(--btn-bg);
+      border:1px solid var(--border);
+      box-shadow:none;
+    }
+    .icon-btn.logout:hover {
+      background:var(--btn-bg-hover);
+      box-shadow:none;
+    }
+    body.dark .icon-btn.logout:hover {
+      --btn-bg-hover:rgba(255,255,255,0.12);
+    }
+    body.dark .icon-btn.logout {
+      background:transparent;
+    }
 
     main {
       flex-grow:1; display:grid; grid-template-columns:300px 1fr; gap:26px;
@@ -58,7 +109,7 @@
       box-sizing:border-box;
     }
     aside.sidebar, .content-area {
-      background:var(--container); border-radius:10px; padding:22px;
+      background:var(--container); border-radius:14px; padding:22px;
       box-shadow:var(--shadow); border:1px solid var(--border);
       min-height:0;
     }
@@ -68,7 +119,7 @@
     ul.category-list li { margin-bottom:4px; }
     ul.category-list a {
       display:block; padding:8px 10px; text-decoration:none;
-      color:var(--label); border-radius:6px; font-size:.85rem;
+      color:var(--label); border-radius:8px; font-size:.85rem;
       transition:background .2s,color .2s;
     }
     ul.category-list a:hover, ul.category-list a.active {
@@ -86,17 +137,17 @@
     .search-bar { position:relative; margin-bottom:18px; }
     .search-bar input {
       width:100%; padding:10px 14px 10px 38px; font-size:.9rem;
-      border:1px solid var(--border); border-radius:6px;
+      border:1px solid var(--border); border-radius:8px;
       background:transparent; color:inherit; box-sizing:border-box;
     }
-    .search-bar input:focus { outline:2px solid var(--accent); outline-offset:2px; }
+    .search-bar input:focus { outline:3px solid rgba(13,110,253,.5); outline-offset:1px; }
     .search-bar svg { position:absolute; left:12px; top:50%; transform:translateY(-50%); width:18px; height:18px; opacity:.6; }
     .note-grid {
       display:grid; gap:18px;
       grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
     }
     .note-card {
-      background:transparent; border:1px solid var(--border); border-radius:10px;
+      background:transparent; border:1px solid var(--border); border-radius:12px;
       padding:16px 16px 14px; display:flex; flex-direction:column;
       box-shadow:0 2px 6px rgba(0,0,0,0.04); transition:transform .18s, box-shadow .18s;
     }
@@ -127,10 +178,25 @@
 </head>
 <body>
   <header>
-    <a href="index.html" class="logo" aria-label="Notes-U Home"><span>U</span></a>
+    <!-- Logo now static (no navigation) -->
+    <div class="logo" aria-label="Notes-U Logo" tabindex="-1">U</div>
     <div class="header-actions">
-      <a href="upload.html" class="button" id="upload-note-btn">Upload Note</a>
-      <button class="logout-button" id="logout-btn" aria-label="Log out">Log Out</button>
+      <a href="upload.html" class="icon-btn" id="upload-note-btn" aria-label="Upload Note">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 16V4m0 0l-5 5m5-5l5 5"/>
+          <path d="M4 20h16"/>
+        </svg>
+        <span>Upload</span>
+      </a>
+      <button class="icon-btn logout" id="logout-btn" aria-label="Log out">
+        <svg viewBox="0 0 24 24">
+          <path d="M15 3h-6a2 2 0 00-2 2v3"/>
+          <path d="M9 21h6a2 2 0 002-2v-3"/>
+          <path d="M16 12H8"/>
+          <path d="M11 9l-3 3 3 3"/>
+        </svg>
+        <span>Log Out</span>
+      </button>
     </div>
   </header>
 
@@ -184,14 +250,14 @@
       <div id="notes-container" class="note-grid">
         <div class="note-card" data-category="placeholder-note">
           <h3>No Notes Found</h3>
-            <p>It looks like there are no notes yet. Upload something to get started.</p>
-            <div class="tags">
-              <span class="category-tag">Info</span>
-              <span class="category-tag">Empty</span>
-            </div>
-            <div class="note-actions">
-              <a href="upload.html">Upload Now</a>
-            </div>
+          <p>It looks like there are no notes yet. Upload something to get started.</p>
+          <div class="tags">
+            <span class="category-tag">Info</span>
+            <span class="category-tag">Empty</span>
+          </div>
+          <div class="note-actions">
+            <a href="upload.html">Upload Now</a>
+          </div>
         </div>
       </div>
     </section>
@@ -202,7 +268,7 @@
   <script type="module">
     import { onAuth, logout, fetchMyNotes } from './firebase-init.js';
 
-    // Theme initialize (same approach as other pages)
+    // Theme (keep consistent with other pages)
     (function initTheme(){
       const stored = localStorage.getItem('theme');
       function apply(t){
@@ -220,19 +286,26 @@
       });
     })();
 
-    const logoutButton = document.getElementById('logout-btn');
+    const logoutButton   = document.getElementById('logout-btn');
     const notesContainer = document.getElementById('notes-container');
-    const searchInput = document.getElementById('searchInput');
-    const categoryList = document.getElementById('categoryList');
+    const searchInput    = document.getElementById('searchInput');
+    const categoryList   = document.getElementById('categoryList');
+
     let allNotesData = [];
     let currentCategory = 'all';
     let searchTerm = '';
 
+    // Stronger logout behavior: replace history so back won't reload home effectively
     logoutButton.addEventListener('click', async ()=>{
-      try {
-        await logout();
-      } finally {
-        location.href='auth.html?mode=login';
+      try { await logout(); } catch(_) {}
+      // Replace current entry and add popstate guard
+      location.replace('auth.html?mode=login');
+    });
+
+    // Extra popstate guard (in case of cached back navigation)
+    window.addEventListener('pageshow', e=>{
+      if(e.persisted){ // from bfcache
+        // onAuth below will redirect if no user
       }
     });
 
@@ -326,10 +399,12 @@
     }
 
     onAuth(user=>{
-      if(!user) location.href='auth.html?mode=login';
-      else loadNotes();
+      if(!user){
+        location.replace('auth.html?mode=login');
+        return;
+      }
+      loadNotes();
     });
-
   </script>
 </body>
 </html>
