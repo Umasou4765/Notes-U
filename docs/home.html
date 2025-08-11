@@ -19,9 +19,15 @@
   --shadow:0 2px 4px rgba(0,0,0,0.08);
   --shadow-strong:0 4px 14px rgba(0,0,0,0.12);
   --focus-ring:0 0 0 3px rgba(13,110,253,.35);
+  --danger:#d23d3d;
+  --warn:#e0a800;
+  --success:#1f9d55;
   --card-hover-bg:rgba(0,0,0,0.035);
   --overlay-bg:rgba(0,0,0,.45);
   --transition:.25s ease;
+  --dialog-backdrop:rgba(0,0,0,0.35);
+  --thumb-bg:#eef3ff;
+  --thumb-text:#0d3d80;
 }
 body.dark {
   --bg:#1a1a1a; --text:#f2f2f2; --label:#b0b0b0;
@@ -30,6 +36,8 @@ body.dark {
   --shadow-strong:0 4px 14px rgba(0,0,0,0.7);
   --card-hover-bg:rgba(255,255,255,0.06);
   --overlay-bg:rgba(0,0,0,.65);
+  --thumb-bg:#273140;
+  --thumb-text:#b9d7ff;
 }
 * { box-sizing:border-box; }
 body {
@@ -43,7 +51,7 @@ body {
 header {
   display:flex; align-items:center; justify-content:space-between;
   padding:10px 18px 10px 14px; background:var(--container);
-  box-shadow:var(--shadow); position:sticky; top:0; z-index:80;
+  box-shadow:var(--shadow); position:sticky; top:0; z-index:60;
   border-bottom:1px solid var(--border);
   gap:12px;
 }
@@ -53,11 +61,7 @@ header {
   display:flex; align-items:center; justify-content:center;
   width:42px; height:42px; border:2px solid currentColor; border-radius:12px;
 }
-.site-title {
-  font-size:1.4rem;
-  font-weight:700; letter-spacing:-.6px;
-  margin:0;
-}
+.site-title { font-size:1.15rem; font-weight:700; letter-spacing:-.5px; }
 
 /* Mobile menu button */
 .menu-btn {
@@ -68,6 +72,7 @@ header {
   align-items:center; justify-content:center;
   cursor:pointer;
   color:var(--text);
+  position:relative;
   transition:background .25s,border-color .25s;
 }
 .menu-btn:focus-visible { outline:none; box-shadow:var(--focus-ring); }
@@ -76,100 +81,74 @@ header {
 
 .header-actions { display:flex; gap:10px; align-items:center; }
 
-/* Subtle icon-only logout */
-.logout-icon-btn {
-  width:42px; height:42px;
-  border-radius:50%;
+/* Generic action buttons */
+.icon-btn, .icon-btn:visited, .clear-filters {
+  --btn-bg:var(--accent);
+  --btn-bg-hover:var(--accent-hover);
+  background:var(--btn-bg);
+  color:#fff; border:none; cursor:pointer;
+  padding:9px 14px; font-size:.75rem; font-weight:600;
+  border-radius:10px; display:inline-flex; gap:6px; align-items:center;
+  text-decoration:none; letter-spacing:.45px;
+  box-shadow:0 4px 14px -6px rgba(0,90,200,0.45), 0 2px 7px -4px rgba(0,70,160,0.4);
+  transition:background .25s, transform .35s, box-shadow .35s;
+  line-height:1;
+}
+.icon-btn svg, .clear-filters svg { width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:2; }
+.icon-btn:hover, .clear-filters:hover { transform:translateY(-2px); box-shadow:0 8px 24px -10px rgba(0,70,170,0.55), 0 4px 14px -6px rgba(0,70,160,0.4); }
+.icon-btn:active, .clear-filters:active { transform:translateY(0) scale(.95); }
+.icon-btn:focus-visible, .clear-filters:focus-visible { outline:none; box-shadow:var(--focus-ring); }
+
+.icon-btn.logout {
+  --btn-bg:transparent;
+  --btn-bg-hover:var(--card-hover-bg);
+  color:var(--text);
+  background:var(--btn-bg);
   border:1px solid var(--border);
+  box-shadow:none;
+  padding:9px 13px;
+}
+.icon-btn.logout:hover { background:var(--btn-bg-hover); box-shadow:none; }
+
+/* View toggle / Sort group */
+.view-toggle {
+  display:flex; gap:6px; align-items:center;
+  background:var(--container);
+  padding:4px;
+  border-radius:12px;
+  border:1px solid var(--border);
+}
+.segment-btn, .view-btn {
   background:transparent;
+  border:0;
+  cursor:pointer;
+  font-size:.66rem;
+  font-weight:600;
+  letter-spacing:.45px;
+  padding:7px 10px;
+  line-height:1;
+  border-radius:8px;
+  color:var(--label);
   display:inline-flex;
   align-items:center;
-  justify-content:center;
-  cursor:pointer;
-  color:var(--label);
-  transition:background .25s,color .25s,border-color .25s;
-}
-.logout-icon-btn svg {
-  width:22px; height:22px;
-  stroke:currentColor; stroke-width:1.8; fill:none;
-}
-.logout-icon-btn:hover {
-  background:var(--card-hover-bg);
-  color:var(--text);
-}
-.logout-icon-btn:focus-visible {
-  outline:none;
-  box-shadow:var(--focus-ring);
-}
-
-/* Floating Upload Button */
-.fab-upload {
-  position:fixed;
-  right:22px;
-  bottom:28px;
-  width:60px;
-  height:60px;
-  border-radius:20px;
-  background:linear-gradient(135deg,var(--accent),var(--accent-hover) 120%);
-  color:#fff;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  font-size:.58rem;
-  font-weight:600;
-  text-decoration:none;
-  letter-spacing:.5px;
   gap:4px;
-  box-shadow:0 10px 30px -10px rgba(0,80,180,0.55), 0 6px 16px -8px rgba(0,70,160,0.45);
-  z-index:400;
-  cursor:pointer;
-  transition:transform .45s var(--transition), box-shadow .45s var(--transition);
+  position:relative;
+  transition:color .25s, background .25s;
 }
-.fab-upload svg {
-  width:22px; height:22px; stroke:currentColor; stroke-width:2;
-  fill:none;
+.segment-btn svg, .view-btn svg { width:14px; height:14px; stroke:currentColor; stroke-width:1.7; fill:none; }
+.segment-btn[aria-pressed="true"],
+.view-btn[aria-pressed="true"] {
+  background:var(--accent);
+  color:#fff;
 }
-.fab-upload:hover {
-  transform:translateY(-4px);
-  box-shadow:0 16px 38px -14px rgba(0,80,180,0.65), 0 8px 20px -10px rgba(0,70,160,0.55);
-}
-.fab-upload:active { transform:translateY(-1px) scale(.94); }
-.fab-upload:focus-visible { outline:none; box-shadow:var(--focus-ring), 0 6px 20px -8px rgba(0,0,0,0.4); }
+.segment-btn:focus-visible,
+.view-btn:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
 
 main {
-  flex-grow:1;
-  display:grid;
-  grid-template-columns:290px 1fr;
-  gap:26px;
-  padding:20px 26px 50px;
-  max-width:1440px;
-  width:100%; margin:0 auto;
-  box-sizing:border-box;
+  flex-grow:1; display:grid; grid-template-columns:290px 1fr; gap:26px;
+  padding:24px 26px 46px;
+  max-width:1440px; width:100%; margin:0 auto; box-sizing:border-box;
   position:relative;
-}
-
-/* Page heading placed directly in grid next to sidebar */
-.page-heading {
-  grid-column:2;
-  margin:2px 0 10px;
-  font-size:1.95rem;
-  line-height:1.15;
-  letter-spacing:-.9px;
-  font-weight:700;
-  background:linear-gradient(90deg,var(--text),var(--label));
-  -webkit-background-clip:text;
-  color:transparent;
-  position:relative;
-}
-.page-heading::after{
-  content:"";
-  position:absolute;
-  left:0; bottom:-6px;
-  width:58px; height:3px;
-  border-radius:3px;
-  background:var(--accent);
-  opacity:.85;
 }
 
 /* Sidebar */
@@ -252,56 +231,26 @@ ul.category-list a:hover {
 }
 .drawer-overlay.visible { opacity:1; pointer-events:auto; }
 
-/* Content area (no big title inside now) */
+/* Content */
 section.content-area {
-  grid-column:2;
-  background:var(--container); border-radius:18px; padding:22px 24px 34px;
+  background:var(--container); border-radius:18px; padding:26px 24px 34px;
   box-shadow:var(--shadow); border:1px solid var(--border); min-height:0;
   display:flex; flex-direction:column;
   position:relative;
   overflow:hidden;
-  margin-top:4px;
+}
+section.content-area h1 {
+  margin:0 0 14px;
+  font-size:1.45rem;
+  letter-spacing:-.5px;
+  font-weight:700;
 }
 
-/* Toolbar */
-.toolbar {
-  display:flex;
-  flex-wrap:wrap;
-  gap:14px;
-  align-items:center;
-  margin:0 0 18px;
+/* Filters / bar */
+.filters-wrap {
+  display:flex; flex-wrap:wrap; gap:14px; align-items:center; margin:0 0 18px;
 }
-.view-toggle {
-  display:flex; gap:6px; align-items:center;
-  background:var(--container);
-  padding:4px;
-  border-radius:12px;
-  border:1px solid var(--border);
-}
-.view-btn {
-  background:transparent;
-  border:0;
-  cursor:pointer;
-  font-size:.66rem;
-  font-weight:600;
-  letter-spacing:.45px;
-  padding:7px 10px;
-  line-height:1;
-  border-radius:8px;
-  color:var(--label);
-  display:inline-flex;
-  align-items:center;
-  gap:4px;
-  transition:color .25s, background .25s;
-}
-.view-btn svg { width:14px; height:14px; stroke:currentColor; stroke-width:1.7; fill:none; }
-.view-btn[aria-pressed="true"] {
-  background:var(--accent);
-  color:#fff;
-}
-.view-btn:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
-
-.search-wrap { position:relative; flex:1 1 240px; min-width:200px; }
+.search-wrap { position:relative; flex:1 1 260px; min-width:240px; }
 .search-wrap input[type="search"] {
   width:100%; padding:11px 14px 11px 42px; font-size:.8rem;
   border:1px solid var(--border); border-radius:10px; background:transparent; color:inherit;
@@ -312,30 +261,47 @@ section.content-area {
   position:absolute; left:14px; top:50%; transform:translateY(-50%); width:18px; height:18px; opacity:.55;
 }
 
+/* Toolbar */
+.toolbar {
+  display:flex; justify-content:space-between; align-items:center; gap:16px;
+  padding:12px 16px; margin:0 0 18px;
+  background:var(--card-hover-bg); 
+  border:1px solid var(--border);
+  border-radius:12px;
+}
+
 .sort-control {
   display:flex; align-items:center; gap:8px;
 }
+
 .sort-label {
-  font-size:.62rem; font-weight:600; letter-spacing:.4px; color:var(--label); text-transform:uppercase;
+  font-size:.72rem; font-weight:600; color:var(--label);
+  letter-spacing:.4px;
 }
+
 .sort-select {
   background:var(--container); color:var(--text);
-  border:1px solid var(--border); border-radius:10px;
-  padding:7px 10px; font-size:.7rem; font-weight:600;
-  cursor:pointer; min-width:150px;
+  border:1px solid var(--border); border-radius:8px;
+  padding:6px 10px; font-size:.72rem; font-weight:500;
+  cursor:pointer; min-width:140px;
   transition:border-color .25s, background .25s;
-  letter-spacing:.3px;
 }
-.sort-select:focus { outline:2px solid var(--accent); outline-offset:2px; border-color:var(--accent); }
-.sort-select:hover { background:var(--card-hover-bg); }
+
+.sort-select:focus {
+  outline:2px solid var(--accent); outline-offset:2px;
+  border-color:var(--accent);
+}
+
+.sort-select:hover {
+  background:var(--card-hover-bg);
+}
 
 .results-summary {
   font-size:.62rem; letter-spacing:.45px; margin:4px 0 14px;
   color:var(--label);
-  min-height:1em;
 }
 
-/* Notes layout */
+/* Note grid/list */
 .notes-host { min-height:140px; position:relative; }
 .note-grid {
   --col-min:250px;
@@ -345,21 +311,47 @@ section.content-area {
 .note-list { display:flex; flex-direction:column; gap:12px; }
 body.view-list .note-card { border-left:4px solid var(--accent); padding-left:16px; }
 
-/* Card */
+/* Card with thumbnail */
 .note-card {
   background:transparent; border:1px solid var(--border); border-radius:14px;
-  padding:14px 16px 12px; display:flex; flex-direction:column;
-  gap:8px;
+  padding:14px 16px 12px; display:flex; flex-direction:row;
+  gap:14px;
   box-shadow:0 2px 6px rgba(0,0,0,0.04);
   transition:transform .18s, box-shadow .18s, background .3s;
   position:relative;
   min-height:120px;
 }
 .note-card:hover { transform:translateY(-2px); box-shadow:var(--shadow-strong); background:var(--card-hover-bg); }
-.note-card h3 {
-  margin:0; font-size:.9rem; line-height:1.25; word-break:break-word;
+.thumb {
+  width:56px; min-width:56px; height:56px;
+  border-radius:14px;
+  background:var(--thumb-bg);
+  color:var(--thumb-text);
+  font-weight:600;
+  font-size:.7rem;
+  line-height:1.15;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  gap:4px;
+  text-align:center;
+  padding:6px 4px;
+  letter-spacing:.5px;
+  box-shadow:inset 0 0 0 1px var(--border);
+  position:relative;
 }
-.note-card p { margin:0 0 6px; font-size:.68rem; line-height:1.35; color:var(--label); }
+.thumb span.ext { font-size:.6rem; opacity:.8; font-weight:600; text-transform:uppercase; letter-spacing:.7px; }
+.note-body {
+  display:flex; flex-direction:column; min-width:0; flex:1 1 auto;
+}
+.note-header {
+  display:flex; justify-content:space-between; align-items:flex-start; gap:12px;
+}
+.note-header h3 {
+  margin:0; font-size:.9rem; line-height:1.25; flex:1 1 auto; word-break:break-word;
+}
+.note-card p { margin:6px 0 10px; font-size:.68rem; line-height:1.35; color:var(--label); }
 
 .tags {
   display:flex; flex-wrap:wrap; gap:6px; margin-top:auto;
@@ -375,16 +367,16 @@ body.view-list .note-card { border-left:4px solid var(--accent); padding-left:16
 }
 
 .note-actions {
-  display:flex; flex-wrap:wrap; gap:10px; margin-top:4px;
+  display:flex; flex-wrap:wrap; gap:10px; margin-top:6px;
 }
-.note-actions a {
+.note-actions a.action-link {
   font-size:.58rem; font-weight:600; letter-spacing:.5px;
   background:transparent; border:1px solid var(--border);
   padding:6px 10px; border-radius:8px; cursor:pointer;
   color:var(--label); text-decoration:none; display:inline-flex; align-items:center; gap:4px;
   transition:background .2s,color .2s,border-color .25s;
 }
-.note-actions a:hover { background:var(--card-hover-bg); color:var(--text); }
+.note-actions a.action-link:hover { background:var(--card-hover-bg); color:var(--text); }
 
 footer {
   text-align:center; font-size:.65rem; padding:16px 10px 28px; opacity:.7;
@@ -415,31 +407,30 @@ body.dark .skeleton::after { background:linear-gradient(90deg, transparent, rgba
   main { grid-template-columns:1fr; }
   aside.sidebar { display:none; }
   .menu-btn { display:flex; }
-  .page-heading { grid-column:1; }
-  section.content-area { grid-column:1; }
 }
 @media (max-width:640px){
-  header { padding:8px 10px; }
-  .brand .logo { display:none; }
-  .brand { gap:6px; }
-  .site-title { font-size:1.25rem; }
-  .logout-icon-btn { width:40px; height:40px; }
-  main { padding:16px 16px 44px; gap:18px; }
-  .page-heading { font-size:1.75rem; margin-top:0; }
-  .toolbar { gap:10px; margin-bottom:16px; }
-  .search-wrap { order:3; flex:1 1 100%; min-width:100%; }
-  .view-toggle { order:1; }
-  .sort-control { order:2; }
-  .view-toggle { padding:4px 6px; }
-  .view-btn { padding:8px 10px; font-size:.58rem; }
-  .view-btn span.label-text { display:none; }
-  .sort-select { min-width:0; flex:1 1 auto; }
-  section.content-area { padding:20px 16px 30px; }
-  .note-card { padding:12px 12px 10px; }
-  .note-card h3 { font-size:.85rem; }
+  header { padding:8px 12px; }
+  .icon-btn, .icon-btn.logout { padding:8px 11px; font-size:.68rem; }
+  .view-toggle { padding:3px; }
+  .segment-btn, .view-btn { padding:6px 9px; font-size:.6rem; }
+  .toolbar { 
+    flex-direction:column; align-items:stretch; gap:12px; padding:12px;
+  }
+  .sort-control { 
+    justify-content:space-between; 
+  }
+  .sort-select {
+    flex:1; margin-left:8px;
+  }
+  section.content-area { padding:22px 18px 30px; }
+  .note-card { padding:12px 12px 10px; gap:12px; }
+  .thumb { width:50px; min-width:50px; height:50px; font-size:.6rem; }
+  .thumb span.ext { font-size:.55rem; }
+  .note-header h3 { font-size:.85rem; }
   .note-card p { font-size:.62rem; }
   .category-tag { font-size:.48rem; }
-  .fab-upload { width:56px; height:56px; bottom:22px; right:18px; font-size:.55rem; }
+  .search-wrap { min-width:0; flex:1 1 100%; }
+  .filters-wrap { gap:10px; }
 }
 @media (prefers-reduced-motion:reduce){
   * { animation:none !important; transition:none !important; }
@@ -465,23 +456,28 @@ body.dark .skeleton::after { background:linear-gradient(90deg, transparent, rgba
   </button>
   <div class="brand" aria-label="Notes-U">
     <div class="logo" aria-hidden="true">U</div>
-    <h1 class="site-title">Notes-U</h1>
+    <span class="site-title">Notes-U</span>
   </div>
   <div class="header-actions">
-    <button class="logout-icon-btn" id="logout-btn" aria-label="Log out">
-      <!-- Door with arrow (logout) icon -->
+    <a href="upload.html" class="icon-btn" id="upload-note-btn" aria-label="Upload Note">
+      <svg viewBox="0 0 24 24"><path d="M12 16V4m0 0l-5 5m5-5 5 5"/><path d="M4 20h16"/></svg>
+      <span>Upload</span>
+    </a>
+    <button class="icon-btn logout" id="logout-btn" aria-label="Log out">
       <svg viewBox="0 0 24 24">
-        <path d="M14 3H6.8A2.8 2.8 0 004 5.8v12.4A2.8 2.8 0 006.8 21H14" />
-        <path d="M10 12h9"/>
-        <path d="M16 8l3.9 4L16 16"/>
+        <path d="M15 3h-6a2 2 0 00-2 2v3"/>
+        <path d="M9 21h6a2 2 0 002-2v-3"/>
+        <path d="M16 12H8"/>
+        <path d="M11 9l-3 3 3 3"/>
       </svg>
+      <span>Log Out</span>
     </button>
   </div>
 </header>
 
 <main role="main">
-  <!-- Sidebar -->
-  <aside class="sidebar" aria-label="Subjects navigation" id="desktopSidebar">
+  <!-- Desktop Sidebar -->
+  <aside class="sidebar" aria-label="Filters" id="desktopSidebar">
     <h2>Subjects</h2>
     <div class="sidebar-scroll">
       <nav class="sidebar-nav" aria-label="Subject categories">
@@ -489,12 +485,12 @@ body.dark .skeleton::after { background:linear-gradient(90deg, transparent, rgba
           <li><a href="#" data-category="all" aria-current="true">All Notes</a></li>
           <li class="category-semester-separator">Year 1 Semester 1</li>
           <li><a href="#" data-category="AMCS1013">AMCS1013 - Problem Solving and Programming</a></li>
-            <li><a href="#" data-category="AMCS1113">AMCS1113 - Computer Architecture</a></li>
-            <li><a href="#" data-category="AMIT1303">AMIT1303 - Introduction to Interface Design</a></li>
-            <li><a href="#" data-category="AMMS1623">AMMS1623 - Calculus and Algebra</a></li>
-            <li><a href="#" data-category="AJEL1713">AJEL1713 - English for Tertiary Studies</a></li>
-            <li><a href="#" data-category="MPU2302">MPU-2302 - Integrity and Anti-Corruption</a></li>
-            <li><a href="#" data-category="MPU2123">MPU-2123 - Penghayatan Etika dan Peradaban</a></li>
+          <li><a href="#" data-category="AMCS1113">AMCS1113 - Computer Architecture</a></li>
+          <li><a href="#" data-category="AMIT1303">AMIT1303 - Introduction to Interface Design</a></li>
+          <li><a href="#" data-category="AMMS1623">AMMS1623 - Calculus and Algebra</a></li>
+          <li><a href="#" data-category="AJEL1713">AJEL1713 - English for Tertiary Studies</a></li>
+          <li><a href="#" data-category="MPU2302">MPU-2302 - Integrity and Anti-Corruption</a></li>
+          <li><a href="#" data-category="MPU2123">MPU-2123 - Penghayatan Etika dan Peradaban</a></li>
           <li class="category-semester-separator">Year 1 Semester 2</li>
           <li><a href="#" data-category="AMCS1043">AMCS1043 - Database Development and Applications</a></li>
           <li><a href="#" data-category="AMCS1034">AMCS1034 - Software Development Fundamentals</a></li>
@@ -523,55 +519,56 @@ body.dark .skeleton::after { background:linear-gradient(90deg, transparent, rgba
     </div>
   </aside>
 
-  <!-- Heading sits directly in grid next to sidebar -->
-  <h2 class="page-heading" id="notesHeading">Your Notes & Resources</h2>
-
   <!-- Content -->
   <section class="content-area" aria-labelledby="notesHeading">
-    <div class="toolbar" role="toolbar" aria-label="Search, view and sort controls">
-      <div class="view-toggle" role="group" aria-label="View mode">
-        <button id="gridViewBtn" class="view-btn" aria-pressed="true">
-          <svg viewBox="0 0 24 24"><path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z"/></svg>
-          <span class="label-text">Grid</span>
-        </button>
-        <button id="listViewBtn" class="view-btn" aria-pressed="false">
-          <svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
-          <span class="label-text">List</span>
-        </button>
-      </div>
+    <h1 id="notesHeading">Your Notes & Resources</h1>
 
-      <div class="sort-control">
-        <label for="sortSelect" class="sort-label">Sort</label>
-        <select id="sortSelect" class="sort-select" aria-label="Sort notes">
-          <option value="newest" selected>Newest first</option>
-            <option value="oldest">Oldest first</option>
-            <option value="title">A–Z Title</option>
-        </select>
-      </div>
-
+    <div class="filters-wrap">
       <div class="search-wrap">
-        <svg viewBox="0 0 24 24"><path d="M11 4a7 7 0 015.56 11.37l4.04 4.04-1.42 1.42-4.04-4.04A7 7 0 1111 4z" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+        <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.6">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.8-4.8m0 0A7.2 7.2 0 105.4 5.4a7.2 7.2 0 0010.8 10.8z"/>
+        </svg>
         <input id="searchInput" type="search" placeholder="Search title or description..." autocomplete="off" aria-label="Search notes">
       </div>
+      <button id="clearFiltersBtn" class="clear-filters" type="button" aria-label="Clear filters">
+        <svg viewBox="0 0 24 24"><path d="M6 6l12 12M6 18L18 6"/></svg>
+        Clear
+      </button>
     </div>
 
     <div id="resultsSummary" class="results-summary" aria-live="polite"></div>
 
-    <div class="notes-host">
-      <div id="notesContainer" class="note-grid" aria-live="polite"></div>
+    <!-- Toolbar with view and sort controls -->
+    <div class="toolbar" role="toolbar" aria-label="View and sort controls">
+      <div class="view-toggle" role="group" aria-label="View mode">
+        <button id="gridViewBtn" class="view-btn" aria-pressed="true">
+          <svg viewBox="0 0 24 24"><path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z"/></svg>
+          Grid
+        </button>
+        <button id="listViewBtn" class="view-btn" aria-pressed="false">
+          <svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
+          List
+        </button>
+      </div>
+      <div class="sort-control">
+        <label for="sortSelect" class="sort-label">Sort by:</label>
+        <select id="sortSelect" class="sort-select" aria-label="Sort notes by">
+          <option value="newest" selected>Newest first</option>
+          <option value="oldest">Oldest first</option>
+          <option value="title">A–Z (Title)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="notes-host" id="notesHost">
+      <!-- grid/list container inserted dynamically -->
     </div>
 
     <div id="actionAnnouncer" class="visually-hidden" aria-live="polite"></div>
   </section>
 </main>
 
-<footer role="contentinfo">&copy; <span id="year"></span> Notes-U. All rights reserved.</footer>
-
-<!-- Floating Upload Button -->
-<a href="upload.html" class="fab-upload" id="fabUpload" aria-label="Upload Note">
-  <svg viewBox="0 0 24 24"><path d="M12 19V5m0 0l-5 5m5-5 5 5"/><path d="M4 19h16"/></svg>
-  Upload
-</a>
+<footer>&copy; 2025 Notes-U. All rights reserved.</footer>
 
 <!-- Drawer (Mobile Sidebar) -->
 <div id="drawerOverlay" class="drawer-overlay" aria-hidden="true"></div>
@@ -583,57 +580,256 @@ body.dark .skeleton::after { background:linear-gradient(90deg, transparent, rgba
     </button>
   </div>
   <div class="sidebar-scroll">
+    <!-- We'll clone original list to keep in sync -->
     <ul class="category-list" id="mobileCategoryList"></ul>
   </div>
 </aside>
 
-<script type="module">
-import { fetchNotes, getUser, logout } from '../js/api.js';
+<!-- Dialog placeholders (if you add edit/delete later) -->
+<dialog id="editDialog" style="display:none;"></dialog>
+<dialog id="deleteDialog" style="display:none;"></dialog>
 
-/* Theme (inherit saved) */
+<script type="module">
+/* Existing Firebase helpers assumed */
+import { onAuth, logout, fetchMyNotes } from './firebase-init.js';
+
+/* THEME INIT (reuse from other pages) */
 (function initTheme(){
   const stored = localStorage.getItem('theme');
-  if(stored){
-    document.body.classList.add(stored);
-  } else {
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    document.body.classList.add(prefersDark?'dark':'light');
+  function apply(t){
+    document.body.classList.remove('light','dark');
+    document.body.classList.add(t);
+    localStorage.setItem('theme', t);
   }
+  if(stored) apply(stored);
+  else apply(window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e=>{
+    if(!localStorage.getItem('theme')) apply(e.matches?'dark':'light');
+  });
+  window.addEventListener('storage', e=>{
+    if(e.key==='theme' && e.newValue) apply(e.newValue);
+  });
 })();
 
-/* Elements */
-const logoutButton       = document.getElementById('logout-btn');
-const categoryList       = document.getElementById('categoryList');
+/* ELEMENTS */
+const logoutButton    = document.getElementById('logout-btn');
+const categoryList    = document.getElementById('categoryList');
 const mobileCategoryList = document.getElementById('mobileCategoryList');
-const searchInput        = document.getElementById('searchInput');
-const resultsSummary     = document.getElementById('resultsSummary');
-const notesContainer     = document.getElementById('notesContainer');
-const gridViewBtn        = document.getElementById('gridViewBtn');
-const listViewBtn        = document.getElementById('listViewBtn');
-const menuBtn            = document.getElementById('menuBtn');
-const drawer             = document.getElementById('sidebarDrawer');
-const drawerOverlay      = document.getElementById('drawerOverlay');
-const closeDrawerBtn     = document.getElementById('closeDrawerBtn');
-const sortSelect         = document.getElementById('sortSelect');
+const searchInput     = document.getElementById('searchInput');
+const clearFiltersBtn = document.getElementById('clearFiltersBtn');
+const resultsSummary  = document.getElementById('resultsSummary');
+const notesHost       = document.getElementById('notesHost');
+const gridViewBtn     = document.getElementById('gridViewBtn');
+const listViewBtn     = document.getElementById('listViewBtn');
+const sortButtons     = Array.from(document.querySelectorAll('.sort-btn'));
+const sortSelect      = document.getElementById('sortSelect');
+const menuBtn         = document.getElementById('menuBtn');
+const drawer          = document.getElementById('sidebarDrawer');
+const drawerOverlay   = document.getElementById('drawerOverlay');
+const closeDrawerBtn  = document.getElementById('closeDrawerBtn');
 
-document.getElementById('year').textContent = new Date().getFullYear();
-
-/* Auth guard */
-(async function ensureAuth(){
-  try { await getUser(); }
-  catch { location.replace('auth.html?mode=login'); }
-})();
-
-/* State */
 let allNotesData = [];
 let activeCategory = 'all';
 let activeSort = 'newest';
-let currentView = 'grid';
 
-/* Clone categories for mobile */
+/* Clone category list for mobile */
 function syncMobileCategories(){
   mobileCategoryList.innerHTML = categoryList.innerHTML;
 }
 syncMobileCategories();
 
-/* Drawer
+/* Drawer logic */
+function openDrawer(){
+  drawer.classList.add('open');
+  drawer.setAttribute('aria-hidden','false');
+  drawerOverlay.classList.add('visible');
+  drawerOverlay.setAttribute('aria-hidden','false');
+  // Focus first link
+  const first = drawer.querySelector('a');
+  if(first) first.focus();
+}
+function closeDrawer(){
+  drawer.classList.remove('open');
+  drawer.setAttribute('aria-hidden','true');
+  drawerOverlay.classList.remove('visible');
+  drawerOverlay.setAttribute('aria-hidden','true');
+  menuBtn.focus();
+}
+menuBtn.addEventListener('click', openDrawer);
+closeDrawerBtn.addEventListener('click', closeDrawer);
+drawerOverlay.addEventListener('click', closeDrawer);
+document.addEventListener('keydown', e=>{
+  if(e.key === 'Escape' && drawer.classList.contains('open')) closeDrawer();
+});
+
+/* Logout */
+logoutButton?.addEventListener('click', async () => {
+  try {
+    await logout();
+    location.href='auth.html?mode=login';
+  } catch {
+    alert('Failed to log out.');
+  }
+});
+
+/* Load */
+onAuth(user=>{
+  if(!user){
+    location.replace('auth.html?mode=login');
+    return;
+  }
+  loadNotes();
+});
+
+/* Fetch notes */
+async function loadNotes(){
+  notesHost.innerHTML = skeletons(6);
+  try {
+    allNotesData = await fetchMyNotes();
+    renderFiltered();
+  } catch(err){
+    notesHost.innerHTML = `<div class="note-list"><div class="note-card">
+      <div class="note-body">
+        <div class="note-header"><h3>Error Loading Notes</h3></div>
+        <p>${escapeHtml(err.message||'There was a problem loading your notes.')}</p>
+        <div class="note-actions">
+          <a class="action-link" href="#" onclick="location.reload();return false;">Reload Page</a>
+        </div>
+      </div></div></div>`;
+  }
+}
+
+/* Skeleton */
+function skeletons(n){
+  return `<div class="note-grid">${Array.from({length:n}).map(()=>'<div class="skeleton"></div>').join('')}</div>`;
+}
+
+/* Rendering */
+function escapeHtml(str=''){
+  return str.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function fileExtToLabel(ext){
+  if(!ext) return 'FILE';
+  if(ext.length>5) return ext.slice(0,5).toUpperCase();
+  return ext.toUpperCase();
+}
+function sortNotes(list){
+  switch(activeSort){
+    case 'oldest': return list.slice().sort((a,b)=> (a.createdAt||0)-(b.createdAt||0));
+    case 'title': return list.slice().sort((a,b)=> (a.title||'').localeCompare(b.title||'', undefined, { sensitivity:'base' }));
+    case 'newest':
+    default: return list.slice().sort((a,b)=> (b.createdAt||0)-(a.createdAt||0));
+  }
+}
+function renderNotes(list){
+  const isList = document.body.classList.contains('view-list');
+  const wrapperClass = isList ? 'note-list' : 'note-grid';
+  const cards = list.map(note=>{
+    const typeDisplay = (note.notes_type||'note').replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
+    const ext = fileExtToLabel(note.file_ext||note.file_url?.split('.').pop()||'');
+    const initials = subjectInitials(note.subject_code);
+    return `<div class="note-card" data-category="${escapeHtml(note.subject_code)}">
+      <div class="thumb" aria-hidden="true">
+        <div>${escapeHtml(initials)}</div>
+        <span class="ext">${escapeHtml(ext)}</span>
+      </div>
+      <div class="note-body">
+        <div class="note-header">
+          <h3>${escapeHtml(note.title||'Untitled')}</h3>
+        </div>
+        <p>${escapeHtml(note.description || 'No description provided.')}</p>
+        <div class="tags">
+          <span class="category-tag">${escapeHtml(note.academic_year.replace('year','Year '))}</span>
+          <span class="category-tag">${escapeHtml(note.semester.replace('semester','Semester '))}</span>
+          <span class="category-tag">${escapeHtml(note.subject_code)}</span>
+          <span class="category-tag">${escapeHtml(typeDisplay)}</span>
+        </div>
+        <div class="note-actions">
+          <a class="action-link" href="${note.file_url}" target="_blank" rel="noopener">View / Download</a>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+  notesHost.innerHTML = `<div class="${wrapperClass}">${cards}</div>`;
+}
+function subjectInitials(code=''){
+  const c = code.replace(/[^A-Z0-9]/gi,'').toUpperCase();
+  if(c.length<=4) return c;
+  return c.slice(0,4);
+}
+
+function renderFiltered(){
+  const term = (searchInput.value || '').toLowerCase();
+  const filtered = allNotesData.filter(n => {
+    const matchCategory = activeCategory === 'all' || n.subject_code === activeCategory;
+    const hay = `${n.title||''} ${n.description||''} ${n.subject_code||''}`.toLowerCase();
+    const matchSearch = !term || hay.includes(term);
+    return matchCategory && matchSearch;
+  });
+  const sorted = sortNotes(filtered);
+  renderNotes(sorted);
+  updateSummary(sorted.length, filtered.length);
+}
+
+function updateSummary(count){
+  resultsSummary.textContent = `${count} note${count!==1?'s':''} shown`;
+}
+
+/* Category interactions (desktop + mobile) */
+function bindCategoryClicks(root){
+  root.querySelectorAll('a[data-category]').forEach(link=>{
+    link.addEventListener('click', e=>{
+      e.preventDefault();
+      // Remove aria-current across both lists
+      document.querySelectorAll('ul.category-list a[aria-current="true"]').forEach(a=>a.removeAttribute('aria-current'));
+      const cat = link.dataset.category || 'all';
+      activeCategory = cat;
+      // Mark matching links in both lists
+      document.querySelectorAll(`a[data-category="${CSS.escape(cat)}"]`).forEach(a=>a.setAttribute('aria-current','true'));
+      if(cat==='all'){
+        document.querySelectorAll('a[data-category="all"]').forEach(a=>a.setAttribute('aria-current','true'));
+      }
+      renderFiltered();
+      if(drawer.classList.contains('open')) closeDrawer();
+    }, { passive:false });
+  });
+}
+bindCategoryClicks(categoryList);
+bindCategoryClicks(mobileCategoryList);
+
+/* Search */
+searchInput.addEventListener('input', renderFiltered);
+
+/* Clear filters */
+clearFiltersBtn.addEventListener('click', ()=>{
+  searchInput.value = '';
+  activeCategory = 'all';
+  document.querySelectorAll('ul.category-list a[aria-current="true"]').forEach(a=>a.removeAttribute('aria-current'));
+  document.querySelectorAll('a[data-category="all"]').forEach(a=>a.setAttribute('aria-current','true'));
+  renderFiltered();
+});
+
+/* View Mode */
+function setView(mode){
+  const isGrid = mode === 'grid';
+  document.body.classList.toggle('view-grid', isGrid);
+  document.body.classList.toggle('view-list', !isGrid);
+  gridViewBtn.setAttribute('aria-pressed', isGrid ? 'true':'false');
+  listViewBtn.setAttribute('aria-pressed', !isGrid ? 'true':'false');
+  renderFiltered();
+}
+gridViewBtn.addEventListener('click', ()=> setView('grid'));
+listViewBtn.addEventListener('click', ()=> setView('list'));
+
+/* Sorting dropdown */
+sortSelect?.addEventListener('change', ()=>{
+  activeSort = sortSelect.value;
+  renderFiltered();
+});
+
+/* Initial placeholder */
+notesHost.innerHTML = skeletons(6);
+
+</script>
+</body>
+</html>
