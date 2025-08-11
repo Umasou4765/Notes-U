@@ -114,7 +114,7 @@ header {
 .fab-upload {
   position:fixed;
   right:22px;
-  bottom:28px;
+  bottom:50px; /* 位置抬高 */
   width:60px;
   height:60px;
   border-radius:20px;
@@ -145,8 +145,12 @@ header {
 .fab-upload:active { transform:translateY(-1px) scale(.94); }
 .fab-upload:focus-visible { outline:none; box-shadow:var(--focus-ring), 0 6px 20px -8px rgba(0,0,0,0.4); }
 
+/* 桌面布局：侧边栏 + 内容区域 */
 main {
   flex-grow:1;
+  display:grid;
+  grid-template-columns:290px 1fr;
+  gap:26px;
   padding:20px 26px 50px;
   max-width:1440px;
   width:100%; margin:0 auto;
@@ -154,11 +158,18 @@ main {
   position:relative;
 }
 
-aside.sidebar {
-  display: none;
-}
-.page-heading, section.content-area {
+/* Page heading placed directly in grid next to sidebar */
+.page-heading {
+  grid-column:2;
   margin:2px 0 10px;
+  font-size:1.95rem;
+  line-height:1.15;
+  letter-spacing:-.9px;
+  font-weight:700;
+  background:linear-gradient(90deg,var(--text),var(--label));
+  -webkit-background-clip:text;
+  color:transparent;
+  position:relative;
 }
 .page-heading::after{
   content:"";
@@ -168,6 +179,49 @@ aside.sidebar {
   border-radius:3px;
   background:var(--accent);
   opacity:.85;
+}
+
+/* Sidebar */
+aside.sidebar {
+  background:var(--container); border-radius:16px; padding:20px 18px 22px;
+  box-shadow:var(--shadow); border:1px solid var(--border); min-height:0;
+  display:flex; flex-direction:column;
+  position:relative;
+  max-height:calc(100vh - 120px);
+  overflow:hidden;
+  transition:transform .4s var(--transition), opacity .35s var(--transition);
+}
+.sidebar-scroll {
+  overflow-y:auto; margin-top:4px; padding-right:4px; scrollbar-width:thin;
+}
+.sidebar-scroll::-webkit-scrollbar { width:8px; }
+.sidebar-scroll::-webkit-scrollbar-track { background:transparent; }
+.sidebar-scroll::-webkit-scrollbar-thumb {
+  background:var(--card-hover-bg);
+  border-radius:20px;
+}
+aside.sidebar h2 {
+  margin:0 0 10px;
+  font-size:.75rem; letter-spacing:.8px; font-weight:700;
+  text-transform:uppercase; opacity:.7;
+}
+
+nav.sidebar-nav { flex:1 1 auto; }
+ul.category-list { list-style:none; margin:0; padding:0; }
+ul.category-list li { margin-bottom:2px; }
+ul.category-list a {
+  display:block; padding:9px 11px; text-decoration:none;
+  color:var(--label); border-radius:8px; font-size:.72rem;
+  transition:background .18s,color .18s;
+  font-weight:500;
+}
+ul.category-list a[aria-current="true"],
+ul.category-list a:hover {
+  background:var(--card-hover-bg); color:var(--text);
+}
+.category-semester-separator {
+  font-size:.55rem; font-weight:700; letter-spacing:.85px;
+  text-transform:uppercase; margin:12px 0 4px; opacity:.55; padding-left:4px;
 }
 
 /* Off-canvas mobile sidebar */
@@ -207,8 +261,9 @@ aside.sidebar {
 }
 .drawer-overlay.visible { opacity:1; pointer-events:auto; }
 
-/* Content area */
+/* Content area (no big title inside now) */
 section.content-area {
+  grid-column:2;
   background:var(--container); border-radius:18px; padding:22px 24px 34px;
   box-shadow:var(--shadow); border:1px solid var(--border); min-height:0;
   display:flex; flex-direction:column;
@@ -283,22 +338,7 @@ section.content-area {
 .sort-select:focus { outline:2px solid var(--accent); outline-offset:2px; border-color:var(--accent); }
 .sort-select:hover { background:var(--card-hover-bg); }
 
-.clear-filters {
-  --btn-bg:var(--accent);
-  --btn-bg-hover:var(--accent-hover);
-  background:var(--btn-bg);
-  color:#fff; border:none; cursor:pointer;
-  padding:9px 14px; font-size:.75rem; font-weight:600;
-  border-radius:10px; display:inline-flex; gap:6px; align-items:center;
-  text-decoration:none; letter-spacing:.45px;
-  box-shadow:0 4px 14px -6px rgba(0,90,200,0.45), 0 2px 7px -4px rgba(0,70,160,0.4);
-  transition:background .25s, transform .35s, box-shadow .35s;
-  line-height:1;
-}
-.clear-filters svg { width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:2; }
-.clear-filters:hover { transform:translateY(-2px); box-shadow:0 8px 24px -10px rgba(0,70,170,0.55), 0 4px 14px -6px rgba(0,70,160,0.4); }
-.clear-filters:active { transform:translateY(0) scale(.95); }
-.clear-filters:focus-visible { outline:none; box-shadow:var(--focus-ring); }
+/* Removed clear-filters button */
 
 .results-summary {
   font-size:.62rem; letter-spacing:.45px; margin:4px 0 14px;
@@ -406,28 +446,14 @@ body.dark .skeleton::after { background:linear-gradient(90deg, transparent, rgba
 
 /* Responsive */
 @media (max-width:1080px){
-
+  main { grid-template-columns:260px 1fr; }
 }
 @media (max-width:930px){
-  main {
-    display: block; 
-    padding:16px 16px 44px;
-  }
-  aside.sidebar {
-    display:none;
-  }
-  .menu-btn {
-    display:flex;
-  }
-  .page-heading {
-  
-    font-size:1.75rem;
-    margin-top:0;
-  }
-  section.content-area {
-  
-    padding:20px 16px 30px;
-  }
+  main { grid-template-columns:1fr; }
+  aside.sidebar { display:none; }
+  .menu-btn { display:flex; }
+  .page-heading { grid-column:1; }
+  section.content-area { grid-column:1; }
 }
 @media (max-width:640px){
   header { padding:8px 10px; }
@@ -563,11 +589,7 @@ body.dark .skeleton::after { background:linear-gradient(90deg, transparent, rgba
         <svg viewBox="0 0 24 24"><path d="M11 4a7 7 0 015.56 11.37l4.04 4.04-1.42 1.42-4.04-4.04A7 7 0 1111 4z" stroke="currentColor" stroke-width="2" fill="none"/></svg>
         <input id="searchInput" type="search" placeholder="Search title or description..." autocomplete="off" aria-label="Search notes">
       </div>
-      <button id="clearFiltersBtn" class="clear-filters" type="button" aria-label="Clear filters">
-        <svg viewBox="0 0 24 24"><path d="M6 6l12 12M6 18L18 6"/></svg>
-        Clear
-      </button>
-    </div>
+      </div>
 
     <div id="resultsSummary" class="results-summary" aria-live="polite"></div>
 
@@ -811,15 +833,6 @@ bindCategoryClicks(mobileCategoryList);
 
 /* Search */
 searchInput.addEventListener('input', renderFiltered);
-
-/* Clear filters */
-clearFiltersBtn.addEventListener('click', ()=>{
-  searchInput.value = '';
-  activeCategory = 'all';
-  document.querySelectorAll('ul.category-list a[aria-current="true"]').forEach(a=>a.removeAttribute('aria-current'));
-  document.querySelectorAll('a[data-category="all"]').forEach(a=>a.setAttribute('aria-current','true'));
-  renderFiltered();
-});
 
 /* View Mode */
 function setView(mode){
