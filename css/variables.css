@@ -1,115 +1,29 @@
-/* variables.css - Global design tokens & theming */
-
 :root {
-  --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
-
-  /* Color Palette Base */
-  --blue-50:#e8f1ff;
-  --blue-100:#d3e6ff;
-  --blue-200:#aacfff;
-  --blue-300:#7fb6ff;
-  --blue-400:#4d98ff;
-  --blue-500:#0d6efd;
-  --blue-600:#0b5ed7;
-  --blue-700:#0a53c5;
-  --blue-800:#093d8d;
-  --blue-900:#072d66;
-
-  --gray-50:#f7f9fb;
-  --gray-100:#eff2f6;
-  --gray-200:#e1e6ed;
-  --gray-300:#cfd6df;
-  --gray-400:#b3bcc7;
-  --gray-500:#88939f;
-  --gray-600:#5f6974;
-  --gray-700:#3f4650;
-  --gray-800:#252b32;
-  --gray-900:#14181c;
-
-  --green-500:#18a05d;
-  --red-500:#d94141;
-  --orange-500:#e78a1b;
-
-  /* Theme Tokens (Light default) */
-  --color-bg: var(--gray-50);
-  --color-bg-alt: #ffffff;
-  --color-surface: #ffffff;
-  --color-surface-alt: #f2f6fb;
-  --color-border: rgba(25,33,45,0.16);
-  --color-border-strong: rgba(25,33,45,0.28);
-  --color-text: var(--gray-800);
-  --color-text-soft: var(--gray-600);
-  --color-text-faint: var(--gray-500);
-  --color-accent: var(--blue-500);
-  --color-accent-hover: var(--blue-600);
-  --color-danger: var(--red-500);
-  --color-success: var(--green-500);
-  --color-warn: var(--orange-500);
-  --color-info: var(--blue-500);
-  --color-focus-ring: 0 0 0 4px rgba(13,110,253,0.30);
-
-  /* Elevation / Shadows */
-  --shadow-sm: 0 2px 5px -1px rgba(0,0,0,0.07), 0 1px 2px rgba(0,0,0,0.08);
-  --shadow: 0 8px 28px -10px rgba(0,30,80,0.18), 0 4px 16px -6px rgba(0,40,100,0.12);
-  --shadow-lg: 0 20px 48px -18px rgba(0,30,80,0.30), 0 10px 30px -12px rgba(0,40,100,0.18);
-
-  /* Radii */
-  --radius-xs:4px;
-  --radius-sm:8px;
-  --radius:14px;
-  --radius-md:20px;
-  --radius-lg:28px;
-
-  /* Transitions & Motion */
-  --ease: cubic-bezier(.4,0,.2,1);
-  --transition-fast: .18s var(--ease);
-  --transition: .45s var(--ease);
-  --transition-slow: .7s var(--ease);
-
-  /* Layout scales */
-  --space-1:4px;
-  --space-2:8px;
-  --space-3:12px;
-  --space-4:16px;
-  --space-5:20px;
-  --space-6:24px;
-  --space-8:32px;
-  --space-10:40px;
-  --space-12:48px;
-
-  /* Misc */
-  --focus-outline: 2px solid var(--color-accent);
-  --backdrop-blur: blur(10px) saturate(140%);
-  --gradient-accent: linear-gradient(135deg,var(--color-accent),var(--color-accent-hover) 110%);
-  --tag-bg: rgba(0,0,0,0.05);
-  --tag-bg-alt: rgba(0,0,0,0.08);
-}
-
-body.dark {
-  --color-bg: #0f1217;
-  --color-bg-alt: #161b22;
-  --color-surface: #161b22;
-  --color-surface-alt: #1e2733;
-  --color-border: rgba(255,255,255,0.10);
-  --color-border-strong: rgba(255,255,255,0.20);
-  --color-text: #e6e9ef;
-  --color-text-soft: #9aa4b4;
-  --color-text-faint: #7d8895;
-  --color-accent: #5da9ff;
-  --color-accent-hover: #4595f2;
-  --color-focus-ring: 0 0 0 4px rgba(90,170,255,0.35);
-  --tag-bg: rgba(255,255,255,0.10);
-  --tag-bg-alt: rgba(255,255,255,0.15);
-  --shadow-sm: 0 2px 6px rgba(0,0,0,0.55);
-  --shadow: 0 14px 46px -14px rgba(0,0,0,0.75), 0 6px 26px -12px rgba(0,0,0,0.55);
-  --shadow-lg: 0 24px 70px -20px rgba(0,0,0,0.85), 0 12px 42px -14px rgba(0,0,0,0.70);
-}
-
-/* Reduced motion */
-@media (prefers-reduced-motion: reduce) {
-  :root {
-    --transition-fast: 0s;
-    --transition: 0s;
-    --transition-slow: 0s;
-  }
+  --color-bg-light: #f8f8f8;
+  --color-text-primary-light: #333;
+  --color-text-secondary-light: #666;
+  --color-border-light: rgba(55,53,47,0.1);
+  --color-input-bg-light: #fff;
+  --color-input-hover-light: rgba(55,53,47,0.03);
+  --color-input-border-hover-light: rgba(55,53,47,0.2);
+  --color-separator-line-light: #ddd;
+  --color-link-light: #007bff;
+  --color-link-hover-light: #0056b3;
+  --color-card-bg-light: #fff;
+  --color-shadow-light: rgba(0,0,0,0.05);
+  --color-accent-blue: #007bff;
+  --color-accent-blue-hover: #0056b3;
+  --color-icon-light: #333;
+  --color-bg-dark: #121212;
+  --color-text-primary-dark: rgba(255,255,255,0.9);
+  --color-text-secondary-dark: rgba(255,255,255,0.6);
+  --color-border-dark: rgba(255,255,255,0.1);
+  --color-input-bg-dark: #252525;
+  --color-input-hover-dark: #333;
+  --color-input-border-hover-dark: rgba(255,255,255,0.2);
+  --color-separator-line-dark: #444;
+  --color-link-dark: #64b5f6;
+  --color-link-hover-dark: #90caf9;
+  --color-card-bg-dark: #1a1a1a;
+  --color-shadow-dark: rgba(255,255,255,0.02);
 }
