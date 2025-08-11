@@ -51,7 +51,7 @@ body {
 header {
   display:flex; align-items:center; justify-content:space-between;
   padding:10px 18px 10px 14px; background:var(--container);
-  box-shadow:var(--shadow); position:sticky; top:0; z-index:60;
+  box-shadow:var(--shadow); position:sticky; top:0; z-index:80;
   border-bottom:1px solid var(--border);
   gap:12px;
 }
@@ -61,7 +61,11 @@ header {
   display:flex; align-items:center; justify-content:center;
   width:42px; height:42px; border:2px solid currentColor; border-radius:12px;
 }
-.site-title { font-size:1.15rem; font-weight:700; letter-spacing:-.5px; }
+.site-title {
+  font-size:1.4rem;
+  font-weight:700; letter-spacing:-.6px;
+  margin:0;
+}
 
 /* Mobile menu button */
 .menu-btn {
@@ -72,7 +76,6 @@ header {
   align-items:center; justify-content:center;
   cursor:pointer;
   color:var(--text);
-  position:relative;
   transition:background .25s,border-color .25s;
 }
 .menu-btn:focus-visible { outline:none; box-shadow:var(--focus-ring); }
@@ -81,74 +84,100 @@ header {
 
 .header-actions { display:flex; gap:10px; align-items:center; }
 
-/* Generic action buttons */
-.icon-btn, .icon-btn:visited, .clear-filters {
-  --btn-bg:var(--accent);
-  --btn-bg-hover:var(--accent-hover);
-  background:var(--btn-bg);
-  color:#fff; border:none; cursor:pointer;
-  padding:9px 14px; font-size:.75rem; font-weight:600;
-  border-radius:10px; display:inline-flex; gap:6px; align-items:center;
-  text-decoration:none; letter-spacing:.45px;
-  box-shadow:0 4px 14px -6px rgba(0,90,200,0.45), 0 2px 7px -4px rgba(0,70,160,0.4);
-  transition:background .25s, transform .35s, box-shadow .35s;
-  line-height:1;
-}
-.icon-btn svg, .clear-filters svg { width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:2; }
-.icon-btn:hover, .clear-filters:hover { transform:translateY(-2px); box-shadow:0 8px 24px -10px rgba(0,70,170,0.55), 0 4px 14px -6px rgba(0,70,160,0.4); }
-.icon-btn:active, .clear-filters:active { transform:translateY(0) scale(.95); }
-.icon-btn:focus-visible, .clear-filters:focus-visible { outline:none; box-shadow:var(--focus-ring); }
-
-.icon-btn.logout {
-  --btn-bg:transparent;
-  --btn-bg-hover:var(--card-hover-bg);
-  color:var(--text);
-  background:var(--btn-bg);
+/* Subtle icon-only logout */
+.logout-icon-btn {
+  width:42px; height:42px;
+  border-radius:50%;
   border:1px solid var(--border);
-  box-shadow:none;
-  padding:9px 13px;
-}
-.icon-btn.logout:hover { background:var(--btn-bg-hover); box-shadow:none; }
-
-/* View toggle / Sort group */
-.view-toggle {
-  display:flex; gap:6px; align-items:center;
-  background:var(--container);
-  padding:4px;
-  border-radius:12px;
-  border:1px solid var(--border);
-}
-.segment-btn, .view-btn {
   background:transparent;
-  border:0;
-  cursor:pointer;
-  font-size:.66rem;
-  font-weight:600;
-  letter-spacing:.45px;
-  padding:7px 10px;
-  line-height:1;
-  border-radius:8px;
-  color:var(--label);
   display:inline-flex;
   align-items:center;
-  gap:4px;
-  position:relative;
-  transition:color .25s, background .25s;
+  justify-content:center;
+  cursor:pointer;
+  color:var(--label);
+  transition:background .25s,color .25s,border-color .25s;
 }
-.segment-btn svg, .view-btn svg { width:14px; height:14px; stroke:currentColor; stroke-width:1.7; fill:none; }
-.segment-btn[aria-pressed="true"],
-.view-btn[aria-pressed="true"] {
-  background:var(--accent);
+.logout-icon-btn svg {
+  width:22px; height:22px;
+  stroke:currentColor; stroke-width:1.8; fill:none;
+}
+.logout-icon-btn:hover {
+  background:var(--card-hover-bg);
+  color:var(--text);
+}
+.logout-icon-btn:focus-visible {
+  outline:none;
+  box-shadow:var(--focus-ring);
+}
+
+/* Floating Upload Button */
+.fab-upload {
+  position:fixed;
+  right:22px;
+  bottom:28px;
+  width:60px;
+  height:60px;
+  border-radius:20px;
+  background:linear-gradient(135deg,var(--accent),var(--accent-hover) 120%);
   color:#fff;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  font-size:.58rem;
+  font-weight:600;
+  text-decoration:none;
+  letter-spacing:.5px;
+  gap:4px;
+  box-shadow:0 10px 30px -10px rgba(0,80,180,0.55), 0 6px 16px -8px rgba(0,70,160,0.45);
+  z-index:400;
+  cursor:pointer;
+  transition:transform .45s var(--transition), box-shadow .45s var(--transition);
 }
-.segment-btn:focus-visible,
-.view-btn:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+.fab-upload svg {
+  width:22px; height:22px; stroke:currentColor; stroke-width:2;
+  fill:none;
+}
+.fab-upload:hover {
+  transform:translateY(-4px);
+  box-shadow:0 16px 38px -14px rgba(0,80,180,0.65), 0 8px 20px -10px rgba(0,70,160,0.55);
+}
+.fab-upload:active { transform:translateY(-1px) scale(.94); }
+.fab-upload:focus-visible { outline:none; box-shadow:var(--focus-ring), 0 6px 20px -8px rgba(0,0,0,0.4); }
 
 main {
-  flex-grow:1; display:grid; grid-template-columns:290px 1fr; gap:26px;
-  padding:24px 26px 46px;
-  max-width:1440px; width:100%; margin:0 auto; box-sizing:border-box;
+  flex-grow:1;
+  display:grid;
+  grid-template-columns:290px 1fr;
+  gap:26px;
+  padding:20px 26px 50px;
+  max-width:1440px;
+  width:100%; margin:0 auto;
+  box-sizing:border-box;
   position:relative;
+}
+
+/* Page heading placed directly in grid next to sidebar */
+.page-heading {
+  grid-column:2;
+  margin:2px 0 10px;
+  font-size:1.95rem;
+  line-height:1.15;
+  letter-spacing:-.9px;
+  font-weight:700;
+  background:linear-gradient(90deg,var(--text),var(--label));
+  -webkit-background-clip:text;
+  color:transparent;
+  position:relative;
+}
+.page-heading::after{
+  content:"";
+  position:absolute;
+  left:0; bottom:-6px;
+  width:58px; height:3px;
+  border-radius:3px;
+  background:var(--accent);
+  opacity:.85;
 }
 
 /* Sidebar */
@@ -231,26 +260,56 @@ ul.category-list a:hover {
 }
 .drawer-overlay.visible { opacity:1; pointer-events:auto; }
 
-/* Content */
+/* Content area (no big title inside now) */
 section.content-area {
-  background:var(--container); border-radius:18px; padding:26px 24px 34px;
+  grid-column:2;
+  background:var(--container); border-radius:18px; padding:22px 24px 34px;
   box-shadow:var(--shadow); border:1px solid var(--border); min-height:0;
   display:flex; flex-direction:column;
   position:relative;
   overflow:hidden;
-}
-section.content-area h1 {
-  margin:0 0 14px;
-  font-size:1.45rem;
-  letter-spacing:-.5px;
-  font-weight:700;
+  margin-top:4px;
 }
 
-/* Filters / bar */
-.filters-wrap {
-  display:flex; flex-wrap:wrap; gap:14px; align-items:center; margin:0 0 18px;
+/* Toolbar */
+.toolbar {
+  display:flex;
+  flex-wrap:wrap;
+  gap:14px;
+  align-items:center;
+  margin:0 0 18px;
 }
-.search-wrap { position:relative; flex:1 1 260px; min-width:240px; }
+.view-toggle {
+  display:flex; gap:6px; align-items:center;
+  background:var(--container);
+  padding:4px;
+  border-radius:12px;
+  border:1px solid var(--border);
+}
+.view-btn {
+  background:transparent;
+  border:0;
+  cursor:pointer;
+  font-size:.66rem;
+  font-weight:600;
+  letter-spacing:.45px;
+  padding:7px 10px;
+  line-height:1;
+  border-radius:8px;
+  color:var(--label);
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  transition:color .25s, background .25s;
+}
+.view-btn svg { width:14px; height:14px; stroke:currentColor; stroke-width:1.7; fill:none; }
+.view-btn[aria-pressed="true"] {
+  background:var(--accent);
+  color:#fff;
+}
+.view-btn:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+
+.search-wrap { position:relative; flex:1 1 240px; min-width:200px; }
 .search-wrap input[type="search"] {
   width:100%; padding:11px 14px 11px 42px; font-size:.8rem;
   border:1px solid var(--border); border-radius:10px; background:transparent; color:inherit;
@@ -261,44 +320,44 @@ section.content-area h1 {
   position:absolute; left:14px; top:50%; transform:translateY(-50%); width:18px; height:18px; opacity:.55;
 }
 
-/* Toolbar */
-.toolbar {
-  display:flex; justify-content:space-between; align-items:center; gap:16px;
-  padding:12px 16px; margin:0 0 18px;
-  background:var(--card-hover-bg); 
-  border:1px solid var(--border);
-  border-radius:12px;
-}
-
 .sort-control {
   display:flex; align-items:center; gap:8px;
 }
-
 .sort-label {
-  font-size:.72rem; font-weight:600; color:var(--label);
-  letter-spacing:.4px;
+  font-size:.62rem; font-weight:600; letter-spacing:.4px; color:var(--label); text-transform:uppercase;
 }
-
 .sort-select {
   background:var(--container); color:var(--text);
-  border:1px solid var(--border); border-radius:8px;
-  padding:6px 10px; font-size:.72rem; font-weight:500;
-  cursor:pointer; min-width:140px;
+  border:1px solid var(--border); border-radius:10px;
+  padding:7px 10px; font-size:.7rem; font-weight:600;
+  cursor:pointer; min-width:150px;
   transition:border-color .25s, background .25s;
+  letter-spacing:.3px;
 }
+.sort-select:focus { outline:2px solid var(--accent); outline-offset:2px; border-color:var(--accent); }
+.sort-select:hover { background:var(--card-hover-bg); }
 
-.sort-select:focus {
-  outline:2px solid var(--accent); outline-offset:2px;
-  border-color:var(--accent);
+.clear-filters {
+  --btn-bg:var(--accent);
+  --btn-bg-hover:var(--accent-hover);
+  background:var(--btn-bg);
+  color:#fff; border:none; cursor:pointer;
+  padding:9px 14px; font-size:.75rem; font-weight:600;
+  border-radius:10px; display:inline-flex; gap:6px; align-items:center;
+  text-decoration:none; letter-spacing:.45px;
+  box-shadow:0 4px 14px -6px rgba(0,90,200,0.45), 0 2px 7px -4px rgba(0,70,160,0.4);
+  transition:background .25s, transform .35s, box-shadow .35s;
+  line-height:1;
 }
-
-.sort-select:hover {
-  background:var(--card-hover-bg);
-}
+.clear-filters svg { width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:2; }
+.clear-filters:hover { transform:translateY(-2px); box-shadow:0 8px 24px -10px rgba(0,70,170,0.55), 0 4px 14px -6px rgba(0,70,160,0.4); }
+.clear-filters:active { transform:translateY(0) scale(.95); }
+.clear-filters:focus-visible { outline:none; box-shadow:var(--focus-ring); }
 
 .results-summary {
   font-size:.62rem; letter-spacing:.45px; margin:4px 0 14px;
   color:var(--label);
+  min-height:1em;
 }
 
 /* Note grid/list */
@@ -407,30 +466,34 @@ body.dark .skeleton::after { background:linear-gradient(90deg, transparent, rgba
   main { grid-template-columns:1fr; }
   aside.sidebar { display:none; }
   .menu-btn { display:flex; }
+  .page-heading { grid-column:1; }
+  section.content-area { grid-column:1; }
 }
 @media (max-width:640px){
-  header { padding:8px 12px; }
-  .icon-btn, .icon-btn.logout { padding:8px 11px; font-size:.68rem; }
-  .view-toggle { padding:3px; }
-  .segment-btn, .view-btn { padding:6px 9px; font-size:.6rem; }
-  .toolbar { 
-    flex-direction:column; align-items:stretch; gap:12px; padding:12px;
-  }
-  .sort-control { 
-    justify-content:space-between; 
-  }
-  .sort-select {
-    flex:1; margin-left:8px;
-  }
-  section.content-area { padding:22px 18px 30px; }
+  header { padding:8px 10px; }
+  .brand .logo { display:none; }
+  .brand { gap:6px; }
+  .site-title { font-size:1.25rem; }
+  .logout-icon-btn { width:40px; height:40px; }
+  main { padding:16px 16px 44px; gap:18px; }
+  .page-heading { font-size:1.75rem; margin-top:0; }
+  .toolbar { gap:10px; margin-bottom:16px; }
+  .search-wrap { order:3; flex:1 1 100%; min-width:100%; }
+  .view-toggle { order:1; }
+  .sort-control { order:2; }
+  .view-toggle { padding:4px 6px; }
+  .view-btn { padding:8px 10px; font-size:.58rem; }
+  .view-btn span.label-text { display:none; }
+  .sort-select { min-width:0; flex:1 1 auto; }
+  .clear-filters { display:none; }
+  section.content-area { padding:20px 16px 30px; }
   .note-card { padding:12px 12px 10px; gap:12px; }
   .thumb { width:50px; min-width:50px; height:50px; font-size:.6rem; }
   .thumb span.ext { font-size:.55rem; }
   .note-header h3 { font-size:.85rem; }
   .note-card p { font-size:.62rem; }
   .category-tag { font-size:.48rem; }
-  .search-wrap { min-width:0; flex:1 1 100%; }
-  .filters-wrap { gap:10px; }
+  .fab-upload { width:56px; height:56px; bottom:22px; right:18px; font-size:.55rem; }
 }
 @media (prefers-reduced-motion:reduce){
   * { animation:none !important; transition:none !important; }
@@ -456,28 +519,21 @@ body.dark .skeleton::after { background:linear-gradient(90deg, transparent, rgba
   </button>
   <div class="brand" aria-label="Notes-U">
     <div class="logo" aria-hidden="true">U</div>
-    <span class="site-title">Notes-U</span>
+    <h1 class="site-title">Notes-U</h1>
   </div>
   <div class="header-actions">
-    <a href="upload.html" class="icon-btn" id="upload-note-btn" aria-label="Upload Note">
-      <svg viewBox="0 0 24 24"><path d="M12 16V4m0 0l-5 5m5-5 5 5"/><path d="M4 20h16"/></svg>
-      <span>Upload</span>
-    </a>
-    <button class="icon-btn logout" id="logout-btn" aria-label="Log out">
+    <button class="logout-icon-btn" id="logout-btn" aria-label="Log out">
       <svg viewBox="0 0 24 24">
-        <path d="M15 3h-6a2 2 0 00-2 2v3"/>
-        <path d="M9 21h6a2 2 0 002-2v-3"/>
-        <path d="M16 12H8"/>
-        <path d="M11 9l-3 3 3 3"/>
+        <path d="M14 3H6.8A2.8 2.8 0 004 5.8v12.4A2.8 2.8 0 006.8 21H14" />
+        <path d="M10 12h9"/>
+        <path d="M16 8l3.9 4L16 16"/>
       </svg>
-      <span>Log Out</span>
     </button>
   </div>
 </header>
 
 <main role="main">
-  <!-- Desktop Sidebar -->
-  <aside class="sidebar" aria-label="Filters" id="desktopSidebar">
+  <aside class="sidebar" aria-label="Subjects navigation" id="desktopSidebar">
     <h2>Subjects</h2>
     <div class="sidebar-scroll">
       <nav class="sidebar-nav" aria-label="Subject categories">
@@ -519,15 +575,32 @@ body.dark .skeleton::after { background:linear-gradient(90deg, transparent, rgba
     </div>
   </aside>
 
-  <!-- Content -->
-  <section class="content-area" aria-labelledby="notesHeading">
-    <h1 id="notesHeading">Your Notes & Resources</h1>
+  <h2 class="page-heading" id="notesHeading">Your Notes & Resources</h2>
 
-    <div class="filters-wrap">
+  <section class="content-area" aria-labelledby="notesHeading">
+    <div class="toolbar" role="toolbar" aria-label="Search, view and sort controls">
+      <div class="view-toggle" role="group" aria-label="View mode">
+        <button id="gridViewBtn" class="view-btn" aria-pressed="true">
+          <svg viewBox="0 0 24 24"><path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z"/></svg>
+          <span class="label-text">Grid</span>
+        </button>
+        <button id="listViewBtn" class="view-btn" aria-pressed="false">
+          <svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
+          <span class="label-text">List</span>
+        </button>
+      </div>
+
+      <div class="sort-control">
+        <label for="sortSelect" class="sort-label">Sort</label>
+        <select id="sortSelect" class="sort-select" aria-label="Sort notes">
+          <option value="newest" selected>Newest first</option>
+            <option value="oldest">Oldest first</option>
+            <option value="title">A–Z Title</option>
+        </select>
+      </div>
+      
       <div class="search-wrap">
-        <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.6">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.8-4.8m0 0A7.2 7.2 0 105.4 5.4a7.2 7.2 0 0010.8 10.8z"/>
-        </svg>
+        <svg viewBox="0 0 24 24"><path d="M11 4a7 7 0 015.56 11.37l4.04 4.04-1.42 1.42-4.04-4.04A7 7 0 1111 4z" stroke="currentColor" stroke-width="2" fill="none"/></svg>
         <input id="searchInput" type="search" placeholder="Search title or description..." autocomplete="off" aria-label="Search notes">
       </div>
       <button id="clearFiltersBtn" class="clear-filters" type="button" aria-label="Clear filters">
@@ -538,39 +611,20 @@ body.dark .skeleton::after { background:linear-gradient(90deg, transparent, rgba
 
     <div id="resultsSummary" class="results-summary" aria-live="polite"></div>
 
-    <!-- Toolbar with view and sort controls -->
-    <div class="toolbar" role="toolbar" aria-label="View and sort controls">
-      <div class="view-toggle" role="group" aria-label="View mode">
-        <button id="gridViewBtn" class="view-btn" aria-pressed="true">
-          <svg viewBox="0 0 24 24"><path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z"/></svg>
-          Grid
-        </button>
-        <button id="listViewBtn" class="view-btn" aria-pressed="false">
-          <svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
-          List
-        </button>
-      </div>
-      <div class="sort-control">
-        <label for="sortSelect" class="sort-label">Sort by:</label>
-        <select id="sortSelect" class="sort-select" aria-label="Sort notes by">
-          <option value="newest" selected>Newest first</option>
-          <option value="oldest">Oldest first</option>
-          <option value="title">A–Z (Title)</option>
-        </select>
-      </div>
-    </div>
-
     <div class="notes-host" id="notesHost">
-      <!-- grid/list container inserted dynamically -->
-    </div>
+      </div>
 
     <div id="actionAnnouncer" class="visually-hidden" aria-live="polite"></div>
   </section>
 </main>
 
-<footer>&copy; 2025 Notes-U. All rights reserved.</footer>
+<footer role="contentinfo">&copy; <span id="year"></span> Notes-U. All rights reserved.</footer>
 
-<!-- Drawer (Mobile Sidebar) -->
+<a href="upload.html" class="fab-upload" id="fabUpload" aria-label="Upload Note">
+  <svg viewBox="0 0 24 24"><path d="M12 19V5m0 0l-5 5m5-5 5 5"/><path d="M4 19h16"/></svg>
+  Upload
+</a>
+
 <div id="drawerOverlay" class="drawer-overlay" aria-hidden="true"></div>
 <aside id="sidebarDrawer" class="sidebar-drawer" aria-label="Subject drawer" aria-hidden="true">
   <div class="drawer-header">
@@ -580,14 +634,9 @@ body.dark .skeleton::after { background:linear-gradient(90deg, transparent, rgba
     </button>
   </div>
   <div class="sidebar-scroll">
-    <!-- We'll clone original list to keep in sync -->
     <ul class="category-list" id="mobileCategoryList"></ul>
   </div>
 </aside>
-
-<!-- Dialog placeholders (if you add edit/delete later) -->
-<dialog id="editDialog" style="display:none;"></dialog>
-<dialog id="deleteDialog" style="display:none;"></dialog>
 
 <script type="module">
 /* Existing Firebase helpers assumed */
@@ -610,6 +659,8 @@ import { onAuth, logout, fetchMyNotes } from './firebase-init.js';
     if(e.key==='theme' && e.newValue) apply(e.newValue);
   });
 })();
+
+document.getElementById('year').textContent = new Date().getFullYear();
 
 /* ELEMENTS */
 const logoutButton    = document.getElementById('logout-btn');
@@ -795,6 +846,7 @@ function bindCategoryClicks(root){
   });
 }
 bindCategoryClicks(categoryList);
+syncMobileCategories();
 bindCategoryClicks(mobileCategoryList);
 
 /* Search */
