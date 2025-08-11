@@ -37,30 +37,23 @@ const firebaseConfig = {
   storageBucket: "notes-u.appspot.com",         
   messagingSenderId: "694892183955",
   appId: "1:694892183955:web:6922cb6de148a155642866",
-  measurementId: "G-RXBBXBRBHT"                
+  measurementId: "G-RXBBXBRBHT"
 };
 
 function initApp() {
   if (!getApps().length) {
     initializeApp(firebaseConfig);
-  
   }
   return getApp();
 }
 
 const app      = initApp();
-export const auth = getAuth(app);
+export const auth     = getAuth(app);
 const db       = getFirestore(app);
 const storage  = getStorage(app);
-
-const NOTE_COLLECTION  = "notes";
-const ALLOWED_EXT      = ["pdf","doc","docx","txt","ppt","pptx","odt","ods","odp","rtf"];
-const MAX_FILE_BYTES   = 25 * 1024 * 1024;
-const CACHE_TTL_MS     = 60 * 1000;       
-
 export function friendlyError(err) {
   if (!err) return "Unknown error.";
-  const code = err.code || err.message || "";
+  const code = (err.code || err.message || "").toLowerCase();
   const map = {
     "auth/invalid-email": "Email address is invalid.",
     "auth/user-not-found": "No account with those credentials.",
@@ -68,6 +61,7 @@ export function friendlyError(err) {
     "auth/email-already-in-use": "That email is already registered.",
     "auth/weak-password": "Password is too weak (minimum 6–8 chars).",
     "auth/too-many-requests": "Too many attempts, please wait and try again.",
+    "auth/network-request-failed": "Network error, please retry.",
     "storage/unauthorized": "You don't have permission to upload this file.",
     "storage/canceled": "Upload was canceled.",
     "storage/retry-limit-exceeded": "Upload retry limit exceeded."
@@ -81,8 +75,7 @@ export function friendlyError(err) {
 function getFileExtension(file) {
   const name = file?.name || "";
   const idx = name.lastIndexOf(".");
-  if (idx === -1) return "";
-  return name.slice(idx + 1).toLowerCase();
+  return idx === -1 ? "" : name.slice(idx + 1).toLowerCase();
 }
 
 function sanitizeFilename(base) {
@@ -98,6 +91,7 @@ function hasValue(v) {
 }
 
 export function onAuth(cb) {
+ 
   return onAuthStateChanged(auth, cb);
 }
 
@@ -129,12 +123,13 @@ export async function logout() {
 }
 
 export function getCurrentUser(timeoutMs = 10000) {
-  return new Promise((resolve, reject) => {
-    const timer = setTimeout(()=> {
+
+  return new Promise(resolve => {
+    const timer = setTimeout(() => {
       unsub();
       resolve(null);
     }, timeoutMs);
-    const unsub = onAuth(user => {
+    const unsub = onAuthStateChanged(auth, user => {
       clearTimeout(timer);
       unsub();
       resolve(user);
@@ -143,10 +138,14 @@ export function getCurrentUser(timeoutMs = 10000) {
 }
 
 
-  data: {
-    academic_year, semester, subject_code, notes_type, description?, file, title
-  }
- 
+const NOTE_COLLECTION = "notes";
+const ALLOWED_EXT     = ["pdf","doc","docx","txt","ppt","pptx","odt","ods","odp","rtf"];
+const MAX_FILE_BYTES  = 25 * 1024 * 1024;
+const CACHE_TTL_MS    = 60 * 1000;
+
+let _notesCache     = null;
+let _notesCacheTime = 0;
+
 export async function createNote(data) {
   const user = auth.currentUser;
   if (!user) throw new Error("Not authenticated. Please log in.");
@@ -163,8 +162,8 @@ export async function createNote(data) {
     throw new Error("File type not allowed.");
   }
 
-  const safeBase   = sanitizeFilename(data.title);
-  const timestamp  = Date.now();
+  const safeBase    = sanitizeFilename(data.title);
+  const timestamp   = Date.now();
   const storagePath = `users/${user.uid}/notes/${timestamp}_${safeBase}.${ext}`;
   const storageRef  = ref(storage, storagePath);
 
@@ -185,7 +184,7 @@ export async function createNote(data) {
   let fileURL;
   try {
     fileURL = await getDownloadURL(snapshot.ref);
-  } catch (err) {
+  } catch {
     throw new Error("Uploaded file, but failed to get URL. Try refreshing.");
   }
 
@@ -200,21 +199,23 @@ export async function createNote(data) {
     file_url: fileURL,
     file_ext: ext,
     file_size: data.file.size,
-    createdAt: Date.now(),        
+    createdAt: Date.now(),
     createdAt_server: serverTimestamp()
   };
 
   try {
     const docRef = await addDoc(collection(db, NOTE_COLLECTION), meta);
-    invalidateNotesCache(); 
+    invalidateNotesCache();
     return { id: docRef.id, ...meta };
   } catch (err) {
     throw new Error(friendlyError(err));
   }
 }
 
-let _notesCache      = null;
-let _notesCacheTime  = 0;
+export function invalidateNotesCache() {
+  _notesCache = null;
+  _notesCacheTime = 0;
+}
 
 export async function fetchMyNotes(opts = {}) {
   const { force = false } = opts;
@@ -227,7 +228,6 @@ export async function fetchMyNotes(opts = {}) {
   }
 
   try {
-
     const qRef = query(
       collection(db, NOTE_COLLECTION),
       where("uid", "==", user.uid),
@@ -244,23 +244,19 @@ export async function fetchMyNotes(opts = {}) {
   }
 }
 
-export function invalidateNotesCache() {
-  _notesCache = null;
-  _notesCacheTime = 0;
-}
-
 import { onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-export function subscribeMyNotes(cb){
+
+export function subscribeMyNotes(cb) {
   const user = auth.currentUser;
-  if(!user) throw new Error("Not authenticated.");
+  if (!user) throw new Error("Not authenticated.");
   const qRef = query(
     collection(db, NOTE_COLLECTION),
     where("uid","==", user.uid),
     orderBy("createdAt","desc")
   );
-  return onSnapshot(qRef, snap=>{
+  return onSnapshot(qRef, snap => {
     const arr = [];
-    snap.forEach(d=>arr.push({ id:d.id, ...d.data() }));
+    snap.forEach(d => arr.push({ id: d.id, ...d.data() }));
     _notesCache = arr;
     _notesCacheTime = Date.now();
     cb(arr.slice());
@@ -269,4 +265,15 @@ export function subscribeMyNotes(cb){
     cb([], err);
   });
 }
- window.__NotesU = { auth, createNote, fetchMyNotes, invalidateNotesCache, loginWithEmail, signupWithEmail, logout };
+
+window.__NotesU = {
+  auth,
+  createNote,
+  fetchMyNotes,
+  subscribeMyNotes,
+  invalidateNotesCache,
+  signupWithEmail,
+  loginWithEmail,
+  logout,
+  friendlyError
+};
