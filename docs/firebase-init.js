@@ -31,35 +31,32 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
 const firebaseConfig = {
-  apiKey:            "REPLACE_ME",
-  authDomain:        "REPLACE_ME.firebaseapp.com",
-  projectId:         "REPLACE_ME",
-  storageBucket:     "REPLACE_ME.appspot.com",
-  messagingSenderId: "REPLACE_ME",
-  appId:             "REPLACE_ME",
+  apiKey: "AIzaSyALfKHvKnsXLDDYASilyGwHA9ycVpbzmuc",
+  authDomain: "notes-u.firebaseapp.com",
+  projectId: "notes-u",
+  storageBucket: "notes-u.appspot.com",         
+  messagingSenderId: "694892183955",
+  appId: "1:694892183955:web:6922cb6de148a155642866",
+  measurementId: "G-RXBBXBRBHT"                
 };
 
 function initApp() {
   if (!getApps().length) {
     initializeApp(firebaseConfig);
+  
   }
   return getApp();
 }
 
-const app       = initApp();
-export const auth     = getAuth(app);
+const app      = initApp();
+export const auth = getAuth(app);
 const db       = getFirestore(app);
 const storage  = getStorage(app);
 
-const NOTE_COLLECTION = "notes";
-
-
-const ALLOWED_EXT = [
-  "pdf","doc","docx","txt","ppt","pptx","odt","ods","odp","rtf"
-];
-
-const MAX_FILE_BYTES = 25 * 1024 * 1024; // 25MB
-
+const NOTE_COLLECTION  = "notes";
+const ALLOWED_EXT      = ["pdf","doc","docx","txt","ppt","pptx","odt","ods","odp","rtf"];
+const MAX_FILE_BYTES   = 25 * 1024 * 1024;
+const CACHE_TTL_MS     = 60 * 1000;       
 
 export function friendlyError(err) {
   if (!err) return "Unknown error.";
@@ -81,7 +78,6 @@ export function friendlyError(err) {
   return err.message || "An unexpected error occurred.";
 }
 
-
 function getFileExtension(file) {
   const name = file?.name || "";
   const idx = name.lastIndexOf(".");
@@ -89,20 +85,17 @@ function getFileExtension(file) {
   return name.slice(idx + 1).toLowerCase();
 }
 
-
 function sanitizeFilename(base) {
-  return base
+  return (base || "")
     .trim()
     .replace(/[^A-Za-z0-9_\- ]+/g, "")
     .replace(/\s+/g, "_")
     .substring(0, 80) || "file";
 }
 
-
 function hasValue(v) {
   return typeof v === "string" && v.trim().length > 0;
 }
-
 
 export function onAuth(cb) {
   return onAuthStateChanged(auth, cb);
@@ -116,7 +109,6 @@ export async function signupWithEmail(email, password) {
     throw new Error(friendlyError(err));
   }
 }
-
 
 export async function loginWithEmail(email, password) {
   try {
@@ -136,35 +128,46 @@ export async function logout() {
   }
 }
 
+export function getCurrentUser(timeoutMs = 10000) {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(()=> {
+      unsub();
+      resolve(null);
+    }, timeoutMs);
+    const unsub = onAuth(user => {
+      clearTimeout(timer);
+      unsub();
+      resolve(user);
+    });
+  });
+}
+
+
+  data: {
+    academic_year, semester, subject_code, notes_type, description?, file, title
+  }
+ 
 export async function createNote(data) {
   const user = auth.currentUser;
   if (!user) throw new Error("Not authenticated. Please log in.");
 
-  // Validate required fields
   const required = ["academic_year","semester","subject_code","notes_type","title"];
-  for (const field of required) {
-    if (!hasValue(data[field])) {
-      throw new Error(`Missing required field: ${field}`);
-    }
+  for (const f of required) {
+    if (!hasValue(data[f])) throw new Error(`Missing required field: ${f}`);
   }
   if (!data.file) throw new Error("File is required.");
+  if (data.file.size > MAX_FILE_BYTES) throw new Error("File exceeds 25MB limit.");
 
-  // File validation
-  if (data.file.size > MAX_FILE_BYTES) {
-    throw new Error("File exceeds 25MB limit.");
-  }
   const ext = getFileExtension(data.file);
   if (!ALLOWED_EXT.includes(ext)) {
     throw new Error("File type not allowed.");
   }
 
-  // Construct storage path: users/<uid>/notes/<timestamp>_<sanitizedTitle>.<ext>
-  const baseName = sanitizeFilename(data.title);
-  const timestamp = Date.now();
-  const storagePath = `users/${user.uid}/notes/${timestamp}_${baseName}.${ext}`;
-  const storageRef = ref(storage, storagePath);
+  const safeBase   = sanitizeFilename(data.title);
+  const timestamp  = Date.now();
+  const storagePath = `users/${user.uid}/notes/${timestamp}_${safeBase}.${ext}`;
+  const storageRef  = ref(storage, storagePath);
 
-  // Upload
   let snapshot;
   try {
     snapshot = await uploadBytes(storageRef, data.file, {
@@ -179,7 +182,6 @@ export async function createNote(data) {
     throw new Error(friendlyError(err));
   }
 
-  // Download URL
   let fileURL;
   try {
     fileURL = await getDownloadURL(snapshot.ref);
@@ -187,8 +189,7 @@ export async function createNote(data) {
     throw new Error("Uploaded file, but failed to get URL. Try refreshing.");
   }
 
-  // Firestore doc
-  const metadata = {
+  const meta = {
     uid: user.uid,
     title: data.title.trim(),
     description: (data.description || "").trim(),
@@ -199,21 +200,21 @@ export async function createNote(data) {
     file_url: fileURL,
     file_ext: ext,
     file_size: data.file.size,
-    createdAt: Date.now(),         
+    createdAt: Date.now(),        
     createdAt_server: serverTimestamp()
   };
 
   try {
-    const docRef = await addDoc(collection(db, NOTE_COLLECTION), metadata);
-    return { id: docRef.id, ...metadata };
+    const docRef = await addDoc(collection(db, NOTE_COLLECTION), meta);
+    invalidateNotesCache(); 
+    return { id: docRef.id, ...meta };
   } catch (err) {
     throw new Error(friendlyError(err));
   }
 }
 
-let _notesCache = null;
-let _notesCacheTime = 0;
-const CACHE_TTL_MS = 60 * 1000; 
+let _notesCache      = null;
+let _notesCacheTime  = 0;
 
 export async function fetchMyNotes(opts = {}) {
   const { force = false } = opts;
@@ -227,19 +228,17 @@ export async function fetchMyNotes(opts = {}) {
 
   try {
 
-    const q = query(
+    const qRef = query(
       collection(db, NOTE_COLLECTION),
       where("uid", "==", user.uid),
       orderBy("createdAt", "desc")
     );
-    const snap = await getDocs(q);
-    const notes = [];
-    snap.forEach(doc => {
-      notes.push({ id: doc.id, ...doc.data() });
-    });
-    _notesCache = notes;
+    const snap = await getDocs(qRef);
+    const arr = [];
+    snap.forEach(doc => arr.push({ id: doc.id, ...doc.data() }));
+    _notesCache = arr;
     _notesCacheTime = now;
-    return notes.slice();
+    return arr.slice();
   } catch (err) {
     throw new Error(friendlyError(err));
   }
@@ -250,4 +249,24 @@ export function invalidateNotesCache() {
   _notesCacheTime = 0;
 }
 
-
+import { onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+export function subscribeMyNotes(cb){
+  const user = auth.currentUser;
+  if(!user) throw new Error("Not authenticated.");
+  const qRef = query(
+    collection(db, NOTE_COLLECTION),
+    where("uid","==", user.uid),
+    orderBy("createdAt","desc")
+  );
+  return onSnapshot(qRef, snap=>{
+    const arr = [];
+    snap.forEach(d=>arr.push({ id:d.id, ...d.data() }));
+    _notesCache = arr;
+    _notesCacheTime = Date.now();
+    cb(arr.slice());
+  }, err => {
+    console.error("subscribeMyNotes error", err);
+    cb([], err);
+  });
+}
+ window.__NotesU = { auth, createNote, fetchMyNotes, invalidateNotesCache, loginWithEmail, signupWithEmail, logout };
