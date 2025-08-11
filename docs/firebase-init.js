@@ -1,211 +1,249 @@
-// firebase-init.js 
+<script type="module">
+/* Existing Firebase helpers assumed */
+import { onAuth, logout, fetchMyNotes } from './firebase-init.js';
 
-const firebaseConfig = {
-  apiKey: "AIzaSyALfKHvKnsXLDDYASilyGwHA9ycVpbzmuc",
-  authDomain: "notes-u.firebaseapp.com",
-  projectId: "notes-u",
-  storageBucket: "notes-u.appspot.com",
-  messagingSenderId: "694892183955",
-  appId: "1:694892183955:web:6922cb6de148a155642866",
-  measurementId: "G-RXBBXBRBHT"
-};
-
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import {
-  getAuth,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signOut,
-  onAuthStateChanged,
-  updateProfile
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import {
-  getFirestore,
-  doc,
-  setDoc,
-  getDoc,
-  collection,
-  query,
-  where,
-  getDocs,
-  addDoc,
-  orderBy,
-  updateDoc,
-  deleteDoc
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import {
-  getStorage,
-  ref,
-  uploadBytes,
-  getDownloadURL
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
-
-export const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
-export const db = getFirestore(app);
-export const storage = getStorage(app);
-
-/* ---------- Legacy Username (Deprecated) ---------- */
-const USERNAME_REGEX = /^[a-z0-9._-]{3,30}$/;
-function normalizeUsername(username){ return username.trim().toLowerCase(); }
-async function isUsernameTaken(username){
-  const snap = await getDoc(doc(db,"usernames", normalizeUsername(username)));
-  return snap.exists();
-}
-async function saveUsernameMapping(username, email, uid){
-  await setDoc(doc(db,"usernames", normalizeUsername(username)), { email, uid });
-}
-async function usernameToEmail(username){
-  const snap = await getDoc(doc(db,"usernames", normalizeUsername(username)));
-  return snap.exists() ? snap.data().email : null;
-}
-export async function signupWithUsername(username, password){
-  const uname = username.trim();
-  if(!uname) throw new Error("Username required");
-  if(!USERNAME_REGEX.test(uname)) throw new Error("Invalid username format");
-  if(password.length<8) throw new Error("Password must be at least 8 characters");
-  if(await isUsernameTaken(uname)) throw new Error("Username already taken");
-  const pseudoEmail = `${normalizeUsername(uname)}@notes-u.fake`;
-  const cred = await createUserWithEmailAndPassword(auth, pseudoEmail, password);
-  await updateProfile(cred.user, { displayName: uname });
-  await saveUsernameMapping(uname, pseudoEmail, cred.user.uid);
-  await setDoc(doc(db, "users", cred.user.uid), {
-    username: uname,
-    usernameLower: uname.toLowerCase(),
-    createdAt: Date.now()
-  });
-  return cred.user;
-}
-export async function loginWithUsername(username, password){
-  const email = await usernameToEmail(username);
-  if(!email) throw new Error("Account not found");
-  const cred = await signInWithEmailAndPassword(auth, email, password);
-  return cred.user;
-}
-
-/* ---------- Modern Email Auth ---------- */
-export async function signupWithEmail(email, password, displayName){
-  if(!email) throw new Error("Email required");
-  if(password.length < 8) throw new Error("Password must be at least 8 characters");
-  const cred = await createUserWithEmailAndPassword(auth, email, password);
-  if(displayName){
-    await updateProfile(cred.user, { displayName: displayName.trim() });
+/* THEME INIT (reuse from other pages) */
+(function initTheme(){
+  const stored = localStorage.getItem('theme');
+  function apply(t){
+    document.body.classList.remove('light','dark');
+    document.body.classList.add(t);
+    localStorage.setItem('theme', t);
   }
-  await setDoc(doc(db,"users", cred.user.uid), {
-    email: email.toLowerCase(),
-    displayName: cred.user.displayName || null,
-    createdAt: Date.now()
-  }, { merge:true });
-  return cred.user;
-}
-export async function loginWithEmail(email, password){
-  if(!email || !password) throw new Error("Missing credentials");
-  const cred = await signInWithEmailAndPassword(auth, email, password);
-  return cred.user;
-}
-export function onAuth(cb){ return onAuthStateChanged(auth, cb); }
-export function logout(){ return signOut(auth); }
-
-/* ---------- Notes Logic ---------- */
-const MAX_FILE_SIZE = 25 * 1024 * 1024;
-const ALLOWED_EXT = ['pdf','doc','docx','txt','ppt','pptx','odt','ods','odp','rtf'];
-
-export async function createNote({
-  academic_year,
-  semester,
-  subject_code,
-  notes_type,
-  description,
-  file,
-  title
-}){
-  const user = auth.currentUser;
-  if(!user) throw new Error("Not authenticated");
-  if(!academic_year) throw new Error("Academic year required");
-  if(!semester) throw new Error("Semester required");
-  if(!subject_code) throw new Error("Subject code required");
-  if(!notes_type) throw new Error("Notes type required");
-  if(!file) throw new Error("File required");
-  if(!title) throw new Error("Title required");
-
-  const ext = file.name.split('.').pop().toLowerCase();
-  if(!ALLOWED_EXT.includes(ext)) throw new Error("Invalid file type");
-  if(file.size > MAX_FILE_SIZE) throw new Error("File exceeds 25MB limit");
-
-  const safeName = file.name.replace(/[^\w.\-() ]+/g,'_');
-  const fileRef = ref(storage, `notes/${user.uid}/${Date.now()}-${safeName}`);
-  await uploadBytes(fileRef, file);
-  const url = await getDownloadURL(fileRef);
-
-  await addDoc(collection(db,"notes"), {
-    userId: user.uid,
-    academic_year,
-    semester,
-    subject_code,
-    notes_type,
-    description: description || "",
-    file_url: url,
-    title: title.trim(),
-    file_size: file.size,
-    file_ext: ext,
-    pinned: false,       
-    createdAt: Date.now()
+  if(stored) apply(stored);
+  else apply(window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e=>{
+    if(!localStorage.getItem('theme')) apply(e.matches?'dark':'light');
   });
-  return true;
-}
+  window.addEventListener('storage', e=>{
+    if(e.key==='theme' && e.newValue) apply(e.newValue);
+  });
+})();
 
-export async function fetchMyNotes(){
-  const user = auth.currentUser;
-  if(!user) throw new Error("Not authenticated");
-  const q = query(
-    collection(db,"notes"),
-    where("userId","==", user.uid),
-    orderBy("createdAt","desc")
-  );
-  const snap = await getDocs(q);
-  return snap.docs.map(d=>({ id:d.id, ...d.data() }));
-}
+document.getElementById('year').textContent = new Date().getFullYear();
 
-export async function updateNote(id, updates){
-  const user = auth.currentUser;
-  if(!user) throw new Error("Not authenticated");
-  const refDoc = doc(db,"notes", id);
-  // Basic whitelist
-  const allowed = {};
-  if(typeof updates.title === 'string') allowed.title = updates.title.trim();
-  if(typeof updates.description === 'string') allowed.description = updates.description;
-  if(typeof updates.notes_type === 'string') allowed.notes_type = updates.notes_type;
-  await updateDoc(refDoc, allowed);
-  return true;
-}
+/* ELEMENTS */
+const logoutButton    = document.getElementById('logout-btn');
+const categoryList    = document.getElementById('categoryList');
+const mobileCategoryList = document.getElementById('mobileCategoryList');
+const searchInput     = document.getElementById('searchInput');
+const clearFiltersBtn = document.getElementById('clearFiltersBtn');
+const resultsSummary  = document.getElementById('resultsSummary');
+const notesHost       = document.getElementById('notesHost');
+const gridViewBtn     = document.getElementById('gridViewBtn');
+const listViewBtn     = document.getElementById('listViewBtn');
+const sortButtons     = Array.from(document.querySelectorAll('.sort-btn'));
+const sortSelect      = document.getElementById('sortSelect');
+const menuBtn         = document.getElementById('menu-btn');
+const drawer          = document.getElementById('sidebarDrawer');
+const drawerOverlay   = document.getElementById('drawerOverlay');
+const closeDrawerBtn  = document.getElementById('closeDrawerBtn');
 
-export async function deleteNote(id){
-  const user = auth.currentUser;
-  if(!user) throw new Error("Not authenticated");
-  await deleteDoc(doc(db,"notes", id));
-  return true;
-}
+let allNotesData = [];
+let activeCategory = 'all';
+let activeSort = 'newest';
 
-export async function togglePin(id, value){
-  const user = auth.currentUser;
-  if(!user) throw new Error("Not authenticated");
-  await updateDoc(doc(db,"notes", id), { pinned: !!value });
-  return true;
+/* Clone category list for mobile */
+function syncMobileCategories(){
+  mobileCategoryList.innerHTML = categoryList.innerHTML;
 }
+syncMobileCategories();
 
-/* Friendly error translator */
-export function friendlyError(err){
-  if(!err) return "Unknown error";
-  if(typeof err === 'string') return err;
-  if(err.code){
-    switch(err.code){
-      case 'auth/email-already-in-use': return 'Email already in use.';
-      case 'auth/invalid-email': return 'Invalid email address.';
-      case 'auth/user-not-found': return 'User not found.';
-      case 'auth/wrong-password': return 'Incorrect password.';
-      case 'auth/weak-password': return 'Password too weak.';
-      default: return err.message || err.code;
-    }
+/* Drawer logic */
+function openDrawer(){
+  drawer.classList.add('open');
+  drawer.setAttribute('aria-hidden','false');
+  drawerOverlay.classList.add('visible');
+  drawerOverlay.setAttribute('aria-hidden','false');
+  // Focus first link
+  const first = drawer.querySelector('a');
+  if(first) first.focus();
+}
+function closeDrawer(){
+  drawer.classList.remove('open');
+  drawer.setAttribute('aria-hidden','true');
+  drawerOverlay.classList.remove('visible');
+  drawerOverlay.setAttribute('aria-hidden','true');
+  menuBtn.focus();
+}
+menuBtn.addEventListener('click', openDrawer);
+closeDrawerBtn.addEventListener('click', closeDrawer);
+drawerOverlay.addEventListener('click', closeDrawer);
+document.addEventListener('keydown', e=>{
+  if(e.key === 'Escape' && drawer.classList.contains('open')) closeDrawer();
+});
+
+/* Logout */
+logoutButton?.addEventListener('click', async () => {
+  try {
+    await logout();
+    location.href='auth.html?mode=login';
+  } catch {
+    alert('Failed to log out.');
   }
-  return err.message || 'Unexpected error';
+});
+
+/* Load */
+onAuth(user=>{
+  if(!user){
+    location.replace('auth.html?mode=login');
+    return;
+  }
+  loadNotes();
+});
+
+/* Fetch notes */
+async function loadNotes(){
+  notesHost.innerHTML = skeletons(6);
+  try {
+    allNotesData = await fetchMyNotes();
+    renderFiltered();
+  } catch(err){
+    notesHost.innerHTML = `<div class="note-list"><div class="note-card">
+      <div class="note-body">
+        <div class="note-header"><h3>Error Loading Notes</h3></div>
+        <p>${escapeHtml(err.message||'There was a problem loading your notes.')}</p>
+        <div class="note-actions">
+          <a class="action-link" href="#" onclick="location.reload();return false;">Reload Page</a>
+        </div>
+      </div></div></div>`;
+  }
 }
+
+/* Skeleton */
+function skeletons(n){
+  return `<div class="note-grid">${Array.from({length:n}).map(()=>'<div class="skeleton"></div>').join('')}</div>`;
+}
+
+/* Rendering */
+function escapeHtml(str=''){
+  return str.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function fileExtToLabel(ext){
+  if(!ext) return 'FILE';
+  if(ext.length>5) return ext.slice(0,5).toUpperCase();
+  return ext.toUpperCase();
+}
+function sortNotes(list){
+  switch(activeSort){
+    case 'oldest': return list.slice().sort((a,b)=> (a.createdAt||0)-(b.createdAt||0));
+    case 'title': return list.slice().sort((a,b)=> (a.title||'').localeCompare(b.title||'', undefined, { sensitivity:'base' }));
+    case 'newest':
+    default: return list.slice().sort((a,b)=> (b.createdAt||0)-(a.createdAt||0));
+  }
+}
+
+function renderNotes(list){
+  const isList = document.body.classList.contains('view-list');
+  const wrapperClass = isList ? 'note-list' : 'note-grid';
+
+  if (list.length === 0) {
+    notesHost.innerHTML = `
+      <div style="text-align: center; padding: 40px; color: var(--label); font-size: 1rem; border: 1px dashed var(--border); border-radius: 12px; margin-top: 20px;">
+        <p>No notes found for this category or search query.</p>
+        <p style="font-size: 0.85rem; margin-top: 10px;">Click the "Upload" button to add your first note!</p>
+      </div>
+    `;
+    return;
+  }
+
+  const cards = list.map(note=>{
+    const typeDisplay = (note.notes_type||'note').replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
+    const ext = fileExtToLabel(note.file_ext||note.file_url?.split('.').pop()||'');
+    const initials = subjectInitials(note.subject_code);
+    return `<div class="note-card" data-category="${escapeHtml(note.subject_code)}">
+      <div class="thumb" aria-hidden="true">
+        <div>${escapeHtml(initials)}</div>
+        <span class="ext">${escapeHtml(ext)}</span>
+      </div>
+      <div class="note-body">
+        <div class="note-header">
+          <h3>${escapeHtml(note.title||'Untitled')}</h3>
+        </div>
+        <p>${escapeHtml(note.description || 'No description provided.')}</p>
+        <div class="tags">
+          <span class="category-tag">${escapeHtml(note.academic_year.replace('year','Year '))}</span>
+          <span class="category-tag">${escapeHtml(note.semester.replace('semester','Semester '))}</span>
+          <span class="category-tag">${escapeHtml(note.subject_code)}</span>
+          <span class="category-tag">${escapeHtml(typeDisplay)}</span>
+        </div>
+        <div class="note-actions">
+          <a class="action-link" href="${note.file_url}" target="_blank" rel="noopener">View / Download</a>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+  notesHost.innerHTML = `<div class="${wrapperClass}">${cards}</div>`;
+}
+
+function subjectInitials(code=''){
+  const c = code.replace(/[^A-Z0-9]/gi,'').toUpperCase();
+  if(c.length<=4) return c;
+  return c.slice(0,4);
+}
+
+function renderFiltered(){
+  const term = (searchInput.value || '').toLowerCase();
+  const filtered = allNotesData.filter(n => {
+    const matchCategory = activeCategory === 'all' || n.subject_code === activeCategory;
+    const hay = `${n.title||''} ${n.description||''} ${n.subject_code||''}`.toLowerCase();
+    const matchSearch = !term || hay.includes(term);
+    return matchCategory && matchSearch;
+  });
+  const sorted = sortNotes(filtered);
+  renderNotes(sorted);
+  updateSummary(sorted.length);
+}
+
+function updateSummary(count){
+  resultsSummary.textContent = `${count} note${count!==1?'s':''} shown`;
+}
+
+/* Category interactions (desktop + mobile) */
+function bindCategoryClicks(root){
+  root.querySelectorAll('a[data-category]').forEach(link=>{
+    link.addEventListener('click', e=>{
+      e.preventDefault();
+      // Remove aria-current across both lists
+      document.querySelectorAll('ul.category-list a[aria-current="true"]').forEach(a=>a.removeAttribute('aria-current'));
+      const cat = link.dataset.category || 'all';
+      activeCategory = cat;
+      // Mark matching links in both lists
+      document.querySelectorAll(`a[data-category="${CSS.escape(cat)}"]`).forEach(a=>a.setAttribute('aria-current','true'));
+      if(cat==='all'){
+        document.querySelectorAll('a[data-category="all"]').forEach(a=>a.setAttribute('aria-current','true'));
+      }
+      renderFiltered();
+      if(drawer.classList.contains('open')) closeDrawer();
+    }, { passive:false });
+  });
+}
+bindCategoryClicks(categoryList);
+syncMobileCategories();
+bindCategoryClicks(mobileCategoryList);
+
+/* Search */
+searchInput.addEventListener('input', renderFiltered);
+
+/* View Mode */
+function setView(mode){
+  const isGrid = mode === 'grid';
+  document.body.classList.toggle('view-grid', isGrid);
+  document.body.classList.toggle('view-list', !isGrid);
+  gridViewBtn.setAttribute('aria-pressed', isGrid ? 'true':'false');
+  listViewBtn.setAttribute('aria-pressed', !isGrid ? 'true':'false');
+  renderFiltered();
+}
+gridViewBtn.addEventListener('click', ()=> setView('grid'));
+listViewBtn.addEventListener('click', ()=> setView('list'));
+
+/* Sorting dropdown */
+sortSelect?.addEventListener('change', ()=>{
+  activeSort = sortSelect.value;
+  renderFiltered();
+});
+
+/* Initial placeholder */
+notesHost.innerHTML = skeletons(6);
+
+</script>
