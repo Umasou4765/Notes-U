@@ -1,249 +1,253 @@
-<script type="module">
-/* Existing Firebase helpers assumed */
-import { onAuth, logout, fetchMyNotes } from './firebase-init.js';
+import {
+  initializeApp,
+  getApps,
+  getApp
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
-/* THEME INIT (reuse from other pages) */
-(function initTheme(){
-  const stored = localStorage.getItem('theme');
-  function apply(t){
-    document.body.classList.remove('light','dark');
-    document.body.classList.add(t);
-    localStorage.setItem('theme', t);
+import {
+  getAuth,
+  onAuthStateChanged,
+  signOut,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  getDocs,
+  query,
+  where,
+  orderBy,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+import {
+  getStorage,
+  ref,
+  uploadBytes,
+  getDownloadURL
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+
+const firebaseConfig = {
+  apiKey:            "REPLACE_ME",
+  authDomain:        "REPLACE_ME.firebaseapp.com",
+  projectId:         "REPLACE_ME",
+  storageBucket:     "REPLACE_ME.appspot.com",
+  messagingSenderId: "REPLACE_ME",
+  appId:             "REPLACE_ME",
+};
+
+function initApp() {
+  if (!getApps().length) {
+    initializeApp(firebaseConfig);
   }
-  if(stored) apply(stored);
-  else apply(window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
-  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e=>{
-    if(!localStorage.getItem('theme')) apply(e.matches?'dark':'light');
-  });
-  window.addEventListener('storage', e=>{
-    if(e.key==='theme' && e.newValue) apply(e.newValue);
-  });
-})();
-
-document.getElementById('year').textContent = new Date().getFullYear();
-
-/* ELEMENTS */
-const logoutButton    = document.getElementById('logout-btn');
-const categoryList    = document.getElementById('categoryList');
-const mobileCategoryList = document.getElementById('mobileCategoryList');
-const searchInput     = document.getElementById('searchInput');
-const clearFiltersBtn = document.getElementById('clearFiltersBtn');
-const resultsSummary  = document.getElementById('resultsSummary');
-const notesHost       = document.getElementById('notesHost');
-const gridViewBtn     = document.getElementById('gridViewBtn');
-const listViewBtn     = document.getElementById('listViewBtn');
-const sortButtons     = Array.from(document.querySelectorAll('.sort-btn'));
-const sortSelect      = document.getElementById('sortSelect');
-const menuBtn         = document.getElementById('menu-btn');
-const drawer          = document.getElementById('sidebarDrawer');
-const drawerOverlay   = document.getElementById('drawerOverlay');
-const closeDrawerBtn  = document.getElementById('closeDrawerBtn');
-
-let allNotesData = [];
-let activeCategory = 'all';
-let activeSort = 'newest';
-
-/* Clone category list for mobile */
-function syncMobileCategories(){
-  mobileCategoryList.innerHTML = categoryList.innerHTML;
+  return getApp();
 }
-syncMobileCategories();
 
-/* Drawer logic */
-function openDrawer(){
-  drawer.classList.add('open');
-  drawer.setAttribute('aria-hidden','false');
-  drawerOverlay.classList.add('visible');
-  drawerOverlay.setAttribute('aria-hidden','false');
-  // Focus first link
-  const first = drawer.querySelector('a');
-  if(first) first.focus();
-}
-function closeDrawer(){
-  drawer.classList.remove('open');
-  drawer.setAttribute('aria-hidden','true');
-  drawerOverlay.classList.remove('visible');
-  drawerOverlay.setAttribute('aria-hidden','true');
-  menuBtn.focus();
-}
-menuBtn.addEventListener('click', openDrawer);
-closeDrawerBtn.addEventListener('click', closeDrawer);
-drawerOverlay.addEventListener('click', closeDrawer);
-document.addEventListener('keydown', e=>{
-  if(e.key === 'Escape' && drawer.classList.contains('open')) closeDrawer();
-});
+const app       = initApp();
+export const auth     = getAuth(app);
+const db       = getFirestore(app);
+const storage  = getStorage(app);
 
-/* Logout */
-logoutButton?.addEventListener('click', async () => {
+const NOTE_COLLECTION = "notes";
+
+
+const ALLOWED_EXT = [
+  "pdf","doc","docx","txt","ppt","pptx","odt","ods","odp","rtf"
+];
+
+const MAX_FILE_BYTES = 25 * 1024 * 1024; // 25MB
+
+
+export function friendlyError(err) {
+  if (!err) return "Unknown error.";
+  const code = err.code || err.message || "";
+  const map = {
+    "auth/invalid-email": "Email address is invalid.",
+    "auth/user-not-found": "No account with those credentials.",
+    "auth/wrong-password": "Incorrect password.",
+    "auth/email-already-in-use": "That email is already registered.",
+    "auth/weak-password": "Password is too weak (minimum 6–8 chars).",
+    "auth/too-many-requests": "Too many attempts, please wait and try again.",
+    "storage/unauthorized": "You don't have permission to upload this file.",
+    "storage/canceled": "Upload was canceled.",
+    "storage/retry-limit-exceeded": "Upload retry limit exceeded."
+  };
+  for (const key in map) {
+    if (code.includes(key)) return map[key];
+  }
+  return err.message || "An unexpected error occurred.";
+}
+
+
+function getFileExtension(file) {
+  const name = file?.name || "";
+  const idx = name.lastIndexOf(".");
+  if (idx === -1) return "";
+  return name.slice(idx + 1).toLowerCase();
+}
+
+
+function sanitizeFilename(base) {
+  return base
+    .trim()
+    .replace(/[^A-Za-z0-9_\- ]+/g, "")
+    .replace(/\s+/g, "_")
+    .substring(0, 80) || "file";
+}
+
+
+function hasValue(v) {
+  return typeof v === "string" && v.trim().length > 0;
+}
+
+
+export function onAuth(cb) {
+  return onAuthStateChanged(auth, cb);
+}
+
+export async function signupWithEmail(email, password) {
   try {
-    await logout();
-    location.href='auth.html?mode=login';
-  } catch {
-    alert('Failed to log out.');
+    const cred = await createUserWithEmailAndPassword(auth, email, password);
+    return cred.user;
+  } catch (err) {
+    throw new Error(friendlyError(err));
   }
-});
+}
 
-/* Load */
-onAuth(user=>{
-  if(!user){
-    location.replace('auth.html?mode=login');
-    return;
-  }
-  loadNotes();
-});
 
-/* Fetch notes */
-async function loadNotes(){
-  notesHost.innerHTML = skeletons(6);
+export async function loginWithEmail(email, password) {
   try {
-    allNotesData = await fetchMyNotes();
-    renderFiltered();
-  } catch(err){
-    notesHost.innerHTML = `<div class="note-list"><div class="note-card">
-      <div class="note-body">
-        <div class="note-header"><h3>Error Loading Notes</h3></div>
-        <p>${escapeHtml(err.message||'There was a problem loading your notes.')}</p>
-        <div class="note-actions">
-          <a class="action-link" href="#" onclick="location.reload();return false;">Reload Page</a>
-        </div>
-      </div></div></div>`;
+    const cred = await signInWithEmailAndPassword(auth, email, password);
+    return cred.user;
+  } catch (err) {
+    throw new Error(friendlyError(err));
   }
 }
 
-/* Skeleton */
-function skeletons(n){
-  return `<div class="note-grid">${Array.from({length:n}).map(()=>'<div class="skeleton"></div>').join('')}</div>`;
-}
-
-/* Rendering */
-function escapeHtml(str=''){
-  return str.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
-function fileExtToLabel(ext){
-  if(!ext) return 'FILE';
-  if(ext.length>5) return ext.slice(0,5).toUpperCase();
-  return ext.toUpperCase();
-}
-function sortNotes(list){
-  switch(activeSort){
-    case 'oldest': return list.slice().sort((a,b)=> (a.createdAt||0)-(b.createdAt||0));
-    case 'title': return list.slice().sort((a,b)=> (a.title||'').localeCompare(b.title||'', undefined, { sensitivity:'base' }));
-    case 'newest':
-    default: return list.slice().sort((a,b)=> (b.createdAt||0)-(a.createdAt||0));
+export async function logout() {
+  try {
+    await signOut(auth);
+    return true;
+  } catch (err) {
+    throw new Error(friendlyError(err));
   }
 }
 
-function renderNotes(list){
-  const isList = document.body.classList.contains('view-list');
-  const wrapperClass = isList ? 'note-list' : 'note-grid';
+export async function createNote(data) {
+  const user = auth.currentUser;
+  if (!user) throw new Error("Not authenticated. Please log in.");
 
-  if (list.length === 0) {
-    notesHost.innerHTML = `
-      <div style="text-align: center; padding: 40px; color: var(--label); font-size: 1rem; border: 1px dashed var(--border); border-radius: 12px; margin-top: 20px;">
-        <p>No notes found for this category or search query.</p>
-        <p style="font-size: 0.85rem; margin-top: 10px;">Click the "Upload" button to add your first note!</p>
-      </div>
-    `;
-    return;
+  // Validate required fields
+  const required = ["academic_year","semester","subject_code","notes_type","title"];
+  for (const field of required) {
+    if (!hasValue(data[field])) {
+      throw new Error(`Missing required field: ${field}`);
+    }
+  }
+  if (!data.file) throw new Error("File is required.");
+
+  // File validation
+  if (data.file.size > MAX_FILE_BYTES) {
+    throw new Error("File exceeds 25MB limit.");
+  }
+  const ext = getFileExtension(data.file);
+  if (!ALLOWED_EXT.includes(ext)) {
+    throw new Error("File type not allowed.");
   }
 
-  const cards = list.map(note=>{
-    const typeDisplay = (note.notes_type||'note').replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
-    const ext = fileExtToLabel(note.file_ext||note.file_url?.split('.').pop()||'');
-    const initials = subjectInitials(note.subject_code);
-    return `<div class="note-card" data-category="${escapeHtml(note.subject_code)}">
-      <div class="thumb" aria-hidden="true">
-        <div>${escapeHtml(initials)}</div>
-        <span class="ext">${escapeHtml(ext)}</span>
-      </div>
-      <div class="note-body">
-        <div class="note-header">
-          <h3>${escapeHtml(note.title||'Untitled')}</h3>
-        </div>
-        <p>${escapeHtml(note.description || 'No description provided.')}</p>
-        <div class="tags">
-          <span class="category-tag">${escapeHtml(note.academic_year.replace('year','Year '))}</span>
-          <span class="category-tag">${escapeHtml(note.semester.replace('semester','Semester '))}</span>
-          <span class="category-tag">${escapeHtml(note.subject_code)}</span>
-          <span class="category-tag">${escapeHtml(typeDisplay)}</span>
-        </div>
-        <div class="note-actions">
-          <a class="action-link" href="${note.file_url}" target="_blank" rel="noopener">View / Download</a>
-        </div>
-      </div>
-    </div>`;
-  }).join('');
-  notesHost.innerHTML = `<div class="${wrapperClass}">${cards}</div>`;
-}
+  // Construct storage path: users/<uid>/notes/<timestamp>_<sanitizedTitle>.<ext>
+  const baseName = sanitizeFilename(data.title);
+  const timestamp = Date.now();
+  const storagePath = `users/${user.uid}/notes/${timestamp}_${baseName}.${ext}`;
+  const storageRef = ref(storage, storagePath);
 
-function subjectInitials(code=''){
-  const c = code.replace(/[^A-Z0-9]/gi,'').toUpperCase();
-  if(c.length<=4) return c;
-  return c.slice(0,4);
-}
-
-function renderFiltered(){
-  const term = (searchInput.value || '').toLowerCase();
-  const filtered = allNotesData.filter(n => {
-    const matchCategory = activeCategory === 'all' || n.subject_code === activeCategory;
-    const hay = `${n.title||''} ${n.description||''} ${n.subject_code||''}`.toLowerCase();
-    const matchSearch = !term || hay.includes(term);
-    return matchCategory && matchSearch;
-  });
-  const sorted = sortNotes(filtered);
-  renderNotes(sorted);
-  updateSummary(sorted.length);
-}
-
-function updateSummary(count){
-  resultsSummary.textContent = `${count} note${count!==1?'s':''} shown`;
-}
-
-/* Category interactions (desktop + mobile) */
-function bindCategoryClicks(root){
-  root.querySelectorAll('a[data-category]').forEach(link=>{
-    link.addEventListener('click', e=>{
-      e.preventDefault();
-      // Remove aria-current across both lists
-      document.querySelectorAll('ul.category-list a[aria-current="true"]').forEach(a=>a.removeAttribute('aria-current'));
-      const cat = link.dataset.category || 'all';
-      activeCategory = cat;
-      // Mark matching links in both lists
-      document.querySelectorAll(`a[data-category="${CSS.escape(cat)}"]`).forEach(a=>a.setAttribute('aria-current','true'));
-      if(cat==='all'){
-        document.querySelectorAll('a[data-category="all"]').forEach(a=>a.setAttribute('aria-current','true'));
+  // Upload
+  let snapshot;
+  try {
+    snapshot = await uploadBytes(storageRef, data.file, {
+      contentType: data.file.type || "application/octet-stream",
+      customMetadata: {
+        uploadedBy: user.uid,
+        subject_code: data.subject_code,
+        notes_type: data.notes_type
       }
-      renderFiltered();
-      if(drawer.classList.contains('open')) closeDrawer();
-    }, { passive:false });
-  });
+    });
+  } catch (err) {
+    throw new Error(friendlyError(err));
+  }
+
+  // Download URL
+  let fileURL;
+  try {
+    fileURL = await getDownloadURL(snapshot.ref);
+  } catch (err) {
+    throw new Error("Uploaded file, but failed to get URL. Try refreshing.");
+  }
+
+  // Firestore doc
+  const metadata = {
+    uid: user.uid,
+    title: data.title.trim(),
+    description: (data.description || "").trim(),
+    academic_year: data.academic_year,
+    semester: data.semester,
+    subject_code: data.subject_code,
+    notes_type: data.notes_type,
+    file_url: fileURL,
+    file_ext: ext,
+    file_size: data.file.size,
+    createdAt: Date.now(),         
+    createdAt_server: serverTimestamp()
+  };
+
+  try {
+    const docRef = await addDoc(collection(db, NOTE_COLLECTION), metadata);
+    return { id: docRef.id, ...metadata };
+  } catch (err) {
+    throw new Error(friendlyError(err));
+  }
 }
-bindCategoryClicks(categoryList);
-syncMobileCategories();
-bindCategoryClicks(mobileCategoryList);
 
-/* Search */
-searchInput.addEventListener('input', renderFiltered);
+let _notesCache = null;
+let _notesCacheTime = 0;
+const CACHE_TTL_MS = 60 * 1000; 
 
-/* View Mode */
-function setView(mode){
-  const isGrid = mode === 'grid';
-  document.body.classList.toggle('view-grid', isGrid);
-  document.body.classList.toggle('view-list', !isGrid);
-  gridViewBtn.setAttribute('aria-pressed', isGrid ? 'true':'false');
-  listViewBtn.setAttribute('aria-pressed', !isGrid ? 'true':'false');
-  renderFiltered();
+export async function fetchMyNotes(opts = {}) {
+  const { force = false } = opts;
+  const user = auth.currentUser;
+  if (!user) throw new Error("Not authenticated.");
+
+  const now = Date.now();
+  if (!force && _notesCache && now - _notesCacheTime < CACHE_TTL_MS) {
+    return _notesCache.slice();
+  }
+
+  try {
+
+    const q = query(
+      collection(db, NOTE_COLLECTION),
+      where("uid", "==", user.uid),
+      orderBy("createdAt", "desc")
+    );
+    const snap = await getDocs(q);
+    const notes = [];
+    snap.forEach(doc => {
+      notes.push({ id: doc.id, ...doc.data() });
+    });
+    _notesCache = notes;
+    _notesCacheTime = now;
+    return notes.slice();
+  } catch (err) {
+    throw new Error(friendlyError(err));
+  }
 }
-gridViewBtn.addEventListener('click', ()=> setView('grid'));
-listViewBtn.addEventListener('click', ()=> setView('list'));
 
-/* Sorting dropdown */
-sortSelect?.addEventListener('change', ()=>{
-  activeSort = sortSelect.value;
-  renderFiltered();
-});
+export function invalidateNotesCache() {
+  _notesCache = null;
+  _notesCacheTime = 0;
+}
 
-/* Initial placeholder */
-notesHost.innerHTML = skeletons(6);
 
-</script>
