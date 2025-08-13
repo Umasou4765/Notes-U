@@ -6,8 +6,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
   <meta name="color-scheme" content="light dark">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    :root {
+  <link rel="stylesheet" href="../css/main.css">
       --brand:#0d6efd;
       --brand-hover:#0b5ed7;
       --danger:#d83535;
@@ -501,7 +500,7 @@ body.dark .theme-toggle .sun {
       </form>
     </section>
   </main>
-  <script type="module">
+  <script type="module" src="../js/pages/auth.js"></script>
     import { signupWithEmail, loginWithEmail, friendlyError, auth } from './firebase-init.js';
     import { onAuthStateChanged, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
     // THEME
