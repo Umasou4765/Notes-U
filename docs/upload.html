@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../css/main.css">
+<style>
 :root {
   --bg:#f5f7fb;
   --surface:#ffffff;
@@ -615,7 +615,7 @@ body.dark .cb-panel { background:var(--surface-alt); }
     </form>
   </div>
 
-<script type="module" src="../js/pages/upload.js"></script>
+<script type="module">
   import { onAuth, createNote } from './firebase-init.js';
 
   // THEME (reuse existing approach; leave stable)

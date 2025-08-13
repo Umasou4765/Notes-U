@@ -1,117 +1,29 @@
-/* CSS Custom Properties and Theme Variables */
-
 :root {
-  --accent: #0d6efd;
-  --accent-hover: #0b5ed7;
-  --focus-ring: var(--accent);
-  --transition: .55s cubic-bezier(.4,0,.2,1);
-}
-
-/* Light Theme Tokens */
-body {
-  --bg: #f5f7fb;
-  --bg-alt: #ffffff;
-  --bg-accent-1: #dfe8ff;
-  --bg-accent-2: #f1f5ff;
-  --text: #1c1f26;
-  --text-soft: #5d6472;
-  --border: rgba(20,28,40,0.12);
-  --shadow: 0 10px 40px -10px rgba(0,30,80,0.18),0 4px 18px -6px rgba(0,40,100,0.12);
-  --shadow-sm: 0 2px 6px rgba(0,0,0,0.06);
-  --toggle-bg: linear-gradient(145deg,#ffffff,#e8eef8);
-  --toggle-border: rgba(0,0,0,0.1);
-  --ring: 0 0 0 4px rgba(13,110,253,0.25);
-}
-
-/* Dark Theme Tokens */
-body.dark {
-  --bg: #0f1217;
-  --bg-alt: #161b22;
-  --bg-accent-1: #1e2734;
-  --bg-accent-2: #19202a;
-  --text: #e6e9ef;
-  --text-soft: #9aa4b4;
-  --border: rgba(255,255,255,0.09);
-  --shadow: 0 12px 42px -12px rgba(0,0,0,0.65),0 6px 22px -10px rgba(0,0,0,0.55);
-  --shadow-sm: 0 2px 8px rgba(0,0,0,0.4);
-  --toggle-bg: linear-gradient(145deg,#1d2430,#131a23);
-  --toggle-border: rgba(255,255,255,0.12);
-  --ring: 0 0 0 4px rgba(120,170,255,0.25);
-}
-
-/* Additional theme variables for different pages */
-:root {
-  --brand: #0d6efd;
-  --brand-hover: #0b5ed7;
-  --danger: #d83535;
-  --success: #20a864;
-  --ease: cubic-bezier(.4,0,.2,1);
-  --container-radius: 28px;
-  
-  /* Auth page specific */
-  --panel: #ffffff;
-  --panel-alt: #f1f5ff;
-  --panel-border: rgba(0,25,70,.14);
-  --input-bg: #ffffff;
-  --input-border: rgba(10,30,70,.22);
-  --link: var(--brand);
-  --link-hover: var(--brand-hover);
-}
-
-body.dark {
-  --panel: #161c24;
-  --panel-alt: #1e2732;
-  --panel-border: rgba(255,255,255,.10);
-  --input-bg: #1d2732;
-  --input-border: rgba(255,255,255,.22);
-  --link: #81b9ff;
-  --link-hover: #a9d2ff;
-}
-
-/* Home page specific variables */
-:root {
-  --label: #666;
-  --container: #fff;
-  --card-hover-bg: rgba(0,0,0,0.035);
-  --overlay-bg: rgba(0,0,0,.45);
-  --dialog-backdrop: rgba(0,0,0,0.35);
-  --thumb-bg: #eef3ff;
-  --thumb-text: #0d3d80;
-}
-
-body.dark {
-  --label: #b0b0b0;
-  --container: #222;
-  --card-hover-bg: rgba(255,255,255,0.06);
-  --overlay-bg: rgba(0,0,0,.65);
-  --thumb-bg: #273140;
-  --thumb-text: #b9d7ff;
-}
-
-/* Upload page specific variables */
-:root {
-  --surface: #ffffff;
-  --surface-alt: #f0f4fa;
-  --text-faint: #7c8694;
-  --border-strong: rgba(25,33,45,0.28);
-  --radius-sm: 8px;
-  --radius: 14px;
-  --radius-lg: 20px;
-  --select-bg: #ffffff;
-  --select-bg-hover: #f3f7fd;
-  --select-bg-disabled: rgba(0,0,0,0.04);
-  --file-bg: linear-gradient(145deg,#fff,#f2f6fb);
-  --file-bg-dark: linear-gradient(145deg,#1d2430,#161c24);
-  --gradient-accent: linear-gradient(135deg,var(--accent),var(--accent-hover) 120%);
-}
-
-body.dark {
-  --surface: #161c24;
-  --surface-alt: #1d2732;
-  --text-faint: #7d8895;
-  --border-strong: rgba(255,255,255,0.22);
-  --select-bg: #1d2732;
-  --select-bg-hover: #243140;
-  --select-bg-disabled: rgba(255,255,255,0.06);
-  --danger-bg: rgba(208,51,51,0.16);
+  --color-bg-light: #f8f8f8;
+  --color-text-primary-light: #333;
+  --color-text-secondary-light: #666;
+  --color-border-light: rgba(55,53,47,0.1);
+  --color-input-bg-light: #fff;
+  --color-input-hover-light: rgba(55,53,47,0.03);
+  --color-input-border-hover-light: rgba(55,53,47,0.2);
+  --color-separator-line-light: #ddd;
+  --color-link-light: #007bff;
+  --color-link-hover-light: #0056b3;
+  --color-card-bg-light: #fff;
+  --color-shadow-light: rgba(0,0,0,0.05);
+  --color-accent-blue: #007bff;
+  --color-accent-blue-hover: #0056b3;
+  --color-icon-light: #333;
+  --color-bg-dark: #121212;
+  --color-text-primary-dark: rgba(255,255,255,0.9);
+  --color-text-secondary-dark: rgba(255,255,255,0.6);
+  --color-border-dark: rgba(255,255,255,0.1);
+  --color-input-bg-dark: #252525;
+  --color-input-hover-dark: #333;
+  --color-input-border-hover-dark: rgba(255,255,255,0.2);
+  --color-separator-line-dark: #444;
+  --color-link-dark: #64b5f6;
+  --color-link-hover-dark: #90caf9;
+  --color-card-bg-dark: #1a1a1a;
+  --color-shadow-dark: rgba(255,255,255,0.02);
 }
