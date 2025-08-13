@@ -1,0 +1,242 @@
+/* Upload Page Styles - Page-specific styles only */
+
+/* Upload page layout */
+body.upload-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+}
+
+/* Upload container */
+.upload-container {
+  width: 100%;
+  max-width: 640px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 3rem 2.5rem 2.5rem;
+  box-shadow: var(--shadow);
+  animation: fadeInUp 0.6s var(--ease);
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Upload page title */
+.upload-container h1 {
+  font-size: 2.25rem;
+  font-weight: 700;
+  margin: 0 0 0.75rem 0;
+  text-align: center;
+  color: var(--text);
+}
+
+.upload-container p.sub {
+  font-size: 1rem;
+  color: var(--text-soft);
+  text-align: center;
+  margin: 0 0 2rem 0;
+  line-height: 1.5;
+}
+
+/* Form grid for upload form */
+.upload-form .form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px 18px;
+  margin-bottom: 1.5rem;
+}
+
+/* File section specific styles */
+.file-section {
+  margin: 1.5rem 0;
+}
+
+.file-section .n-label {
+  display: block;
+  margin-bottom: 0.75rem;
+}
+
+/* Enhanced file drop area */
+.file-drop {
+  border: 2px dashed var(--border);
+  border-radius: 12px;
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+  background: var(--bg-alt);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+.file-drop:hover,
+.file-drop.dragover {
+  border-color: var(--accent);
+  background: var(--bg-accent-1);
+  transform: translateY(-2px);
+}
+
+.file-drop:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: var(--focus-ring);
+}
+
+.file-drop p {
+  margin: 0 0 0.5rem 0;
+  font-size: 1rem;
+  color: var(--text);
+}
+
+.file-drop strong {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.file-drop small {
+  font-size: 0.875rem;
+  color: var(--text-soft);
+  display: block;
+}
+
+/* File success display */
+.file-ok {
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  background: var(--bg-accent-1);
+  border: 1px solid var(--success);
+  border-radius: 8px;
+  color: var(--success);
+  font-weight: 600;
+  font-size: 0.875rem;
+  display: none;
+}
+
+/* Actions section */
+.actions {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+}
+
+.actions .submit-btn {
+  min-width: 200px;
+}
+
+/* Combobox styles for advanced subject picker */
+.combobox {
+  position: relative;
+}
+
+.combobox button.cb-trigger {
+  width: 100%;
+  text-align: left;
+  padding: 14px 46px 13px 15px;
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: 12px;
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.combobox button.cb-trigger:hover {
+  background: var(--bg-accent-1);
+  border-color: var(--input-border-hover);
+}
+
+.combobox button.cb-trigger:focus {
+  outline: none;
+  border-color: var(--input-border-focus);
+  box-shadow: var(--focus-ring);
+}
+
+.combobox .cb-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 100;
+  margin-top: 4px;
+  display: none;
+}
+
+.combobox .cb-dropdown.open {
+  display: block;
+}
+
+.combobox .cb-option {
+  padding: 10px 15px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  font-size: 0.875rem;
+}
+
+.combobox .cb-option:hover {
+  background: var(--bg-accent-1);
+}
+
+.combobox .cb-option[aria-selected="true"] {
+  background: var(--accent);
+  color: white;
+}
+
+/* Responsive adjustments for upload */
+@media (max-width: 660px) {
+  .upload-container {
+    border-radius: 24px;
+    padding: 40px 28px 42px;
+  }
+  
+  .upload-container p.sub { 
+    margin-bottom: 28px; 
+  }
+  
+  .upload-form .form-grid { 
+    gap: 20px 18px; 
+  }
+  
+  .actions .submit-btn { 
+    font-size: 0.95rem; 
+    min-width: 180px;
+  }
+  
+  .file-drop {
+    padding: 2rem 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  body.upload-page {
+    padding: 1rem 0.5rem;
+  }
+  
+  .upload-container {
+    padding: 2rem 1.5rem;
+  }
+  
+  .upload-container h1 {
+    font-size: 2rem;
+  }
+  
+  .upload-form .form-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}

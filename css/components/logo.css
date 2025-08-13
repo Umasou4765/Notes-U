@@ -1,0 +1,82 @@
+/* Logo Component */
+
+.logo {
+  font-size: 2.9rem;
+  font-weight: 700;
+  width: 90px;
+  height: 90px;
+  border: 2.5px solid currentColor;
+  border-radius: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+  user-select: none;
+  letter-spacing: 0.5px;
+  color: var(--text);
+  background: linear-gradient(140deg, rgba(255,255,255,0.55), rgba(255,255,255,0.10));
+  box-shadow: inset 0 0 0 1px var(--border), 0 8px 18px -4px rgba(0,0,0,0.15);
+  transition: transform .6s var(--ease), background .6s;
+  position: relative;
+}
+
+body.dark .logo {
+  background: linear-gradient(140deg, rgba(255,255,255,0.10), rgba(255,255,255,0.04));
+  box-shadow: inset 0 0 0 1px var(--border), 0 10px 20px -5px rgba(0,0,0,0.55);
+}
+
+.logo:hover {
+  transform: rotate(-2deg) scale(1.03);
+}
+
+/* Logo variations for different contexts */
+.logo.small {
+  width: 68px;
+  height: 68px;
+  font-size: 2rem;
+  margin-bottom: 16px;
+  border-width: 2px;
+  border-radius: 20px;
+}
+
+.logo.large {
+  width: 120px;
+  height: 120px;
+  font-size: 3.5rem;
+  border-width: 3px;
+  border-radius: 32px;
+}
+
+/* Header logo (for home page) */
+.brand .logo {
+  width: 82px;
+  height: 82px;
+  font-size: 2.4rem;
+  margin: 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .logo {
+    width: 68px;
+    height: 68px;
+    font-size: 2rem;
+    margin-bottom: 16px;
+    border-radius: 20px;
+  }
+  
+  .brand .logo {
+    width: 72px;
+    height: 72px;
+    font-size: 2.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .logo {
+    width: 60px;
+    height: 60px;
+    font-size: 1.8rem;
+    border-radius: 18px;
+  }
+}
