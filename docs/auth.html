@@ -340,7 +340,7 @@
     .global-status.ok { color:var(--success); }
     .global-status.err { color:var(--danger); }
 
-    /* Theme toggle button (copied from index.html for full match) */
+    /* Theme toggle button */
     .theme-toggle {
       position:fixed;
       top:18px;
@@ -376,20 +376,20 @@
     body.dark .theme-toggle .moon { opacity:0; transform:rotate(55deg) scale(.55);}
 
     .theme-toggle .moon {
-  stroke:#000;
-  fill:rgba(0,0,0,0.05);
-  filter:drop-shadow(0 2px 4px rgba(0,0,0,0.25));
-  transition:stroke .45s, fill .45s;
-}
-.theme-toggle .sun {
-  stroke:#ffcf33;
-  fill:rgba(255,200,0,0.10);
-  filter:drop-shadow(0 0 6px rgba(255,200,0,0.55));
-}
-body.dark .theme-toggle .sun {
-  stroke:#ffe8a6;
-  fill:rgba(255,220,120,0.15);
-}
+      stroke:#000;
+      fill:rgba(0,0,0,0.05);
+      filter:drop-shadow(0 2px 4px rgba(0,0,0,0.25));
+      transition:stroke .45s, fill .45s;
+    }
+    .theme-toggle .sun {
+      stroke:#ffcf33;
+      fill:rgba(255,200,0,0.10);
+      filter:drop-shadow(0 0 6px rgba(255,200,0,0.55));
+    }
+    body.dark .theme-toggle .sun {
+      stroke:#ffe8a6;
+      fill:rgba(255,220,120,0.15);
+    }
 
     @media (max-width:640px){
       .auth-card {
@@ -407,7 +407,7 @@ body.dark .theme-toggle .sun {
   </style>
 </head>
 <body class="light">
-  <!-- Theme Toggle Button (matches index.html) -->
+  <!-- Theme Toggle Button -->
   <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme">
     <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
       <path d="M21 12.8A9 9 0 0112.8 3a7 7 0 100 18A9 9 0 0021 12.8z"/>
@@ -417,11 +417,13 @@ body.dark .theme-toggle .sun {
       <path d="M12 1v2m0 18v2m11-11h-2M3 12H1m16.95 7.07l-1.41-1.41M6.34 6.34L4.93 4.93m12.02 0l-1.41 1.41M6.34 17.66l-1.41 1.41"/>
     </svg>
   </button>
+  
   <main class="auth-card" role="main" aria-labelledby="authHeading">
     <div class="logo" aria-label="Notes-U Logo">U</div>
     <h1 id="authHeading">Welcome Back</h1>
     <p class="lead" id="authLead">Log in to access and manage your academic notes.</p>
     <div id="globalStatus" class="global-status" aria-live="polite"></div>
+    
     <div class="forms-shell" id="formsShell">
       <!-- LOGIN -->
       <form id="loginForm" class="auth-form active" novalidate autocomplete="off" aria-describedby="globalStatus">
@@ -434,16 +436,17 @@ body.dark .theme-toggle .sun {
         </div>
         <div class="field" style="margin-bottom:12px;">
           <label for="login-password">Password</label>
-            <div class="input-wrap">
-              <input id="login-password" type="password" required minlength="8" autocomplete="current-password" placeholder="••••••••">
-              <button type="button" class="toggle-pass" data-target="login-password" aria-label="Toggle password visibility">Show</button>
-            </div>
+          <div class="input-wrap">
+            <input id="login-password" type="password" required minlength="8" autocomplete="current-password" placeholder="••••••••">
+            <button type="button" class="toggle-pass" data-target="login-password" aria-label="Toggle password visibility">Show</button>
+          </div>
           <div class="errors" id="login-password-error" aria-live="polite"></div>
           <a href="#" id="forgotLink" class="forgot-link">Forgot password?</a>
         </div>
         <button type="submit" class="submit-btn" id="loginBtn"><span class="btn-text">Log In</span></button>
       </form>
-      <!-- SIGN UP (username/display removed, matches login box height) -->
+      
+      <!-- SIGN UP -->
       <form id="signupForm" class="auth-form" novalidate autocomplete="off" hidden aria-describedby="globalStatus">
         <div class="field">
           <label for="signup-email">Email</label>
@@ -473,10 +476,12 @@ body.dark .theme-toggle .sun {
         <button type="submit" class="submit-btn" id="signupBtn"><span class="btn-text">Create Account</span></button>
       </form>
     </div>
+    
     <div class="switch-links" aria-live="polite">
       <a href="auth.html?signup" id="linkToSignup" style="display:block;">Don't have an account? Create one now</a>
       <a href="auth.html?login" id="linkToLogin" style="display:none;">Already have an account? Log In instead</a>
     </div>
+    
     <!-- Forgot password panel -->
     <section id="forgotPanel" class="forgot-panel" aria-labelledby="forgotHeading" hidden>
       <h2 id="forgotHeading">Reset Password</h2>
@@ -501,9 +506,11 @@ body.dark .theme-toggle .sun {
       </form>
     </section>
   </main>
+  
   <script type="module">
     import { signupWithEmail, loginWithEmail, friendlyError, auth } from './firebase-init.js';
     import { onAuthStateChanged, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    
     // THEME
     const body = document.body;
     const themeToggle = document.getElementById('themeToggle');
@@ -526,6 +533,7 @@ body.dark .theme-toggle .sun {
       });
     })();
     themeToggle.addEventListener('click', ()=> applyTheme(!body.classList.contains('dark')));
+    
     // FORM HANDLING
     const formsShell      = document.getElementById('formsShell');
     const loginForm       = document.getElementById('loginForm');
@@ -543,6 +551,7 @@ body.dark .theme-toggle .sun {
     const signupBtn       = document.getElementById('signupBtn');
     const forgotBtn       = document.getElementById('forgotBtn');
     const forgotStatus    = document.getElementById('forgotStatus');
+    
     // MODE SWITCH
     function detectMode(){
       const qs = window.location.search;
@@ -552,16 +561,19 @@ body.dark .theme-toggle .sun {
       return p === 'signup' ? 'signup' : 'login';
     }
     let mode = detectMode();
+    
     function setGlobalStatus(msg='', kind=''){
       globalStatus.textContent = msg;
       globalStatus.className = 'global-status' + (kind ? ' ' + kind : '');
     }
+    
     function showErr(id, msg){
       const el = document.getElementById(id);
       if(!el) return;
       el.textContent = msg || '';
       el.classList.toggle('show', !!msg);
     }
+    
     function applyMode(m){
       mode = m;
       const isSignup = m === 'signup';
@@ -583,8 +595,10 @@ body.dark .theme-toggle .sun {
       setGlobalStatus();
     }
     applyMode(mode);
+    
     linkToSignup.addEventListener('click', e=>{ e.preventDefault(); applyMode('signup'); });
     linkToLogin.addEventListener('click',  e=>{ e.preventDefault(); applyMode('login');  });
+    
     // PASSWORD TOGGLE
     document.addEventListener('click', e=>{
       const btn = e.target.closest('.toggle-pass');
@@ -600,8 +614,10 @@ body.dark .theme-toggle .sun {
       }
       input.focus({ preventScroll:true });
     });
+    
     // VALIDATION
     function validEmail(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+    
     // LOGIN
     loginForm.addEventListener('submit', async e=>{
       e.preventDefault();
@@ -630,6 +646,7 @@ body.dark .theme-toggle .sun {
         loginBtn.querySelector('.btn-text').textContent = 'Log In';
       }
     });
+    
     // SIGNUP
     signupForm.addEventListener('submit', async e=>{
       e.preventDefault();
@@ -663,6 +680,7 @@ body.dark .theme-toggle .sun {
         signupBtn.querySelector('.btn-text').textContent = 'Create Account';
       }
     });
+    
     // FORGOT PASSWORD
     forgotLink.addEventListener('click', e=>{
       e.preventDefault();
@@ -671,12 +689,14 @@ body.dark .theme-toggle .sun {
       document.getElementById('forgot-email').focus();
       setGlobalStatus();
     });
+    
     closeForgot.addEventListener('click', e=>{
       e.preventDefault();
       forgotPanel.hidden = true;
       forgotPanel.classList.remove('active');
       forgotStatus.textContent = '';
     });
+    
     forgotForm.addEventListener('submit', async e=>{
       e.preventDefault();
       const email = document.getElementById('forgot-email').value.trim();
@@ -702,15 +722,15 @@ body.dark .theme-toggle .sun {
         forgotBtn.querySelector('.btn-text').textContent = 'Send Reset Link';
       }
     });
-     onAuth(user=>{
-  if(!user){
-    location.replace('auth.html?mode=login');
-    return;
-  }
-  localStorage.removeItem('recentLogout');
-  lockHistory();          
-  loadNotes();
-});
+
+    // AUTH STATE LISTENER - FIXED
+    onAuthStateChanged(auth, user => {
+      if(user) {
+        // User is logged in, redirect to home
+        location.href = 'home.html';
+      }
+      // If no user, stay on auth page
+    });
   </script>
 </body>
 </html>
