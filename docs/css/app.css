@@ -119,6 +119,12 @@ body::before, body::after {
 .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); box-shadow: none; }
 .btn-outline:hover { background: var(--bg-accent-2); border-color: var(--text-soft); }
 
+/* Make auth form buttons full-width and add small top margin */
+.submit-btn, .auth-btn {
+  width: 100%;
+  margin-top: 10px;
+}
+
 /* header theme toggle button adjustment */
 header .theme-toggle-btn {
   position: static; 
@@ -259,6 +265,7 @@ header {
   max-width: 1400px;
   margin: 0 auto;
   width: 100%;
+  flex: 1;
 }
 
 /* Sidebar */
