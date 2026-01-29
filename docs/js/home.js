@@ -10,6 +10,7 @@ import { showToast } from './services/ui.js';
 let lastSnapshot = null;
 let hasMore = false;
 const PAGE_SIZE = 50; // server page size
+let spin = 0; // rotation state for theme toggle
 
 
 // Theme init (shared pattern)
@@ -27,9 +28,15 @@ const PAGE_SIZE = 50; // server page size
   window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e=>{ if(!localStorage.getItem('theme')) applyTheme(e.matches); });
   window.addEventListener('storage', e=>{ if(e.key==='theme' && e.newValue) applyTheme(e.newValue==='dark'); });
 
-  document.getElementById('theme-toggle')?.addEventListener('click', ()=>{
+  const themeToggleBtn = document.getElementById('theme-toggle');
+  themeToggleBtn?.addEventListener('click', ()=>{
     const willBeDark = !document.body.classList.contains('dark');
     applyTheme(willBeDark);
+
+    // rotation animation (keeps consistent with index.js behavior)
+    spin += 360;
+    try { themeToggleBtn.style.transform = `rotate(${spin}deg)`; } catch(e){}
+    setTimeout(()=>{ try { themeToggleBtn.style.transform = ''; } catch(e){} }, 650);
   }, { passive:true });
 })();
 
