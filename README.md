@@ -1,38 +1,41 @@
-📚 Notes-U
-A modern, collaborative platform for sharing and accessing university lecture notes, tutorial solutions, and past year papers.
+这是为你准备的 Markdown 格式代码。你可以直接点击右上角的“复制”按钮，然后粘贴到你的 `README.md` 文件中。
 
-Notes-U is a serverless web application built with Vanilla JavaScript (ES Modules) and Firebase. It features a clean, responsive UI with Dark Mode support, secure file uploads, and real-time data synchronization.
+```markdown
+# 📚 Notes-U
 
-✨ Features
-🔐 Secure Authentication: Email/Password login, signup, and password reset flow via Firebase Auth.
+> A modern, collaborative platform for sharing and accessing university lecture notes, tutorial solutions, and past year papers.
 
-📂 File Sharing: Upload study materials (PDF, DOCX, PPTX, etc.) up to 25MB.
+**Notes-U** is a serverless web application built with **Vanilla JavaScript (ES Modules)** and **Firebase**. It features a clean, responsive UI with Dark Mode support, secure file uploads, and real-time data synchronization.
 
-🔍 Smart Discovery: Filter notes by Academic Year, Semester, and Subject Code, or use the real-time search bar.
+---
 
-🎨 Modern UI: Fully responsive design with Dark/Light Theme toggle and smooth animations.
+## ✨ Features
 
-🛡️ Robust Security: Server-side validation for file types, sizes, and data integrity using Firestore & Storage Security Rules.
+* **🔐 Secure Authentication**: Email/Password login, signup, and password reset flow via Firebase Auth.
+* **📂 File Sharing**: Upload study materials (PDF, DOCX, PPTX, etc.) up to **25MB**.
+* **🔍 Smart Discovery**: Filter notes by Academic Year, Semester, and Subject Code, or use the real-time search bar.
+* **🎨 Modern UI**: Fully responsive design with Dark/Light Theme toggle and smooth animations.
+* **🛡️ Robust Security**: Server-side validation for file types, sizes, and data integrity using Firestore & Storage Security Rules.
+* **⚡ No Bundler Required**: Built using standard ES Modules – runs directly in modern browsers.
 
-⚡ No Bundler Required: Built using standard ES Modules – runs directly in modern browsers.
+---
 
-🛠️ Tech Stack
-Frontend: HTML5, CSS3 (Variables, Grid/Flexbox), JavaScript (ES6+ Modules).
+## 🛠️ Tech Stack
 
-Backend (BaaS): Google Firebase.
+* **Frontend**: HTML5, CSS3 (Variables, Grid/Flexbox), JavaScript (ES6+ Modules).
+* **Backend (BaaS)**: Google Firebase.
+    * **Authentication**: User management.
+    * **Firestore**: NoSQL database for storing note metadata (titles, descriptions, subject codes).
+    * **Storage**: Object storage for actual document files.
+* **Deployment**: GitHub Pages (Ready-to-deploy `docs/` folder).
 
-Authentication: User management.
+---
 
-Firestore: NoSQL database for storing note metadata (titles, descriptions, subject codes).
+## 📂 Project Structure
 
-Storage: Object storage for actual document files.
-
-Deployment: GitHub Pages (Ready-to-deploy docs/ folder).
-
-📂 Project Structure
 The project uses a clean separation of concerns:
 
-Plaintext
+```text
 Notes-U-main/
 ├── firebase.rules         # Firestore security rules
 ├── firebase.storage.rules # Storage security rules
@@ -51,32 +54,41 @@ Notes-U-main/
     ├── home.html          # Main dashboard
     ├── upload.html        # Upload page
     └── index.html         # Landing page
-🚀 Getting Started
-1. Prerequisites
-Since this project uses ES Modules (import ... from ...), you cannot open .html files directly from your file explorer. You must use a local static server.
 
-Option A: Node.js (Recommended)
+```
 
-Bash
+---
+
+## 🚀 Getting Started
+
+### 1. Prerequisites
+
+Since this project uses **ES Modules** (`import ... from ...`), you cannot open `.html` files directly from your file explorer. You must use a local static server.
+
+**Option A: Node.js (Recommended)**
+
+```bash
 npx serve docs
-Option B: Python
 
-Bash
+```
+
+**Option B: Python**
+
+```bash
 python -m http.server -d docs 8080
-2. Firebase Configuration
-Go to the Firebase Console and create a new project.
 
-Enable Authentication (Email/Password provider).
+```
 
-Enable Firestore Database (Start in production mode).
+### 2. Firebase Configuration
 
-Enable Storage.
+1. Go to the [Firebase Console](https://console.firebase.google.com/) and create a new project.
+2. Enable **Authentication** (Email/Password provider).
+3. Enable **Firestore Database** (Start in production mode).
+4. Enable **Storage**.
+5. Go to **Project Settings > General > Your apps**, select **Web**, and copy the `firebaseConfig` object.
+6. Open `docs/js/services/firebase.js` and paste your config:
 
-Go to Project Settings > General > Your apps, select Web, and copy the firebaseConfig object.
-
-Open docs/js/services/firebase.js and paste your config:
-
-JavaScript
+```javascript
 const firebaseConfig = {
   apiKey: "YOUR_API_KEY",
   authDomain: "YOUR_PROJECT.firebaseapp.com",
@@ -85,39 +97,50 @@ const firebaseConfig = {
   messagingSenderId: "...",
   appId: "..."
 };
-3. Security Rules (Crucial!)
+
+```
+
+### 3. Security Rules (Crucial!)
+
 To secure your app, copy the contents of the local rule files into your Firebase Console:
 
-Firestore: Copy content from firebase.rules to Firestore > Rules.
+* **Firestore**: Copy content from `firebase.rules` to **Firestore > Rules**.
+* **Storage**: Copy content from `firebase.storage.rules` to **Storage > Rules**.
 
-Storage: Copy content from firebase.storage.rules to Storage > Rules.
+> **Note**: These rules ensure users can only edit/delete their own notes and prevent uploading files larger than 25MB.
 
-Note: These rules ensure users can only edit/delete their own notes and prevent uploading files larger than 25MB.
+### 4. Create Indexes
 
-4. Create Indexes
-If you see an error in the browser console regarding "indexes", click the link provided in the error message to automatically create the required Composite Index in Firestore (usually for sorting by createdAt while filtering by subject_code).
+If you see an error in the browser console regarding "indexes", click the link provided in the error message to automatically create the required Composite Index in Firestore (usually for sorting by `createdAt` while filtering by `subject_code`).
 
-🚢 Deployment
-This project is pre-configured for GitHub Pages.
+---
 
-Push your code to GitHub.
+## 🚢 Deployment
 
-Go to Settings > Pages.
+This project is pre-configured for **GitHub Pages**.
 
-Under Build and deployment, select Deploy from a branch.
+1. Push your code to GitHub.
+2. Go to **Settings > Pages**.
+3. Under **Build and deployment**, select **Deploy from a branch**.
+4. Select the `main` branch and the `/docs` folder.
+5. Click **Save**.
 
-Select the main branch and the /docs folder.
+---
 
-Click Save.
+## 🛡️ Pre-Production Checklist
 
-🛡️ Pre-Production Checklist
 Before sharing your site publicly:
 
-Restrict API Key: Go to Google Cloud Console > APIs & Services > Credentials. Edit your API Key to restrict "HTTP Referrers" to your domain (e.g., yourname.github.io and localhost).
+* **Restrict API Key**: Go to Google Cloud Console > APIs & Services > Credentials. Edit your API Key to restrict "HTTP Referrers" to your domain (e.g., `yourname.github.io` and `localhost`).
+* **Verify Rules**: Ensure your Firestore and Storage rules are deployed.
+* **Cache Busting**: When updating code, remember to bump the version query string in HTML files (e.g., `src="./js/home.js?v=2.1"`) to force browsers to load the new code.
 
-Verify Rules: Ensure your Firestore and Storage rules are deployed.
+---
 
-Cache Busting: When updating code, remember to bump the version query string in HTML files (e.g., src="./js/home.js?v=2.1") to force browsers to load the new code.
+## 📄 License
 
-📄 License
-This project is licensed under the MIT License. See LICENSE for details.
+This project is licensed under the **MIT License**. See [LICENSE](https://www.google.com/search?q=LICENSE) for details.
+
+```
+
+```
