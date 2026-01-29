@@ -136,6 +136,4 @@ Before sharing your site publicly:
 
 ## 📄 License
 
-This project is licensed under the **MIT License**. See [LICENSE](https://www.google.com/search?q=LICENSE) for details.
-
-```
+This project is licensed under the **MIT License**.
