@@ -123,6 +123,7 @@ body::before, body::after {
 .submit-btn, .auth-btn {
   width: 100%;
   margin-top: 10px;
+  justify-content: center; 
 }
 
 /* header theme toggle button adjustment */
@@ -313,7 +314,7 @@ header {
 
 /* Notes Grid */
 .notes-host { position: relative; }
-.note-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+.note-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; }
 .note-list { display: flex; flex-direction: column; gap: 12px; }
 
 /* Note Card */
@@ -430,3 +431,39 @@ header {
   opacity: 0; pointer-events: none; transition: opacity .3s;
 }
 .drawer-overlay.visible { opacity: 1; pointer-events: auto; }
+
+/* Main Content Wrapper */
+.main-content-wrapper {
+  flex: 1;
+  width: 100%;
+  min-width: 0; 
+  display: flex;
+  flex-direction: column;
+}
+
+.content-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Modern Sort UI */
+.custom-select-wrapper { position: relative; display: flex; align-items: center; }
+.modern-select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 36px 8px 14px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  color: var(--text);
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+  min-width: 140px;
+}
+.modern-select:hover { border-color: var(--brand); background-color: var(--bg-accent-1); }
+.modern-select:focus { outline: none; border-color: var(--brand); box-shadow: 0 0 0 3px rgba(13,110,253,0.2); }
+.select-arrow { position: absolute; right: 12px; width: 16px; height: 16px; color: var(--text-soft); pointer-events: none; transition: transform 0.2s; }

@@ -25,7 +25,10 @@
   <div class="header-actions">
     <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle theme">
       <svg class="moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 0112.8 3a7 7 0 100 18A9 9 0 0021 12.8z"/></svg>
-      <svg class="sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2m11-11h-2M3 12H1m16.95 7.07l-1.41-1.41M6.34 6.34L4.93 4.93m12.02 0l-1.41 1.41M6.34 17.66l-1.41 1.41"/></svg>
+      <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="5"></circle>
+        <path d="M12 1v2m0 18v2m11-11h-2M3 12H1m16.95 7.07l-1.41-1.41M6.34 6.34L4.93 4.93m12.02 0l-1.41 1.41M6.34 17.66l-1.41 1.41"></path>
+      </svg>
     </button>
 
     <button class="logout-icon-btn" id="logout-btn" aria-label="Log out">
@@ -98,12 +101,17 @@
         </div>
 
         <div class="sort-control">
-          <label for="sortSelect" class="sort-label">Sort</label>
-          <select id="sortSelect" class="sort-select" aria-label="Sort notes">
-            <option value="newest" selected>Newest first</option>
-              <option value="oldest">Oldest first</option>
-              <option value="title">A–Z Title</option>
-          </select>
+          <label for="sortSelect" class="sort-label" style="display:none;">Sort by</label>
+          <div class="custom-select-wrapper">
+            <select id="sortSelect" class="modern-select" aria-label="Sort notes">
+              <option value="newest" selected>Newest First</option>
+              <option value="oldest">Oldest First</option>
+              <option value="title">A-Z Title</option>
+            </select>
+            <svg class="select-arrow" viewBox="0 0 24 24">
+              <path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
         </div>
         
         <div class="search-wrap">
