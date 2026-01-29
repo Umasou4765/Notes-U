@@ -212,7 +212,7 @@ bindCategoryClicks(categoryList); syncMobileCategories(); bindCategoryClicks(mob
 
 searchInput?.addEventListener('input', renderFiltered);
 
-// --- Custom Sort Dropdown (replaces native select) ---
+//  Custom Sort Dropdown 
 const sortDropdown = document.getElementById('customSortDropdown');
 const sortTrigger = document.getElementById('sortTrigger');
 const sortOptions = document.getElementById('sortOptions');
@@ -256,22 +256,25 @@ sortOptions?.addEventListener('click', (e) => {
 
 document.addEventListener('click', (e) => { if(sortDropdown && !sortDropdown.contains(e.target)) closeSortDropdown(); });
 
-function setView(mode){ 
-  const isGrid = mode === 'grid';
-  // Force classes
+// View mode toggle
+function setView(mode) {
+  console.log("Switching to:", mode);
+  const isGrid = (mode === 'grid');
+
   if (isGrid) {
-    document.body.classList.add('view-grid');
     document.body.classList.remove('view-list');
+    document.body.classList.add('view-grid');
   } else {
-    document.body.classList.add('view-list');
     document.body.classList.remove('view-grid');
+    document.body.classList.add('view-list');
   }
 
-  if(gridViewBtn) gridViewBtn.setAttribute('aria-pressed', isGrid ? 'true':'false');
-  if(listViewBtn) listViewBtn.setAttribute('aria-pressed', !isGrid ? 'true':'false');
+  const btnGrid = document.getElementById('gridViewBtn');
+  const btnList = document.getElementById('listViewBtn');
+  if (btnGrid) btnGrid.setAttribute('aria-pressed', isGrid);
+  if (btnList) btnList.setAttribute('aria-pressed', !isGrid);
 
-  // ensure paint before rendering list
-  requestAnimationFrame(()=>{ renderFiltered(); });
+  renderFiltered();
 }
 gridViewBtn?.addEventListener('click', ()=> setView('grid'));
 listViewBtn?.addEventListener('click', ()=> setView('list'));
