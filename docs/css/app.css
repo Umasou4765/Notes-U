@@ -119,6 +119,18 @@ body::before, body::after {
 .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); box-shadow: none; }
 .btn-outline:hover { background: var(--bg-accent-2); border-color: var(--text-soft); }
 
+/* header theme toggle button adjustment */
+header .theme-toggle-btn {
+  position: static; 
+  transform: none;  
+  margin-right: 12px; 
+}
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;  
+}
+
 /* inputs */
 input, select, textarea {
   width: 100%;
@@ -349,7 +361,7 @@ header {
   text-decoration: none; font-size: 0.7rem; font-weight: 600;
   transition: transform .2s; z-index: 90;
 }
-.fab-upload svg { width: 24px; height: 24px; stroke: currentColor; fill: none; margin-bottom: -2px; }
+.fab-upload svg { width: 24px; height: 24px; stroke: currentColor; stroke-width: 2px; fill: none; margin-bottom: -2px; }
 .fab-upload:hover { transform: scale(1.1); background: var(--brand-hover); }
 
 /* --- PAGE: Upload --- */
