@@ -432,6 +432,59 @@ header {
 }
 .drawer-overlay.visible { opacity: 1; pointer-events: auto; }
 
+/* === Force Grid behavior to avoid stuck List/Grid state === */
+.view-grid .note-list {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)) !important;
+  gap: 20px !important;
+}
+
+.view-grid .note-card {
+  flex-direction: column !important;
+  align-items: flex-start !important;
+}
+
+.view-grid .note-card p {
+  display: -webkit-box !important;
+}
+
+.view-grid .tags { margin-top: auto !important; margin-left: 0 !important; }
+
+.view-grid .note-actions {
+  border-top: 1px solid var(--border) !important;
+  margin-left: 0 !important;
+  padding-top: 10px !important;
+}
+
+/* Custom Rounded Dropdown (from design) */
+.custom-dropdown { position: relative; min-width: 160px; }
+.dropdown-trigger {
+  width: 100%;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 8px 16px;
+  display: flex; justify-content: space-between; align-items: center; cursor: pointer;
+  color: var(--text); font-family: inherit; font-size: 0.9rem; transition: all 0.2s;
+}
+.dropdown-trigger:hover { border-color: var(--brand); background: var(--bg-accent-1); }
+.dropdown-options {
+  position: absolute; top: 110%; right: 0; width: 100%; background: var(--card-bg); border: 1px solid var(--border);
+  border-radius: 16px; box-shadow: var(--shadow-hover); padding: 6px; list-style: none; margin: 0; z-index: 100;
+  opacity: 0; transform: translateY(-10px); pointer-events: none; transition: all 0.2s ease;
+}
+.custom-dropdown.active .dropdown-options { opacity: 1; transform: translateY(0); pointer-events: auto; visibility: visible; display: block; }
+.dropdown-options li { padding: 8px 12px; border-radius: 10px; cursor: pointer; color: var(--text-soft); transition: background 0.2s; font-size: 0.9rem; }
+.dropdown-options li:hover { background: var(--bg-accent-1); color: var(--text); }
+.dropdown-options li.selected { background: var(--bg-accent-2); color: var(--brand); font-weight: 600; }
+.dropdown-trigger .arrow { width: 16px; height: 16px; transition: transform 0.2s; }
+.custom-dropdown.active .arrow { transform: rotate(180deg); }
+
+/* Logout button color in dark mode */
+body.dark .logout-icon-btn { color: #ffffff; border-color: rgba(255,255,255,0.3); }
+body.dark .logout-icon-btn svg { fill: currentColor; }
+.logout-icon-btn svg path { fill: currentColor; }
+
 /* Main Content Wrapper */
 .main-content-wrapper {
   flex: 1;

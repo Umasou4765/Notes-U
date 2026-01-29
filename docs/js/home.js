@@ -212,14 +212,67 @@ bindCategoryClicks(categoryList); syncMobileCategories(); bindCategoryClicks(mob
 
 searchInput?.addEventListener('input', renderFiltered);
 
-// Sort select (server-side request when sort changes)
-const sortSelect = document.getElementById('sortSelect');
-sortSelect?.addEventListener('change', ()=>{
-  activeSort = sortSelect.value || 'newest';
+// --- Custom Sort Dropdown (replaces native select) ---
+const sortDropdown = document.getElementById('customSortDropdown');
+const sortTrigger = document.getElementById('sortTrigger');
+const sortOptions = document.getElementById('sortOptions');
+const sortLabel = document.getElementById('sortLabel');
+
+// Initialize activeSort from markup (fallback to default)
+{
+  const selected = sortOptions?.querySelector('li.selected');
+  if(selected) activeSort = selected.dataset.value || activeSort;
+}
+
+function closeSortDropdown(){
+  if(!sortDropdown) return;
+  sortDropdown.classList.remove('active');
+  if(sortOptions) sortOptions.hidden = true;
+  if(sortTrigger) sortTrigger.setAttribute('aria-expanded', 'false');
+}
+
+sortTrigger?.addEventListener('click', (e) => {
+  e.stopPropagation();
+  if(!sortDropdown) return;
+  const isActive = sortDropdown.classList.contains('active');
+  if(isActive) closeSortDropdown();
+  else {
+    sortDropdown.classList.add('active');
+    if(sortOptions) sortOptions.hidden = false;
+    sortTrigger.setAttribute('aria-expanded', 'true');
+  }
+});
+
+sortOptions?.addEventListener('click', (e) => {
+  const li = e.target.closest('li');
+  if(!li) return;
+  sortOptions.querySelectorAll('li').forEach(el => el.classList.remove('selected'));
+  li.classList.add('selected');
+  if(sortLabel) sortLabel.textContent = li.textContent;
+  activeSort = li.dataset.value;
+  closeSortDropdown();
   loadNotes();
 });
 
-function setView(mode){ const isGrid = mode === 'grid'; document.body.classList.toggle('view-grid', isGrid); document.body.classList.toggle('view-list', !isGrid); gridViewBtn.setAttribute('aria-pressed', isGrid ? 'true':'false'); listViewBtn.setAttribute('aria-pressed', !isGrid ? 'true':'false'); renderFiltered(); }
+document.addEventListener('click', (e) => { if(sortDropdown && !sortDropdown.contains(e.target)) closeSortDropdown(); });
+
+function setView(mode){ 
+  const isGrid = mode === 'grid';
+  // Force classes
+  if (isGrid) {
+    document.body.classList.add('view-grid');
+    document.body.classList.remove('view-list');
+  } else {
+    document.body.classList.add('view-list');
+    document.body.classList.remove('view-grid');
+  }
+
+  if(gridViewBtn) gridViewBtn.setAttribute('aria-pressed', isGrid ? 'true':'false');
+  if(listViewBtn) listViewBtn.setAttribute('aria-pressed', !isGrid ? 'true':'false');
+
+  // ensure paint before rendering list
+  requestAnimationFrame(()=>{ renderFiltered(); });
+}
 gridViewBtn?.addEventListener('click', ()=> setView('grid'));
 listViewBtn?.addEventListener('click', ()=> setView('list'));
 

@@ -101,16 +101,17 @@
         </div>
 
         <div class="sort-control">
-          <label for="sortSelect" class="sort-label" style="display:none;">Sort by</label>
-          <div class="custom-select-wrapper">
-            <select id="sortSelect" class="modern-select" aria-label="Sort notes">
-              <option value="newest" selected>Newest First</option>
-              <option value="oldest">Oldest First</option>
-              <option value="title">A-Z Title</option>
-            </select>
-            <svg class="select-arrow" viewBox="0 0 24 24">
-              <path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
+          <div class="custom-dropdown" id="customSortDropdown">
+            <button type="button" class="dropdown-trigger" id="sortTrigger" aria-haspopup="listbox" aria-expanded="false">
+              <span id="sortLabel">Newest First</span>
+              <svg class="arrow" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+
+            <ul class="dropdown-options" role="listbox" id="sortOptions" hidden>
+              <li role="option" data-value="newest" aria-selected="true" class="selected">Newest First</li>
+              <li role="option" data-value="oldest">Oldest First</li>
+              <li role="option" data-value="title">A-Z Title</li>
+            </ul>
           </div>
         </div>
         
