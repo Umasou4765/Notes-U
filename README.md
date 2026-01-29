@@ -1,5 +1,3 @@
-这是为你准备的 Markdown 格式代码。你可以直接点击右上角的“复制”按钮，然后粘贴到你的 `README.md` 文件中。
-
 ```markdown
 # 📚 Notes-U
 
