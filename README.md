@@ -1,31 +1,30 @@
-```markdown
-# 📚 Notes-U
+## 📚 Notes-U
 
-> A modern, collaborative platform for sharing and accessing university lecture notes, tutorial solutions, and past year papers.
+A modern, collaborative platform for sharing and accessing university lecture notes, tutorial solutions, and past year papers.
 
-**Notes-U** is a serverless web application built with **Vanilla JavaScript (ES Modules)** and **Firebase**. It features a clean, responsive UI with Dark Mode support, secure file uploads, and real-time data synchronization.
+Notes-U is a serverless web application built with Vanilla JavaScript (ES Modules) and Firebase. It features a clean, responsive UI with Dark Mode support, secure file uploads, and real-time data synchronization.
 
 ---
 
 ## ✨ Features
 
-* **🔐 Secure Authentication**: Email/Password login, signup, and password reset flow via Firebase Auth.
-* **📂 File Sharing**: Upload study materials (PDF, DOCX, PPTX, etc.) up to **25MB**.
-* **🔍 Smart Discovery**: Filter notes by Academic Year, Semester, and Subject Code, or use the real-time search bar.
-* **🎨 Modern UI**: Fully responsive design with Dark/Light Theme toggle and smooth animations.
-* **🛡️ Robust Security**: Server-side validation for file types, sizes, and data integrity using Firestore & Storage Security Rules.
-* **⚡ No Bundler Required**: Built using standard ES Modules – runs directly in modern browsers.
+* 🔐 Secure Authentication: Email/Password login, signup, and password reset flow via Firebase Auth.
+* 📂 File Sharing: Upload study materials (PDF, DOCX, PPTX, etc.) up to 25MB.
+* 🔍 Smart Discovery: Filter notes by Academic Year, Semester, and Subject Code, or use the real-time search bar.
+* 🎨 Modern UI: Fully responsive design with Dark/Light Theme toggle and smooth animations.
+* 🛡️ Robust Security: Server-side validation for file types, sizes, and data integrity using Firestore & Storage Security Rules.
+* ⚡ No Bundler Required: Built using standard ES Modules – runs directly in modern browsers.
 
 ---
 
 ## 🛠️ Tech Stack
 
-* **Frontend**: HTML5, CSS3 (Variables, Grid/Flexbox), JavaScript (ES6+ Modules).
-* **Backend (BaaS)**: Google Firebase.
-    * **Authentication**: User management.
-    * **Firestore**: NoSQL database for storing note metadata (titles, descriptions, subject codes).
-    * **Storage**: Object storage for actual document files.
-* **Deployment**: GitHub Pages (Ready-to-deploy `docs/` folder).
+* Frontend: HTML5, CSS3 (Variables, Grid/Flexbox), JavaScript (ES6+ Modules).
+* Backend (BaaS): Google Firebase.
+    * Authentication: User management.
+    * Firestore: NoSQL database for storing note metadata (titles, descriptions, subject codes).
+    * Storage: Object storage for actual document files.
+* Deployment: GitHub Pages (Ready-to-deploy docs/ folder).
 
 ---
 
