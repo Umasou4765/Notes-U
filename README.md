@@ -140,5 +140,3 @@ Before sharing your site publicly:
 This project is licensed under the **MIT License**. See [LICENSE](https://www.google.com/search?q=LICENSE) for details.
 
 ```
-
-```
