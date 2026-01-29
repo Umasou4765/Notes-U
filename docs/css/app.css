@@ -245,7 +245,14 @@ header {
   border-bottom: 1px solid var(--border);
   position: sticky; top: 0; z-index: 50;
 }
-.brand { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 1.2rem; }
+.brand { display: flex; align-items: center; font-weight: 700; font-size: 1rem; }
+footer {
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--text-soft);
+  padding: 20px;
+  width: 100%;
+}
 .logo { width: 32px; height: 32px; border: 2px solid currentColor; border-radius: 8px; display: grid; place-items: center; font-size: 1rem; }
 .header-actions { display: flex; align-items: center; gap: 12px; }
 .logout-icon-btn {
@@ -431,6 +438,15 @@ header {
   opacity: 0; pointer-events: none; transition: opacity .3s;
 }
 .drawer-overlay.visible { opacity: 1; pointer-events: auto; }
+
+/* Footer: smaller, centered, with subtle color and padding */
+footer {
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--text-soft);
+  padding: 20px;
+  width: 100%;
+}
 
 textarea#description {
   resize: none;
