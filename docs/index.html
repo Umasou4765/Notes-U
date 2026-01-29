@@ -5,34 +5,30 @@
 -->
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="light dark">
   <title>Notes-U</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./css/app.css?v=2.0">
 </head>
 <body class="center-layout">
-  
   <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle theme">
     <svg class="moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 0112.8 3a7 7 0 100 18A9 9 0 0021 12.8z"/></svg>
-    <svg class="sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2m11-11h-2M3 12H1m16.95 7.07l-1.41-1.41M6.34 6.34L4.93 4.93m12.02 0l-1.41 1.41M6.34 17.66l-1.41 1.41"/></svg>
+    <svg class="sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/></svg>
   </button>
 
-  <div class="card-container auth-box">
-    <div class="logo-sq">U</div>
+  <div class="card-container auth-box" role="main">
+    <div class="logo-sq" aria-hidden="true">U</div>
     <h1>Notes-U</h1>
-    <p style="color:var(--text-soft); margin-bottom:32px;">
-      A collaborative platform for sharing and accessing academic notes.
-    </p>
-    
-    <div style="display:flex; gap:12px; justify-content:center;">
-      <a class="btn-primary" href="auth.html?mode=login" style="text-decoration:none; line-height:20px;">Log In</a>
-      <a class="btn-primary btn-outline" href="auth.html?mode=signup" style="text-decoration:none; line-height:20px;">Sign Up</a>
+    <p class="lead" style="color:var(--text-soft);">A collaborative platform for sharing and accessing academic notes.</p>
+    <div class="button-group">
+      <a class="btn-primary" href="auth.html?mode=login">Log In</a>
+      <a class="btn-primary btn-outline" href="auth.html?mode=signup">Sign Up</a>
     </div>
   </div>
 
-    <script type="module" src="./js/index.js?v=2.0"></script>
+  <script type="module" src="./js/index.js?v=2.0"></script>
 </body>
 </html>    .theme-toggle-btn:focus-visible {
       outline:none;
