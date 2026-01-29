@@ -10,7 +10,6 @@ import { showToast } from './services/ui.js';
 let lastSnapshot = null;
 let hasMore = false;
 const PAGE_SIZE = 50; // server page size
-let spin = 0; // rotation state for theme toggle
 
 
 // Theme init (shared pattern)
@@ -32,11 +31,6 @@ let spin = 0; // rotation state for theme toggle
   themeToggleBtn?.addEventListener('click', ()=>{
     const willBeDark = !document.body.classList.contains('dark');
     applyTheme(willBeDark);
-
-    // rotation animation (keeps consistent with index.js behavior)
-    spin += 360;
-    try { themeToggleBtn.style.transform = `rotate(${spin}deg)`; } catch(e){}
-    setTimeout(()=>{ try { themeToggleBtn.style.transform = ''; } catch(e){} }, 650);
   }, { passive:true });
 })();
 
@@ -280,4 +274,4 @@ gridViewBtn?.addEventListener('click', ()=> setView('grid'));
 listViewBtn?.addEventListener('click', ()=> setView('list'));
 
 /* Initial placeholder */
-notesHost.innerHTML = skeletons(6);
+notesHost.innerHTML = skeletons(8);
