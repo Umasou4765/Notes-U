@@ -1,58 +1,93 @@
 <!DOCTYPE html>
+<!-- File: docs/upload.html
+     Description: Upload page allowing authenticated users to upload notes (max 25MB).
+     Notes: Keep comments and labels in English only.
+-->
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="color-scheme" content="light dark">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Upload Notes - Notes-U</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<style>
-:root {
-  --bg:#f5f7fb;
-  --surface:#ffffff;
-  --surface-alt:#f0f4fa;
-  --text:#1c1f26;
-  --text-soft:#5d6472;
-  --text-faint:#7c8694;
-  --border:rgba(25,33,45,0.15);
-  --border-strong:rgba(25,33,45,0.28);
-  --focus:#0d6efd;
-  --focus-ring:0 0 0 4px rgba(13,110,253,0.30);
-  --danger:#d03333;
-  --danger-bg:rgba(208,51,51,0.08);
-  --accent:#0d6efd;
-  --accent-hover:#0b5ed7;
-  --radius-sm:8px;
-  --radius:14px;
-  --radius-lg:20px;
-  --shadow:0 10px 34px -12px rgba(0,40,110,0.18), 0 4px 18px -8px rgba(0,60,140,0.12);
-  --shadow-sm:0 2px 6px rgba(0,0,0,0.08);
-  --select-bg:#ffffff;
-  --select-bg-hover:#f3f7fd;
-  --select-bg-disabled:rgba(0,0,0,0.04);
-  --file-bg:linear-gradient(145deg,#fff,#f2f6fb);
-  --file-bg-dark:linear-gradient(145deg,#1d2430,#161c24);
-  --gradient-accent:linear-gradient(135deg,var(--accent),var(--accent-hover) 120%);
-}
-body.dark {
-  --bg:#0f1217;
-  --surface:#161c24;
-  --surface-alt:#1d2732;
-  --text:#e6e9ef;
-  --text-soft:#9aa4b4;
-  --text-faint:#7d8895;
-  --border:rgba(255,255,255,0.12);
-  --border-strong:rgba(255,255,255,0.22);
-  --select-bg:#1d2732;
-  --select-bg-hover:#243140;
-  --select-bg-disabled:rgba(255,255,255,0.06);
-  --danger-bg:rgba(208,51,51,0.16);
-  --shadow:0 14px 46px -14px rgba(0,0,0,0.75),0 6px 22px -10px rgba(0,0,0,0.55);
-  --shadow-sm:0 2px 8px rgba(0,0,0,0.45);
-}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  <title>Upload Notes - Notes-U</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./css/app.css?v=2.0">
+</head>
+<body class="upload-layout">
 
+  <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle theme">
+    <svg class="moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 0112.8 3a7 7 0 100 18A9 9 0 0021 12.8z"/></svg>
+    <svg class="sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2m11-11h-2M3 12H1m16.95 7.07l-1.41-1.41M6.34 6.34L4.93 4.93m12.02 0l-1.41 1.41M6.34 17.66l-1.41 1.41"/></svg>
+  </button>
+
+  <div class="card-container upload-box">
+    <h1>Upload Your Notes</h1>
+    <p style="color:var(--text-soft); margin-top:0; margin-bottom:30px;">
+      Share knowledge by uploading study materials for your courses.
+    </p>
+
+    <form id="uploadForm" novalidate>
+      <div class="form-grid">
+        <div>
+          <label class="field-label">Academic Year *</label>
+          <select id="academicYearSelect" required>
+            <option value="">Select Year</option>
+            <option value="year1">Year 1</option>
+            <option value="year2">Year 2</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="field-label">Semester *</label>
+          <select id="semesterSelect" required disabled>
+            <option value="">Select Semester</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="field-label">Subject *</label>
+          <select id="subjectSelect" required disabled>
+            <option value="">Select Subject</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="field-label">Type of Notes *</label>
+          <select id="notesType" required>
+            <option value="">Select type</option>
+            <option value="lecture_notes">Lecture Notes</option>
+            <option value="tutorial_solutions">Tutorial Solutions</option>
+            <option value="past_year_papers">Past Year Papers</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="margin-bottom: 24px;">
+        <label class="field-label">Description (Optional)</label>
+        <textarea id="description" placeholder="Brief description..." rows="4"></textarea>
+      </div>
+
+      <div style="margin-bottom: 30px;">
+        <label class="field-label">File *</label>
+        <input type="file" id="fileUpload" hidden accept=".pdf,.doc,.docx,.txt,.ppt,.pptx">
+        <div id="fileDrop" class="file-drop-area" tabindex="0" role="button">
+          <p style="margin:0; font-weight:500;">Click or Drag & Drop to upload</p>
+          <small style="color:var(--text-soft)">Max 25MB (PDF, DOC, PPT)</small>
+          <div id="fileOk" style="margin-top:10px; color:var(--success); font-weight:600; display:none;"></div>
+        </div>
+        <p id="fileUploadError" class="error-msg"></p>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <button type="submit" class="btn-primary">Upload Notes</button>
+        <progress id="uploadProgress" value="0" max="100" style="width:100%; display:none; height:4px;"></progress>
+        <a href="home.html" style="text-align:center; font-size:0.9rem; color:var(--text-soft); text-decoration:none; margin-top:10px;">Cancel</a>
+      </div>
+    </form>
+  </div>
+
+  <script type="module" src="./js/upload.js?v=2.0"></script>
+</body>
+</html>
 * { box-sizing:border-box; }
 body {
   margin:0;
@@ -326,7 +361,7 @@ body.dark .file-drop { background:var(--file-bg-dark); }
   margin-top:10px;
 }
 
-.submit-btn {
+.btn {
   width:100%;
   padding:16px 22px;
   border:none;
@@ -341,14 +376,14 @@ body.dark .file-drop { background:var(--file-bg-dark); }
   box-shadow:0 10px 30px -12px rgba(0,80,180,0.55), 0 6px 16px -10px rgba(0,70,160,0.45);
   transition:background .35s, transform .55s cubic-bezier(.4,0,.2,1), box-shadow .55s;
 }
-.submit-btn:hover:not(:disabled){
+.btn:hover:not(:disabled){
   transform:translateY(-3px);
   box-shadow:0 14px 38px -14px rgba(0,80,180,0.65),0 8px 22px -12px rgba(0,70,160,0.55);
 }
-.submit-btn:active:not(:disabled){
+.btn:active:not(:disabled){
   transform:translateY(0) scale(.96);
 }
-.submit-btn:disabled {
+.btn:disabled {
   opacity:.6;
   cursor:not-allowed;
   transform:none;
@@ -380,7 +415,7 @@ button:focus-visible,
   }
   p.sub { margin-bottom:28px; }
   .form-grid { gap:20px 18px; }
-  .submit-btn { font-size:.95rem; }
+  .btn { font-size:.95rem; }
 }
 
 /* (Optional) Combobox styles section kept minimal if you enable the advanced subject picker */
@@ -511,7 +546,7 @@ body.dark .cb-panel { background:var(--surface-alt); }
 </style>
 </head>
 <body>
-  <div class="container">
+  <div class="app-container">
     <h1>Upload Your Notes</h1>
     <p class="sub">Share knowledge by uploading study materials for your courses.</p>
 
@@ -608,15 +643,15 @@ body.dark .cb-panel { background:var(--surface-alt); }
       <div class="divider" aria-hidden="true"></div>
 
       <div class="actions">
-        <button type="submit" class="submit-btn">
+        <button type="submit" class="btn">
           Upload Notes
         </button>
+        <progress id="uploadProgress" value="0" max="100" style="display:none;width:100%;margin-top:12px"></progress>
       </div>
     </form>
   </div>
 
-<script type="module">
-  import { onAuth, createNote } from './firebase-init.js';
+<script type="module" src="./js/upload.js">
 
   // THEME (reuse existing approach; leave stable)
   (function initTheme(){
@@ -693,7 +728,7 @@ body.dark .cb-panel { background:var(--surface-alt); }
   const fileUpload = document.getElementById('fileUpload');
   const fileDrop = document.getElementById('fileDrop');
   const fileOk = document.getElementById('fileOk');
-  const submitBtn = form.querySelector('.submit-btn');
+  const submitBtn = form.querySelector('.btn');
 
   const requiredFields = [
     { id:'academicYearSelect', msg:'Please select an academic year.' },
@@ -784,6 +819,7 @@ body.dark .cb-panel { background:var(--surface-alt); }
     validate();
   }
 
+
   // Drag & Drop
   fileDrop.addEventListener('click', ()=> fileUpload.click());
   fileDrop.addEventListener('keydown', e=>{
@@ -821,7 +857,7 @@ body.dark .cb-panel { background:var(--surface-alt); }
   form.addEventListener('submit', async e=>{
     e.preventDefault();
     if(!validate(true)){
-      alert('Please fix the highlighted fields.');
+      showToast('Please fix the highlighted fields.', 'error');
       return;
     }
     if(!fileUpload.files.length){
@@ -847,10 +883,10 @@ body.dark .cb-panel { background:var(--surface-alt); }
         file,
         title
       });
-      alert('Upload successful');
-      location.href='home.html';
+      showToast('Upload successful','success');
+      setTimeout(()=> location.href='home.html',700);
     } catch(err){
-      alert(err.message || 'Upload failed');
+      showToast(err.message || 'Upload failed', 'error');
       submitBtn.disabled = false;
       submitBtn.textContent = prevText;
     }
@@ -859,3 +895,5 @@ body.dark .cb-panel { background:var(--surface-alt); }
 </script>
 </body>
 </html>
+
+

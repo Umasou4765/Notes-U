@@ -1,138 +1,40 @@
 <!DOCTYPE html>
+<!-- File: docs/index.html
+     Description: Landing page (marketing + entry) for Notes-U. Includes links to login/signup.
+     Notes: Keep comments and labels in English only.
+-->
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Notes-U</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="color-scheme" content="light dark">
+  <title>Notes-U</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --accent:#0d6efd;
-      --accent-hover:#0b5ed7;
-      --focus-ring: var(--accent);
-      --transition: .55s cubic-bezier(.4,0,.2,1);
-    }
+  <link rel="stylesheet" href="./css/app.css?v=2.0">
+</head>
+<body class="center-layout">
+  
+  <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle theme">
+    <svg class="moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 0112.8 3a7 7 0 100 18A9 9 0 0021 12.8z"/></svg>
+    <svg class="sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2m11-11h-2M3 12H1m16.95 7.07l-1.41-1.41M6.34 6.34L4.93 4.93m12.02 0l-1.41 1.41M6.34 17.66l-1.41 1.41"/></svg>
+  </button>
 
-    /* Light Theme Tokens */
-    body {
-      --bg:#f5f7fb;
-      --bg-alt:#ffffff;
-      --bg-accent-1:#dfe8ff;
-      --bg-accent-2:#f1f5ff;
-      --text:#1c1f26;
-      --text-soft:#5d6472;
-      --border:rgba(20,28,40,0.12);
-      --shadow:0 10px 40px -10px rgba(0,30,80,0.18),0 4px 18px -6px rgba(0,40,100,0.12);
-      --shadow-sm:0 2px 6px rgba(0,0,0,0.06);
-      --toggle-bg:linear-gradient(145deg,#ffffff,#e8eef8);
-      --toggle-border:rgba(0,0,0,0.1);
-      --ring:0 0 0 4px rgba(13,110,253,0.25);
-    }
-    /* Dark Theme Tokens */
-    body.dark {
-      --bg:#0f1217;
-      --bg-alt:#161b22;
-      --bg-accent-1:#1e2734;
-      --bg-accent-2:#19202a;
-      --text:#e6e9ef;
-      --text-soft:#9aa4b4;
-      --border:rgba(255,255,255,0.09);
-      --shadow:0 12px 42px -12px rgba(0,0,0,0.65),0 6px 22px -10px rgba(0,0,0,0.55);
-      --shadow-sm:0 2px 8px rgba(0,0,0,0.4);
-      --toggle-bg:linear-gradient(145deg,#1d2430,#131a23);
-      --toggle-border:rgba(255,255,255,0.12);
-      --ring:0 0 0 4px rgba(120,170,255,0.25);
-    }
+  <div class="card-container auth-box">
+    <div class="logo-sq">U</div>
+    <h1>Notes-U</h1>
+    <p style="color:var(--text-soft); margin-bottom:32px;">
+      A collaborative platform for sharing and accessing academic notes.
+    </p>
+    
+    <div style="display:flex; gap:12px; justify-content:center;">
+      <a class="btn-primary" href="auth.html?mode=login" style="text-decoration:none; line-height:20px;">Log In</a>
+      <a class="btn-primary btn-outline" href="auth.html?mode=signup" style="text-decoration:none; line-height:20px;">Sign Up</a>
+    </div>
+  </div>
 
-    /* Base Layout */
-    body {
-      font-family:'Inter',system-ui,Arial,sans-serif;
-      margin:0;
-      min-height:100vh;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      background:var(--bg);
-      color:var(--text);
-      -webkit-font-smoothing:antialiased;
-      text-rendering:optimizeLegibility;
-      transition:background .6s ease, color .4s ease;
-      overflow-x:hidden;
-    }
-
-    /* Animated Background Layer */
-    body::before,
-    body::after {
-      content:"";
-      position:fixed;
-      inset:0;
-      pointer-events:none;
-      z-index:-2;
-      background:
-        radial-gradient(circle at 18% 25%, var(--bg-accent-1) 0%, transparent 60%),
-        radial-gradient(circle at 82% 70%, var(--bg-accent-2) 0%, transparent 65%);
-      mix-blend-mode:normal;
-      opacity:0.85;
-      transition:opacity .8s ease;
-      animation:floaty 18s linear infinite;
-      background-size:160% 160%;
-    }
-    body.dark::before,
-    body.dark::after {
-      opacity:0.6;
-      background:
-        radial-gradient(circle at 20% 30%, rgba(40,100,255,0.10) 0%, transparent 60%),
-        radial-gradient(circle at 80% 75%, rgba(0,180,255,0.08) 0%, transparent 65%);
-    }
-    @keyframes floaty {
-      0%{transform:translate3d(0,0,0);}
-      50%{transform:translate3d(0,-2.5%,0);}
-      100%{transform:translate3d(0,0,0);}
-    }
-
-    /* Subtle Noise Overlay */
-    body::after {
-      z-index:-1;
-      background-image:
-        radial-gradient(circle at 18% 25%, var(--bg-accent-1) 0%, transparent 60%),
-        radial-gradient(circle at 82% 70%, var(--bg-accent-2) 0%, transparent 65%),
-        repeating-linear-gradient(45deg, rgba(255,255,255,0.03) 0 2px, transparent 2px 4px);
-      mix-blend-mode:overlay;
-      opacity:.35;
-      filter:contrast(110%);
-    }
-    body.dark::after {
-      mix-blend-mode:normal;
-      opacity:.28;
-      background-image:
-        radial-gradient(circle at 20% 30%, rgba(80,150,255,0.10) 0%, transparent 60%),
-        radial-gradient(circle at 80% 75%, rgba(0,150,255,0.08) 0%, transparent 65%),
-        repeating-linear-gradient(45deg, rgba(255,255,255,0.04) 0 2px, transparent 2px 4px);
-    }
-
-    /* Theme Toggle */
-    .theme-toggle-btn {
-      position:fixed;
-      top:22px;
-      right:22px;
-      background:var(--toggle-bg);
-      border:1px solid var(--toggle-border);
-      cursor:pointer;
-      width:54px;
-      height:54px;
-      border-radius:18px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      box-shadow:var(--shadow-sm);
-      backdrop-filter:blur(12px) saturate(140%);
-      -webkit-backdrop-filter:blur(12px) saturate(140%);
-      transition:background .6s var(--transition), transform .5s var(--transition), border-color .6s, box-shadow .5s;
-      isolation:isolate;
-      overflow:hidden;
-    }
-    .theme-toggle-btn:focus-visible {
+    <script type="module" src="./js/index.js?v=2.0"></script>
+</body>
+</html>    .theme-toggle-btn:focus-visible {
       outline:none;
       box-shadow:var(--ring), var(--shadow-sm);
     }
@@ -401,14 +303,8 @@
         gap:14px;
       }
     }
-
-    @media (prefers-reduced-motion:reduce) {
-      * {
-        animation:none !important;
-        transition:none !important;
-      }
-    }
-  </style>
+</style>
+  <link rel="stylesheet" href="../css/app.css">
 </head>
 <body class="light">
   <button class="theme-toggle-btn" id="theme-toggle" aria-label="Toggle theme" title="Toggle light/dark theme">
@@ -435,52 +331,6 @@
     </div>
   </div>
 
-  <script type="module">
-    /* Theme Handling */
-    function applyTheme(dark){
-      document.body.classList.toggle('dark', dark);
-      document.body.classList.toggle('light', !dark);
-      localStorage.setItem('theme', dark ? 'dark' : 'light');
-    }
-    function initTheme(){
-      const stored = localStorage.getItem('theme');
-      if(stored === 'dark') applyTheme(true);
-      else if(stored === 'light') applyTheme(false);
-      else applyTheme(window.matchMedia('(prefers-color-scheme: dark)').matches);
-      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e=>{
-        if(!localStorage.getItem('theme')){
-          applyTheme(e.matches);
-        }
-      });
-      window.addEventListener('storage', e=>{
-        if(e.key==='theme' && e.newValue){
-          applyTheme(e.newValue==='dark');
-        }
-      });
-    }
-    initTheme();
-
-    const toggleBtn = document.getElementById('theme-toggle');
-    let spin = 0;
-    toggleBtn.addEventListener('click', ()=>{
-      const willBeDark = !document.body.classList.contains('dark');
-      applyTheme(willBeDark);
-      // playful spin effect
-      spin += 360;
-      toggleBtn.style.transform = `rotate(${spin}deg)`;
-      setTimeout(()=>{ toggleBtn.style.transform=''; }, 650);
-    }, { passive:true });
-
-    // Optional redirect if already logged in
-    import { onAuth } from './firebase-init.js';
-    let redirected = false;
-    onAuth(user => {
-      if(redirected) return;
-      if(user){
-        redirected = true;
-        setTimeout(()=> location.href='home.html', 250);
-      }
-    });
-  </script>
+  <script type="module" src="./js/index.js?v=2.0"></script>
 </body>
 </html>

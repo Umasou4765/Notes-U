@@ -1,53 +1,75 @@
 <!DOCTYPE html>
+<!-- File: docs/auth.html
+     Description: Authentication page (login, signup, password reset) with client-side validation.
+     Notes: Keep comments and labels in English only.
+-->
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <title>Authenticate - Notes-U</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="color-scheme" content="light dark">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --brand:#0d6efd;
-      --brand-hover:#0b5ed7;
-      --danger:#d83535;
-      --success:#20a864;
-      --focus-ring:0 0 0 4px rgba(13,110,253,.30);
-      --ease:cubic-bezier(.4,0,.2,1);
-      --container-radius:28px;
-    }
-    body {
-      --bg:#f5f7fb;
-      --bg-accent-1:#dfe8ff;
-      --bg-accent-2:#f1f5ff;
-      --panel:#ffffff;
-      --panel-alt:#f1f5ff;
-      --panel-border:rgba(0,25,70,.14);
-      --text:#1b1f27;
-      --text-soft:#5d6472;
-      --input-bg:#ffffff;
-      --input-border:rgba(10,30,70,.22);
-      --shadow:0 14px 48px -14px rgba(0,50,140,.18), 0 6px 26px -12px rgba(0,60,160,.12);
-      --shadow-sm:0 2px 6px rgba(0,0,0,.08);
-      --link:var(--brand);
-      --link-hover:var(--brand-hover);
-    }
-    body.dark {
-      --bg:#0f1217;
-      --bg-accent-1:#1e2734;
-      --bg-accent-2:#18212c;
-      --panel:#161c24;
-      --panel-alt:#1e2732;
-      --panel-border:rgba(255,255,255,.10);
-      --text:#e6e9ef;
-      --text-soft:#9aa4b4;
-      --input-bg:#1d2732;
-      --input-border:rgba(255,255,255,.22);
-      --shadow:0 18px 60px -18px rgba(0,0,0,.75), 0 8px 32px -14px rgba(0,0,0,.55);
-      --shadow-sm:0 2px 8px rgba(0,0,0,.42);
-      --link:#81b9ff;
-      --link-hover:#a9d2ff;
-    }
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./css/app.css?v=2.0">
+</head>
+<body class="auth-layout">
+
+  <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle theme">
+    <svg class="moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 0112.8 3a7 7 0 100 18A9 9 0 0021 12.8z"/></svg>
+    <svg class="sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2m11-11h-2M3 12H1m16.95 7.07l-1.41-1.41M6.34 6.34L4.93 4.93m12.02 0l-1.41 1.41M6.34 17.66l-1.41 1.41"/></svg>
+  </button>
+
+  <main class="card-container auth-box">
+    <div class="logo-sq">U</div>
+    <h1 id="authHeading" style="margin:0 0 10px; font-size:1.8rem;">Welcome</h1>
+    <p id="authLead" style="color:var(--text-soft); text-align:center; margin-bottom:30px;">Log in to continue</p>
+
+    <div id="globalStatus" style="margin-bottom:15px; font-size:0.9rem; text-align:center;"></div>
+
+    <div style="width:100%; flex:1;">
+      <form id="loginForm" class="auth-form active" novalidate>
+        <div style="margin-bottom:15px;">
+          <label class="field-label">Email</label>
+          <input id="login-email" type="email" required placeholder="you@example.com">
+          <div class="error-msg" id="login-email-error"></div>
+        </div>
+        <div style="margin-bottom:20px;">
+          <label class="field-label">Password</label>
+          <input id="login-password" type="password" required placeholder="••••••••">
+          <div class="error-msg" id="login-password-error"></div>
+        </div>
+        <button type="submit" class="btn-primary" id="loginBtn">Log In</button>
+      </form>
+      
+      <form id="signupForm" class="auth-form" novalidate hidden>
+        <div style="margin-bottom:15px;">
+          <label class="field-label">Email</label>
+          <input id="signup-email" type="email" required placeholder="student@tarumt.edu.my">
+          <div class="error-msg" id="signup-email-error"></div>
+        </div>
+        <div style="margin-bottom:15px;">
+          <label class="field-label">Password</label>
+          <input id="signup-password" type="password" required placeholder="Min 8 chars">
+          <div class="error-msg" id="signup-password-error"></div>
+        </div>
+        <div style="margin-bottom:20px;">
+          <label class="field-label">Confirm Password</label>
+          <input id="signup-confirm" type="password" required>
+          <div class="error-msg" id="signup-confirm-error"></div>
+        </div>
+        <button type="submit" class="btn-primary" id="signupBtn">Create Account</button>
+      </form>
+    </div>
+    
+    <div style="margin-top:20px; font-size:0.85rem;">
+      <a href="#" id="linkToSignup" style="color:var(--brand); text-decoration:none;">No account? Sign up</a>
+      <a href="#" id="linkToLogin" style="color:var(--brand); text-decoration:none; display:none;">Have an account? Log in</a>
+    </div>
+  </main>
+  
+  <script type="module" src="./js/auth.js?v=2.0"></script>
+</body>
+</html>
     * { box-sizing:border-box; }
     body {
       margin:0;
@@ -104,7 +126,7 @@
       100%{transform:translateY(0)}
     }
 
-    .auth-card {
+    .auth-container {
       width:100%;
       max-width:420px;
       background:linear-gradient(145deg,var(--panel),var(--panel-alt) 140%);
@@ -247,7 +269,7 @@
     }
     .errors.show { display:block; }
 
-    .submit-btn {
+    .auth-btn {
       --bg:var(--brand);
       --bg-hover:var(--brand-hover);
       font:inherit;
@@ -329,7 +351,7 @@
     }
     .status-line.ok { color:var(--success); }
     .status-line.err { color:var(--danger); }
-    .global-status {
+    .auth-status {
       text-align:center;
       font-size:.7rem;
       letter-spacing:.4px;
@@ -407,18 +429,8 @@
   </style>
 </head>
 <body class="light">
-  <!-- Theme Toggle Button -->
-  <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme">
-    <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
-      <path d="M21 12.8A9 9 0 0112.8 3a7 7 0 100 18A9 9 0 0021 12.8z"/>
-    </svg>
-    <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
-      <circle cx="12" cy="12" r="5"/>
-      <path d="M12 1v2m0 18v2m11-11h-2M3 12H1m16.95 7.07l-1.41-1.41M6.34 6.34L4.93 4.93m12.02 0l-1.41 1.41M6.34 17.66l-1.41 1.41"/>
-    </svg>
-  </button>
-  
-  <main class="auth-card" role="main" aria-labelledby="authHeading">
+
+  <main class="auth-container" role="main" aria-labelledby="authHeading">
     <div class="logo" aria-label="Notes-U Logo">U</div>
     <h1 id="authHeading">Welcome Back</h1>
     <p class="lead" id="authLead">Log in to access and manage your academic notes.</p>
@@ -443,7 +455,7 @@
           <div class="errors" id="login-password-error" aria-live="polite"></div>
           <a href="#" id="forgotLink" class="forgot-link">Forgot password?</a>
         </div>
-        <button type="submit" class="submit-btn" id="loginBtn"><span class="btn-text">Log In</span></button>
+        <button type="submit" class="auth-btn" id="loginBtn"><span class="btn-text">Log In</span></button>
       </form>
       
       <!-- SIGN UP -->
@@ -473,7 +485,7 @@
           </div>
           <div class="errors" id="signup-confirm-error" aria-live="polite"></div>
         </div>
-        <button type="submit" class="submit-btn" id="signupBtn"><span class="btn-text">Create Account</span></button>
+        <button type="submit" class="auth-btn" id="signupBtn"><span class="btn-text">Create Account</span></button>
       </form>
     </div>
     
@@ -496,7 +508,7 @@
           </div>
           <div class="errors" id="forgot-email-error" aria-live="polite"></div>
         </div>
-        <button type="submit" class="submit-btn" id="forgotBtn" style="margin-top:6px;padding:14px 18px;">
+        <button type="submit" class="auth-btn" id="forgotBtn" style="margin-top:6px;padding:14px 18px;">
           <span class="btn-text">Send Reset Link</span>
         </button>
         <div class="status-line" id="forgotStatus" aria-live="polite"></div>
@@ -507,230 +519,6 @@
     </section>
   </main>
   
-  <script type="module">
-    import { signupWithEmail, loginWithEmail, friendlyError, auth } from './firebase-init.js';
-    import { onAuthStateChanged, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-    
-    // THEME
-    const body = document.body;
-    const themeToggle = document.getElementById('themeToggle');
-    function applyTheme(dark){
-      body.classList.toggle('dark', dark);
-      body.classList.toggle('light', !dark);
-      localStorage.setItem('theme', dark ? 'dark':'light');
-    }
-    (function initTheme(){
-      const stored = localStorage.getItem('theme');
-      if(stored) applyTheme(stored==='dark');
-      else applyTheme(window.matchMedia('(prefers-color-scheme: dark)').matches);
-      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e=>{
-        if(!localStorage.getItem('theme')) applyTheme(e.matches);
-      });
-      window.addEventListener('storage', e=>{
-        if(e.key==='theme' && e.newValue){
-          applyTheme(e.newValue==='dark');
-        }
-      });
-    })();
-    themeToggle.addEventListener('click', ()=> applyTheme(!body.classList.contains('dark')));
-    
-    // FORM HANDLING
-    const formsShell      = document.getElementById('formsShell');
-    const loginForm       = document.getElementById('loginForm');
-    const signupForm      = document.getElementById('signupForm');
-    const forgotPanel     = document.getElementById('forgotPanel');
-    const forgotForm      = document.getElementById('forgotForm');
-    const linkToSignup    = document.getElementById('linkToSignup');
-    const linkToLogin     = document.getElementById('linkToLogin');
-    const forgotLink      = document.getElementById('forgotLink');
-    const closeForgot     = document.getElementById('closeForgot');
-    const authHeading     = document.getElementById('authHeading');
-    const authLead        = document.getElementById('authLead');
-    const globalStatus    = document.getElementById('globalStatus');
-    const loginBtn        = document.getElementById('loginBtn');
-    const signupBtn       = document.getElementById('signupBtn');
-    const forgotBtn       = document.getElementById('forgotBtn');
-    const forgotStatus    = document.getElementById('forgotStatus');
-    
-    // MODE SWITCH
-    function detectMode(){
-      const qs = window.location.search;
-      if(/\?signup\b/i.test(qs)) return 'signup';
-      if(/\?login\b/i.test(qs)) return 'login';
-      const p = new URLSearchParams(qs).get('mode');
-      return p === 'signup' ? 'signup' : 'login';
-    }
-    let mode = detectMode();
-    
-    function setGlobalStatus(msg='', kind=''){
-      globalStatus.textContent = msg;
-      globalStatus.className = 'global-status' + (kind ? ' ' + kind : '');
-    }
-    
-    function showErr(id, msg){
-      const el = document.getElementById(id);
-      if(!el) return;
-      el.textContent = msg || '';
-      el.classList.toggle('show', !!msg);
-    }
-    
-    function applyMode(m){
-      mode = m;
-      const isSignup = m === 'signup';
-      loginForm.classList.toggle('active', !isSignup);
-      signupForm.classList.toggle('active', isSignup);
-      loginForm.hidden = isSignup;
-      signupForm.hidden = !isSignup;
-      linkToSignup.style.display = isSignup ? 'none':'block';
-      linkToLogin.style.display  = isSignup ? 'block':'none';
-      forgotPanel.hidden = true;
-      forgotPanel.classList.remove('active');
-      if(isSignup){
-        authHeading.textContent = 'Create Your Account';
-        authLead.textContent    = 'Sign up with your email to start uploading and managing your notes.';
-      } else {
-        authHeading.textContent = 'Welcome Back';
-        authLead.textContent    = 'Log in to access and manage your academic notes.';
-      }
-      setGlobalStatus();
-    }
-    applyMode(mode);
-    
-    linkToSignup.addEventListener('click', e=>{ e.preventDefault(); applyMode('signup'); });
-    linkToLogin.addEventListener('click',  e=>{ e.preventDefault(); applyMode('login');  });
-    
-    // PASSWORD TOGGLE
-    document.addEventListener('click', e=>{
-      const btn = e.target.closest('.toggle-pass');
-      if(!btn) return;
-      const input = document.getElementById(btn.dataset.target);
-      if(!input) return;
-      if(input.type === 'password'){
-        input.type = 'text';
-        btn.textContent = 'Hide';
-      } else {
-        input.type = 'password';
-        btn.textContent = 'Show';
-      }
-      input.focus({ preventScroll:true });
-    });
-    
-    // VALIDATION
-    function validEmail(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
-    
-    // LOGIN
-    loginForm.addEventListener('submit', async e=>{
-      e.preventDefault();
-      setGlobalStatus();
-      const email = document.getElementById('login-email').value.trim();
-      const pass  = document.getElementById('login-password').value;
-      let ok = true;
-      if(!email || !validEmail(email)){
-        showErr('login-email-error','Valid email required.');
-        ok=false;
-      } else showErr('login-email-error','');
-      if(!pass){
-        showErr('login-password-error','Password required.');
-        ok=false;
-      } else showErr('login-password-error','');
-      if(!ok) return;
-      loginBtn.disabled = true;
-      loginBtn.querySelector('.btn-text').textContent = 'Logging In...';
-      try {
-        await loginWithEmail(email, pass);
-        setGlobalStatus('Login successful. Redirecting...','ok');
-        setTimeout(()=> location.href='home.html', 450);
-      } catch(err){
-        setGlobalStatus(friendlyError(err),'err');
-        loginBtn.disabled = false;
-        loginBtn.querySelector('.btn-text').textContent = 'Log In';
-      }
-    });
-    
-    // SIGNUP
-    signupForm.addEventListener('submit', async e=>{
-      e.preventDefault();
-      setGlobalStatus();
-      const email   = document.getElementById('signup-email').value.trim();
-      const pass    = document.getElementById('signup-password').value;
-      const conf    = document.getElementById('signup-confirm').value;
-      let ok = true;
-      if(!validEmail(email)){
-        showErr('signup-email-error','Enter a valid email.');
-        ok=false;
-      } else showErr('signup-email-error','');
-      if(pass.length < 8){
-        showErr('signup-password-error','At least 8 characters required.');
-        ok=false;
-      } else showErr('signup-password-error','');
-      if(conf !== pass){
-        showErr('signup-confirm-error','Passwords do not match.');
-        ok=false;
-      } else showErr('signup-confirm-error','');
-      if(!ok) return;
-      signupBtn.disabled = true;
-      signupBtn.querySelector('.btn-text').textContent = 'Creating...';
-      try {
-        await signupWithEmail(email, pass);
-        setGlobalStatus('Account created! Redirecting...','ok');
-        setTimeout(()=> location.href='home.html', 550);
-      } catch(err){
-        setGlobalStatus(friendlyError(err),'err');
-        signupBtn.disabled = false;
-        signupBtn.querySelector('.btn-text').textContent = 'Create Account';
-      }
-    });
-    
-    // FORGOT PASSWORD
-    forgotLink.addEventListener('click', e=>{
-      e.preventDefault();
-      forgotPanel.hidden = false;
-      forgotPanel.classList.add('active');
-      document.getElementById('forgot-email').focus();
-      setGlobalStatus();
-    });
-    
-    closeForgot.addEventListener('click', e=>{
-      e.preventDefault();
-      forgotPanel.hidden = true;
-      forgotPanel.classList.remove('active');
-      forgotStatus.textContent = '';
-    });
-    
-    forgotForm.addEventListener('submit', async e=>{
-      e.preventDefault();
-      const email = document.getElementById('forgot-email').value.trim();
-      if(!validEmail(email)){
-        document.getElementById('forgot-email-error').textContent = 'Valid email required.';
-        return;
-      } else {
-        document.getElementById('forgot-email-error').textContent = '';
-      }
-      forgotBtn.disabled = true;
-      forgotBtn.querySelector('.btn-text').textContent = 'Sending...';
-      forgotStatus.textContent = '';
-      forgotStatus.className = 'status-line';
-      try {
-        await sendPasswordResetEmail(auth, email);
-        forgotStatus.textContent = 'Reset link sent (check inbox / spam).';
-        forgotStatus.className = 'status-line ok';
-      } catch(err){
-        forgotStatus.textContent = friendlyError(err);
-        forgotStatus.className = 'status-line err';
-      } finally {
-        forgotBtn.disabled = false;
-        forgotBtn.querySelector('.btn-text').textContent = 'Send Reset Link';
-      }
-    });
-
-    // AUTH STATE LISTENER - FIXED
-    onAuthStateChanged(auth, user => {
-      if(user) {
-        // User is logged in, redirect to home
-        location.href = 'home.html';
-      }
-      // If no user, stay on auth page
-    });
-  </script>
+  <script type="module" src="./js/auth.js?v=2.0"></script>
 </body>
 </html>

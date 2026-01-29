@@ -1,85 +1,123 @@
-# Notes-U (Frontend Only + Firebase)
+📚 Notes-U
+A modern, collaborative platform for sharing and accessing university lecture notes, tutorial solutions, and past year papers.
 
-A simple university notes sharing platform (static frontend + Firebase).
+Notes-U is a serverless web application built with Vanilla JavaScript (ES Modules) and Firebase. It features a clean, responsive UI with Dark Mode support, secure file uploads, and real-time data synchronization.
 
-Features:
-- Firebase Authentication (username mapped to pseudo email)
-- Firestore (users + notes metadata)
-- Firebase Storage (file uploads)
-- Client-side filtering & search
+✨ Features
+🔐 Secure Authentication: Email/Password login, signup, and password reset flow via Firebase Auth.
 
-## Setup
+📂 File Sharing: Upload study materials (PDF, DOCX, PPTX, etc.) up to 25MB.
 
-1. Create a Firebase project.
-2. Enable:
-   - Authentication (Email/Password)
-   - Firestore
-   - Storage
-3. In Firebase Console → Project Settings → Your Apps → Web, copy the config and paste it into `docs/firebase-init.js`.
-4. Adjust security rules (see below).
-5. Deploy via GitHub Pages:
-   - Settings → Pages → Deploy from `main` branch `/docs`.
+🔍 Smart Discovery: Filter notes by Academic Year, Semester, and Subject Code, or use the real-time search bar.
 
-## Firestore Rules (basic example — refine for production)
+🎨 Modern UI: Fully responsive design with Dark/Light Theme toggle and smooth animations.
 
-```
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
+🛡️ Robust Security: Server-side validation for file types, sizes, and data integrity using Firestore & Storage Security Rules.
 
-    match /users/{userId} {
-      allow read: if request.auth != null;
-      allow create: if request.auth != null && request.auth.uid == userId;
-      allow update, delete: if request.auth != null && request.auth.uid == userId;
-    }
+⚡ No Bundler Required: Built using standard ES Modules – runs directly in modern browsers.
 
-    // Username mapping documents (public existence check avoided here).
-    match /usernames/{uname} {
-      allow read: if false; // Prevent enumeration of usernames.
-      allow create: if request.auth != null;
-      allow update, delete: if false; // Immutable mapping (optional).
-    }
+🛠️ Tech Stack
+Frontend: HTML5, CSS3 (Variables, Grid/Flexbox), JavaScript (ES6+ Modules).
 
-    match /notes/{noteId} {
-      allow create: if request.auth != null
-        && request.resource.data.userId == request.auth.uid;
-      allow read, update, delete:
-        if request.auth != null && resource.data.userId == request.auth.uid;
-    }
-  }
-}
-```
+Backend (BaaS): Google Firebase.
 
-## Storage Rules (basic example)
+Authentication: User management.
 
-```
-rules_version = '2';
-service firebase.storage {
-  match /b/{bucket}/o {
-    match /notes/{userId}/{allPaths=**} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
-    }
-  }
-}
-```
+Firestore: NoSQL database for storing note metadata (titles, descriptions, subject codes).
 
-## Development
+Storage: Object storage for actual document files.
 
-Serve the `docs/` folder with any static server:
+Deployment: GitHub Pages (Ready-to-deploy docs/ folder).
 
-```
+📂 Project Structure
+The project uses a clean separation of concerns:
+
+Plaintext
+Notes-U-main/
+├── firebase.rules         # Firestore security rules
+├── firebase.storage.rules # Storage security rules
+└── docs/                  # Public web root (GitHub Pages)
+    ├── css/
+    │   └── app.css        # Unified styles & variables
+    ├── js/
+    │   ├── services/      # Reusable logic layer
+    │   │   ├── firebase.js  # Firebase SDK init & API wrappers
+    │   │   └── ui.js        # UI utilities (Toasts, etc.)
+    │   ├── auth.js        # Login/Signup logic
+    │   ├── home.js        # Dashboard & Search logic
+    │   ├── upload.js      # File upload logic
+    │   └── index.js       # Landing page logic
+    ├── auth.html          # Auth page
+    ├── home.html          # Main dashboard
+    ├── upload.html        # Upload page
+    └── index.html         # Landing page
+🚀 Getting Started
+1. Prerequisites
+Since this project uses ES Modules (import ... from ...), you cannot open .html files directly from your file explorer. You must use a local static server.
+
+Option A: Node.js (Recommended)
+
+Bash
 npx serve docs
-# or
+Option B: Python
+
+Bash
 python -m http.server -d docs 8080
-```
+2. Firebase Configuration
+Go to the Firebase Console and create a new project.
 
-## Notes
+Enable Authentication (Email/Password provider).
 
-- Pseudo email format: `<username>@notes-u.fake` (no real email delivery).
-- Username validation: only `[a-z0-9._-]`, 3–30 chars (adjust in `firebase-init.js`).
-- Max upload size: 25MB (client-side enforced).
-- For production: add rate limiting, content moderation, robust validation, server timestamps, and indexing.
+Enable Firestore Database (Start in production mode).
 
-## License
+Enable Storage.
 
-MIT — see `LICENSE`.
+Go to Project Settings > General > Your apps, select Web, and copy the firebaseConfig object.
+
+Open docs/js/services/firebase.js and paste your config:
+
+JavaScript
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "...",
+  appId: "..."
+};
+3. Security Rules (Crucial!)
+To secure your app, copy the contents of the local rule files into your Firebase Console:
+
+Firestore: Copy content from firebase.rules to Firestore > Rules.
+
+Storage: Copy content from firebase.storage.rules to Storage > Rules.
+
+Note: These rules ensure users can only edit/delete their own notes and prevent uploading files larger than 25MB.
+
+4. Create Indexes
+If you see an error in the browser console regarding "indexes", click the link provided in the error message to automatically create the required Composite Index in Firestore (usually for sorting by createdAt while filtering by subject_code).
+
+🚢 Deployment
+This project is pre-configured for GitHub Pages.
+
+Push your code to GitHub.
+
+Go to Settings > Pages.
+
+Under Build and deployment, select Deploy from a branch.
+
+Select the main branch and the /docs folder.
+
+Click Save.
+
+🛡️ Pre-Production Checklist
+Before sharing your site publicly:
+
+Restrict API Key: Go to Google Cloud Console > APIs & Services > Credentials. Edit your API Key to restrict "HTTP Referrers" to your domain (e.g., yourname.github.io and localhost).
+
+Verify Rules: Ensure your Firestore and Storage rules are deployed.
+
+Cache Busting: When updating code, remember to bump the version query string in HTML files (e.g., src="./js/home.js?v=2.1") to force browsers to load the new code.
+
+📄 License
+This project is licensed under the MIT License. See LICENSE for details.
